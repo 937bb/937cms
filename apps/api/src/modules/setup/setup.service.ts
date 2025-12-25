@@ -94,13 +94,13 @@ export type SetupInput = {
   mysqlPassword: string;
   mysqlCreateDatabase?: boolean;
 
-  // CMS security + admin
+  // CMS security + admin (always required)
   adminUser: string;
   adminPassword: string;
   siteName?: string;
 
-  // 强制初始化（跳过管理员检查，用于已有数据库的情况）
-  forceReinit?: boolean;
+  // 是否覆盖数据库（单选：true=覆盖，false=保留）
+  overwriteDatabase?: boolean;
 
   // Optional secrets; if omitted, server will generate and write to config file.
   adminJwtSecret?: string;
@@ -158,8 +158,8 @@ export class SetupService {
   }
 
   async run(input: SetupInput) {
-    const forceReinit = Boolean(input.forceReinit);
-    if (this.cfg.exists() && !forceReinit) throw new BadRequestException('already configured');
+    const overwriteDatabase = Boolean(input.overwriteDatabase);
+    if (this.cfg.exists() && !overwriteDatabase) throw new BadRequestException('already configured, use overwriteDatabase to reinit');
 
     const mysqlHost = requiredStr(input.mysqlHost, 'mysqlHost', 1);
     const mysqlPort = requiredInt(input.mysqlPort, 'mysqlPort', 1);
@@ -168,9 +168,9 @@ export class SetupService {
     const mysqlPassword = requiredStr(input.mysqlPassword, 'mysqlPassword', 1);
     const mysqlCreateDatabase = Boolean(input.mysqlCreateDatabase);
 
-    // 强制初始化模式下，管理员信息可选
-    const adminUser = forceReinit ? trim(input.adminUser) : requiredStr(input.adminUser, 'adminUser', 3);
-    const adminPassword = forceReinit ? trim(input.adminPassword) : requiredStr(input.adminPassword, 'adminPassword', 6);
+    // 管理员信息始终必须
+    const adminUser = requiredStr(input.adminUser, 'adminUser', 3);
+    const adminPassword = requiredStr(input.adminPassword, 'adminPassword', 6);
     const interfacePass = randHex(24);
 
     const adminJwtSecret = trim(input.adminJwtSecret) || randHex(48);
@@ -240,11 +240,9 @@ export class SetupService {
 
       const now = nowTs();
 
-      // 创建管理员：forceReinit时如果没有管理员则创建，否则检查是否已存在
+      // 创建或更新管理员
       if (adminCount === 0) {
-        if (!adminUser || !adminPassword) {
-          throw new BadRequestException('adminUser and adminPassword required when no admin exists');
-        }
+        // 第一次初始化：创建管理员
         const hash = await bcrypt.hash(adminPassword, 10);
         await dbConn.query('INSERT INTO bb_admin (username, password_hash, role, created_at, updated_at) VALUES (?,?,?,?,?)', [
           adminUser,
@@ -253,8 +251,10 @@ export class SetupService {
           now,
           now,
         ]);
-      } else if (!forceReinit) {
-        throw new BadRequestException('database already has admin, abort setup (use forceReinit to skip)');
+      } else if (overwriteDatabase) {
+        // 覆盖数据库模式：更新管理员密码
+        const hash = await bcrypt.hash(adminPassword, 10);
+        await dbConn.query('UPDATE bb_admin SET password_hash = ?, updated_at = ? WHERE role = ?', [hash, now, 'owner']);
       }
 
       await dbConn.query(
