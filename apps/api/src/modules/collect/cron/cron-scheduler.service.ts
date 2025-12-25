@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit, Inject, forwardRef } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { CollectService } from '../collect.service';
 import { CronParser } from './cron-parser';
@@ -8,7 +8,7 @@ export class CronSchedulerService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(CronSchedulerService.name);
   private activeJobs = new Map<number, NodeJS.Timeout>();
 
-  constructor(private readonly collect: CollectService) {}
+  constructor(@Inject(forwardRef(() => CollectService)) private readonly collect: CollectService) {}
 
   onModuleInit() {
     this.initializeSchedules();
