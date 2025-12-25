@@ -6,6 +6,45 @@
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
+-- 删除旧表（用于重新初始化）
+DROP TABLE IF EXISTS `bb_collect_type_bind`;
+DROP TABLE IF EXISTS `bb_collect_record`;
+DROP TABLE IF EXISTS `bb_collect_task`;
+DROP TABLE IF EXISTS `bb_ulog`;
+DROP TABLE IF EXISTS `bb_theme_config`;
+DROP TABLE IF EXISTS `bb_server_group`;
+DROP TABLE IF EXISTS `bb_downloader`;
+DROP TABLE IF EXISTS `bb_gbook`;
+DROP TABLE IF EXISTS `bb_comment`;
+DROP TABLE IF EXISTS `bb_attachment`;
+DROP TABLE IF EXISTS `bb_article`;
+DROP TABLE IF EXISTS `bb_actor`;
+DROP TABLE IF EXISTS `bb_api_key`;
+DROP TABLE IF EXISTS `bb_role`;
+DROP TABLE IF EXISTS `bb_session_token`;
+DROP TABLE IF EXISTS `bb_session_token_config`;
+DROP TABLE IF EXISTS `bb_link`;
+DROP TABLE IF EXISTS `bb_member_play_history`;
+DROP TABLE IF EXISTS `bb_member_favorite`;
+DROP TABLE IF EXISTS `bb_vod_download`;
+DROP TABLE IF EXISTS `bb_vod_download_source`;
+DROP TABLE IF EXISTS `bb_vod_episode`;
+DROP TABLE IF EXISTS `bb_vod_source`;
+DROP TABLE IF EXISTS `bb_vod`;
+DROP TABLE IF EXISTS `bb_topic`;
+DROP TABLE IF EXISTS `bb_type`;
+DROP TABLE IF EXISTS `bb_collect_job_source`;
+DROP TABLE IF EXISTS `bb_collect_job`;
+DROP TABLE IF EXISTS `bb_collect_source`;
+DROP TABLE IF EXISTS `bb_member`;
+DROP TABLE IF EXISTS `bb_member_group`;
+DROP TABLE IF EXISTS `bb_player`;
+DROP TABLE IF EXISTS `bb_theme_setting`;
+DROP TABLE IF EXISTS `bb_setting`;
+DROP TABLE IF EXISTS `bb_admin`;
+DROP TABLE IF EXISTS `bb_install`;
+DROP TABLE IF EXISTS `bb_migration`;
+
 -- 系统版本管理表（用于自动升级）
 CREATE TABLE IF NOT EXISTS `bb_migration` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,

@@ -158,7 +158,8 @@ export class SetupService {
   }
 
   async run(input: SetupInput) {
-    if (this.cfg.exists()) throw new BadRequestException('already configured');
+    const forceReinit = Boolean(input.forceReinit);
+    if (this.cfg.exists() && !forceReinit) throw new BadRequestException('already configured');
 
     const mysqlHost = requiredStr(input.mysqlHost, 'mysqlHost', 1);
     const mysqlPort = requiredInt(input.mysqlPort, 'mysqlPort', 1);
@@ -166,7 +167,6 @@ export class SetupService {
     const mysqlUser = requiredStr(input.mysqlUser, 'mysqlUser', 1);
     const mysqlPassword = requiredStr(input.mysqlPassword, 'mysqlPassword', 1);
     const mysqlCreateDatabase = Boolean(input.mysqlCreateDatabase);
-    const forceReinit = Boolean(input.forceReinit);
 
     // 强制初始化模式下，管理员信息可选
     const adminUser = forceReinit ? trim(input.adminUser) : requiredStr(input.adminUser, 'adminUser', 3);
