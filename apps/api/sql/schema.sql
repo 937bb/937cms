@@ -427,6 +427,20 @@ CREATE TABLE IF NOT EXISTS `bb_member_play_history` (
   KEY `idx_vod_id` (`vod_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='会员播放历史';
 
+-- 友情链接表
+CREATE TABLE IF NOT EXISTS `bb_link` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) NOT NULL COMMENT '链接名称',
+  `url` varchar(255) NOT NULL COMMENT '链接地址',
+  `logo` varchar(255) NOT NULL DEFAULT '' COMMENT '链接logo',
+  `sort` int unsigned NOT NULL DEFAULT 0 COMMENT '排序',
+  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态 1=启用 0=禁用',
+  `created_at` int unsigned NOT NULL DEFAULT 0,
+  `updated_at` int unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='友情链接';
+
 -- Session Token 配置表
 CREATE TABLE IF NOT EXISTS `bb_session_token_config` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
