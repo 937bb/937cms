@@ -742,6 +742,8 @@ CREATE TABLE IF NOT EXISTS `bb_collect_task` (
   `run_id` int unsigned NOT NULL DEFAULT 0 COMMENT '采集运行ID',
   `source_id` int unsigned NOT NULL DEFAULT 0 COMMENT '采集源ID',
   `status` tinyint unsigned NOT NULL DEFAULT 0 COMMENT '0=待处理,1=运行中,2=完成,3=失败',
+  `current_page` int unsigned NOT NULL DEFAULT 1 COMMENT '当前页码',
+  `total_pages` int unsigned NOT NULL DEFAULT 0 COMMENT '总页数',
   `started_at` int unsigned NOT NULL DEFAULT 0,
   `created_at` int unsigned NOT NULL DEFAULT 0,
   `updated_at` int unsigned NOT NULL DEFAULT 0,
