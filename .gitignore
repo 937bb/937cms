@@ -9,11 +9,13 @@ yarn.lock
 package-lock.json
 
 # Build outputs
-dist
+apps/*/dist
 build
 .next
 .nuxt
 output
+# But include collector dist (compiled binary)
+!apps/collector/dist
 
 # Environment
 .env
