@@ -3,7 +3,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AdminAuthService } from './admin-auth.service';
 import { AdminGuard } from './admin.guard';
 
-class LoginDto {
+class AdminLoginDto {
   username!: string;
   password!: string;
 }
@@ -14,7 +14,7 @@ export class AdminAuthController {
   constructor(private readonly auth: AdminAuthService) {}
 
   @Post('login')
-  async login(@Body() body: LoginDto) {
+  async login(@Body() body: AdminLoginDto) {
     return this.auth.login(body.username, body.password);
   }
 }
