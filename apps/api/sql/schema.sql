@@ -482,4 +482,175 @@ CREATE TABLE IF NOT EXISTS `bb_session_token` (
   KEY `idx_expires_at` (`expires_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='会话 Token 记录';
 
+-- 角色表
+CREATE TABLE IF NOT EXISTS `bb_role` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(64) NOT NULL COMMENT '角色名称',
+  `description` varchar(255) NOT NULL DEFAULT '' COMMENT '角色描述',
+  `permissions` json NOT NULL COMMENT '权限列表',
+  `created_at` int unsigned NOT NULL DEFAULT 0,
+  `updated_at` int unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='角色';
+
+-- API Key 表
+CREATE TABLE IF NOT EXISTS `bb_api_key` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) NOT NULL COMMENT 'API Key 名称',
+  `key` varchar(255) NOT NULL COMMENT 'API Key',
+  `secret` varchar(255) NOT NULL COMMENT 'API Secret',
+  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态',
+  `created_at` int unsigned NOT NULL DEFAULT 0,
+  `updated_at` int unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_key` (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='API Key';
+
+-- 演员表
+CREATE TABLE IF NOT EXISTS `bb_actor` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) NOT NULL COMMENT '演员名称',
+  `description` text NOT NULL COMMENT '演员描述',
+  `image` varchar(255) NOT NULL DEFAULT '' COMMENT '演员图片',
+  `created_at` int unsigned NOT NULL DEFAULT 0,
+  `updated_at` int unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx_name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='演员';
+
+-- 文章表
+CREATE TABLE IF NOT EXISTS `bb_article` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL COMMENT '文章标题',
+  `content` longtext NOT NULL COMMENT '文章内容',
+  `summary` varchar(500) NOT NULL DEFAULT '' COMMENT '文章摘要',
+  `cover` varchar(255) NOT NULL DEFAULT '' COMMENT '文章封面',
+  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态',
+  `created_at` int unsigned NOT NULL DEFAULT 0,
+  `updated_at` int unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='文章';
+
+-- 附件表
+CREATE TABLE IF NOT EXISTS `bb_attachment` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL COMMENT '附件名称',
+  `path` varchar(255) NOT NULL COMMENT '附件路径',
+  `size` int unsigned NOT NULL DEFAULT 0 COMMENT '文件大小',
+  `mime_type` varchar(64) NOT NULL DEFAULT '' COMMENT 'MIME 类型',
+  `created_at` int unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx_created_at` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='附件';
+
+-- 评论表
+CREATE TABLE IF NOT EXISTS `bb_comment` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `vod_id` int unsigned NOT NULL DEFAULT 0 COMMENT '视频ID',
+  `member_id` int unsigned NOT NULL DEFAULT 0 COMMENT '会员ID',
+  `content` text NOT NULL COMMENT '评论内容',
+  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态',
+  `created_at` int unsigned NOT NULL DEFAULT 0,
+  `updated_at` int unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx_vod_id` (`vod_id`),
+  KEY `idx_member_id` (`member_id`),
+  KEY `idx_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='评论';
+
+-- 留言板表
+CREATE TABLE IF NOT EXISTS `bb_gbook` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) NOT NULL COMMENT '留言者名称',
+  `email` varchar(128) NOT NULL DEFAULT '' COMMENT '邮箱',
+  `content` text NOT NULL COMMENT '留言内容',
+  `status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '状态',
+  `created_at` int unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='留言板';
+
+-- 下载器表
+CREATE TABLE IF NOT EXISTS `bb_downloader` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) NOT NULL COMMENT '下载器名称',
+  `url` varchar(255) NOT NULL COMMENT '下载器地址',
+  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态',
+  `created_at` int unsigned NOT NULL DEFAULT 0,
+  `updated_at` int unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='下载器';
+
+-- 服务器组表
+CREATE TABLE IF NOT EXISTS `bb_server_group` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) NOT NULL COMMENT '服务器组名称',
+  `description` varchar(255) NOT NULL DEFAULT '' COMMENT '描述',
+  `created_at` int unsigned NOT NULL DEFAULT 0,
+  `updated_at` int unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='服务器组';
+
+-- 主题配置表
+CREATE TABLE IF NOT EXISTS `bb_theme_config` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `theme_id` varchar(64) NOT NULL COMMENT '主题ID',
+  `key` varchar(128) NOT NULL COMMENT '配置键',
+  `value` longtext NOT NULL COMMENT '配置值',
+  `created_at` int unsigned NOT NULL DEFAULT 0,
+  `updated_at` int unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_theme_key` (`theme_id`, `key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='主题配置';
+
+-- 用户日志表
+CREATE TABLE IF NOT EXISTS `bb_ulog` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `admin_id` int unsigned NOT NULL DEFAULT 0 COMMENT '管理员ID',
+  `action` varchar(128) NOT NULL COMMENT '操作',
+  `description` varchar(255) NOT NULL DEFAULT '' COMMENT '描述',
+  `ip` varchar(45) NOT NULL DEFAULT '' COMMENT 'IP地址',
+  `created_at` int unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx_admin_id` (`admin_id`),
+  KEY `idx_created_at` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户日志';
+
+-- 采集任务表
+CREATE TABLE IF NOT EXISTS `bb_collect_task` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `job_id` int unsigned NOT NULL DEFAULT 0 COMMENT '采集任务ID',
+  `status` varchar(32) NOT NULL DEFAULT 'pending' COMMENT '状态',
+  `created_at` int unsigned NOT NULL DEFAULT 0,
+  `updated_at` int unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx_job_id` (`job_id`),
+  KEY `idx_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='采集任务';
+
+-- 采集记录表
+CREATE TABLE IF NOT EXISTS `bb_collect_record` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `job_id` int unsigned NOT NULL DEFAULT 0 COMMENT '采集任务ID',
+  `status` varchar(32) NOT NULL DEFAULT 'pending' COMMENT '状态',
+  `error_message` text NOT NULL COMMENT '错误信息',
+  `created_at` int unsigned NOT NULL DEFAULT 0,
+  `updated_at` int unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx_job_id` (`job_id`),
+  KEY `idx_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='采集记录';
+
+-- 采集类型绑定表
+CREATE TABLE IF NOT EXISTS `bb_collect_type_bind` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `job_id` int unsigned NOT NULL DEFAULT 0 COMMENT '采集任务ID',
+  `type_id` smallint unsigned NOT NULL DEFAULT 0 COMMENT '类型ID',
+  `created_at` int unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_job_type` (`job_id`, `type_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='采集类型绑定';
+
 SET FOREIGN_KEY_CHECKS = 1;
