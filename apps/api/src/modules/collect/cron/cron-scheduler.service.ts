@@ -7,6 +7,7 @@ import { CronParser } from './cron-parser';
 export class CronSchedulerService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(CronSchedulerService.name);
   private activeJobs = new Map<number, NodeJS.Timeout>();
+  private lastExecutedMinute = new Map<number, number>(); // Track last executed minute per job
 
   constructor(@Inject(forwardRef(() => CollectService)) private readonly collect: CollectService) {}
 
@@ -38,7 +39,9 @@ export class CronSchedulerService implements OnModuleInit, OnModuleDestroy {
 
     try {
       CronParser.parse(cronExpression); // Validate
-      const timer = setInterval(() => this.checkAndEnqueueJob(jobId), 60000); // Check every minute
+      // Set up interval to check every 60 seconds
+      // First check will happen after 60 seconds, not immediately
+      const timer = setInterval(() => this.checkAndEnqueueJob(jobId).catch(() => void 0), 60000);
       this.activeJobs.set(jobId, timer);
       this.logger.log(`Scheduled job ${jobId} with cron: ${cronExpression}`);
     } catch (error) {
@@ -65,6 +68,14 @@ export class CronSchedulerService implements OnModuleInit, OnModuleDestroy {
       }
 
       if (CronParser.isTimeToRun(job.cron)) {
+        const now = new Date();
+        const currentMinute = now.getHours() * 60 + now.getMinutes();
+
+        // Prevent duplicate execution in the same minute
+        if (this.lastExecutedMinute.get(jobId) === currentMinute) {
+          return;
+        }
+
         // Check if there are active runs
         const runsResult = await this.collect.listRuns({
           page: 1,
@@ -76,6 +87,7 @@ export class CronSchedulerService implements OnModuleInit, OnModuleDestroy {
         if (runsResult.items.length === 0) {
           // No pending runs, create one
           await this.collect.createRun(jobId);
+          this.lastExecutedMinute.set(jobId, currentMinute);
           this.logger.log(`Enqueued job ${jobId} via cron schedule`);
         }
       }

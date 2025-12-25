@@ -2,22 +2,22 @@
   <n-space vertical size="small">
     <n-space align="center">
       <span style="min-width: 100px">执行周期</span>
-      <n-select v-model:value="period" :options="periodOptions" style="width: 150px" />
+      <n-select v-model:value="period" :options="periodOptions" style="width: 200px" />
     </n-space>
 
     <n-space align="center" v-if="period === 'hourly'">
       <span style="min-width: 100px">执行分钟</span>
-      <n-input-number v-model:value="minuteValue" :min="0" :max="59" style="width: 100px" />
+      <n-input-number v-model:value="minuteValue" :min="0" :max="59" style="width: 150px" />
     </n-space>
 
     <n-space align="center" v-if="period !== 'never' && period !== 'hourly'">
       <span style="min-width: 100px">执行时间</span>
-      <n-time-picker v-model:value="timeValue" format="HH:mm" style="width: 150px" />
+      <n-time-picker v-model:value="timeValue" format="HH:mm" style="width: 200px" />
     </n-space>
 
     <n-space align="center" v-if="period === 'custom'">
       <span style="min-width: 100px">Cron 表达式</span>
-      <n-input v-model:value="customCron" placeholder="例如: 0 14 * * 1-5" style="width: 250px" />
+      <n-input v-model:value="customCron" placeholder="例如: 0 14 * * 1-5" style="width: 350px" />
     </n-space>
 
     <n-alert v-if="cronExpression" type="info" style="margin-top: 8px">
@@ -63,7 +63,8 @@ const cronExpression = computed(() => {
   if (period.value === 'never') return '';
 
   if (period.value === 'hourly') {
-    return `${minuteValue.value} * * * *`;
+    const minute = minuteValue.value ?? 0;
+    return `${minute} * * * *`;
   }
 
   const hour = timeValue.value ? Math.floor(timeValue.value / 3600000) : 0;
