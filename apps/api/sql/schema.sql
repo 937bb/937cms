@@ -216,6 +216,21 @@ CREATE TABLE IF NOT EXISTS `bb_type` (
   KEY `idx_type_mid` (`type_mid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 专题表
+CREATE TABLE IF NOT EXISTS `bb_topic` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) NOT NULL COMMENT '专题名称',
+  `description` text NOT NULL COMMENT '专题描述',
+  `cover` varchar(255) NOT NULL DEFAULT '' COMMENT '专题封面',
+  `sort` int unsigned NOT NULL DEFAULT 0 COMMENT '排序',
+  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态 1=启用 0=禁用',
+  `created_at` int unsigned NOT NULL DEFAULT 0,
+  `updated_at` int unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx_status` (`status`),
+  KEY `idx_sort` (`sort`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='专题';
+
 CREATE TABLE IF NOT EXISTS `bb_vod` (
   `vod_id` int unsigned NOT NULL AUTO_INCREMENT,
   `type_id` smallint NOT NULL DEFAULT 0,
