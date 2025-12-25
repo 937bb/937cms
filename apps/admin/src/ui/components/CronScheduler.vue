@@ -5,7 +5,12 @@
       <n-select v-model:value="period" :options="periodOptions" style="width: 150px" />
     </n-space>
 
-    <n-space align="center" v-if="period !== 'never'">
+    <n-space align="center" v-if="period === 'hourly'">
+      <span style="min-width: 100px">执行分钟</span>
+      <n-input-number v-model:value="minuteValue" :min="0" :max="59" style="width: 100px" />
+    </n-space>
+
+    <n-space align="center" v-if="period !== 'never' && period !== 'hourly'">
       <span style="min-width: 100px">执行时间</span>
       <n-time-picker v-model:value="timeValue" format="HH:mm" style="width: 150px" />
     </n-space>
@@ -24,7 +29,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { NAlert, NInput, NSelect, NSpace, NTimePicker } from 'naive-ui';
+import { NAlert, NInput, NInputNumber, NSelect, NSpace, NTimePicker } from 'naive-ui';
 import { CronParser } from '../../lib/cron-parser';
 
 const props = defineProps<{
@@ -37,6 +42,7 @@ const emit = defineEmits<{
 
 const periodOptions = [
   { label: '不定时', value: 'never' },
+  { label: '每小时', value: 'hourly' },
   { label: '每天', value: 'daily' },
   { label: '每周一', value: 'monday' },
   { label: '每周二', value: 'tuesday' },
@@ -50,10 +56,15 @@ const periodOptions = [
 
 const period = ref<string>('never');
 const timeValue = ref<number | null>(null);
+const minuteValue = ref<number>(0);
 const customCron = ref('');
 
 const cronExpression = computed(() => {
   if (period.value === 'never') return '';
+
+  if (period.value === 'hourly') {
+    return `${minuteValue.value} * * * *`;
+  }
 
   const hour = timeValue.value ? Math.floor(timeValue.value / 3600000) : 0;
   const minute = timeValue.value ? Math.floor((timeValue.value % 3600000) / 60000) : 0;
@@ -97,6 +108,7 @@ watch(
     if (!newVal) {
       period.value = 'never';
       timeValue.value = null;
+      minuteValue.value = 0;
       customCron.value = '';
       return;
     }
@@ -106,24 +118,30 @@ watch(
       const minute = parts.minute[0] || 0;
       const hour = parts.hour[0] || 0;
 
-      timeValue.value = hour * 3600000 + minute * 60000;
-
-      if (newVal.includes('*') && newVal.split(' ')[4] === '*') {
-        period.value = 'daily';
-      } else if (parts.weekday.length === 1) {
-        const weekdayMap: Record<number, string> = {
-          0: 'sunday',
-          1: 'monday',
-          2: 'tuesday',
-          3: 'wednesday',
-          4: 'thursday',
-          5: 'friday',
-          6: 'saturday',
-        };
-        period.value = weekdayMap[parts.weekday[0]] || 'custom';
+      // Check if it's hourly (hour is *, day is *, month is *, weekday is *)
+      if (parts.hour.length === 24 && parts.day.length === 31 && parts.month.length === 12 && parts.weekday.length === 7) {
+        period.value = 'hourly';
+        minuteValue.value = minute;
       } else {
-        period.value = 'custom';
-        customCron.value = newVal;
+        timeValue.value = hour * 3600000 + minute * 60000;
+
+        if (newVal.includes('*') && newVal.split(' ')[4] === '*') {
+          period.value = 'daily';
+        } else if (parts.weekday.length === 1) {
+          const weekdayMap: Record<number, string> = {
+            0: 'sunday',
+            1: 'monday',
+            2: 'tuesday',
+            3: 'wednesday',
+            4: 'thursday',
+            5: 'friday',
+            6: 'saturday',
+          };
+          period.value = weekdayMap[parts.weekday[0]] || 'custom';
+        } else {
+          period.value = 'custom';
+          customCron.value = newVal;
+        }
       }
     } catch {
       period.value = 'custom';
