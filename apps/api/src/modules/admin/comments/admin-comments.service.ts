@@ -18,16 +18,16 @@ export class AdminCommentsService {
     const params: any[] = [];
 
     if (mid !== undefined) {
-      where += ' AND mid = ?';
+      where += ' AND c.mid = ?';
       params.push(mid);
     }
     if (status !== undefined) {
-      where += ' AND status = ?';
+      where += ' AND c.status = ?';
       params.push(status);
     }
 
     const [[{ total }]] = await this.pool.query<RowDataPacket[]>(
-      `SELECT COUNT(*) as total FROM bb_comment WHERE ${where}`,
+      `SELECT COUNT(*) as total FROM bb_comment c WHERE ${where}`,
       params
     );
 

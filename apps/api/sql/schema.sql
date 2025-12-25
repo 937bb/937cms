@@ -218,17 +218,35 @@ CREATE TABLE IF NOT EXISTS `bb_type` (
 
 -- 专题表
 CREATE TABLE IF NOT EXISTS `bb_topic` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(128) NOT NULL COMMENT '专题名称',
-  `description` text NOT NULL COMMENT '专题描述',
-  `cover` varchar(255) NOT NULL DEFAULT '' COMMENT '专题封面',
-  `sort` int unsigned NOT NULL DEFAULT 0 COMMENT '排序',
-  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态 1=启用 0=禁用',
-  `created_at` int unsigned NOT NULL DEFAULT 0,
-  `updated_at` int unsigned NOT NULL DEFAULT 0,
-  PRIMARY KEY (`id`),
-  KEY `idx_status` (`status`),
-  KEY `idx_sort` (`sort`)
+  `topic_id` int unsigned NOT NULL AUTO_INCREMENT,
+  `topic_name` varchar(128) NOT NULL DEFAULT '' COMMENT '专题名称',
+  `topic_en` varchar(128) NOT NULL DEFAULT '' COMMENT '专题英文名',
+  `topic_sub` varchar(255) NOT NULL DEFAULT '' COMMENT '专题副标题',
+  `topic_status` tinyint unsigned NOT NULL DEFAULT 1 COMMENT '状态',
+  `topic_sort` int unsigned NOT NULL DEFAULT 0 COMMENT '排序',
+  `topic_letter` char(1) NOT NULL DEFAULT '' COMMENT '首字母',
+  `topic_color` varchar(6) NOT NULL DEFAULT '' COMMENT '颜色',
+  `topic_tpl` varchar(30) NOT NULL DEFAULT '' COMMENT '模板',
+  `topic_type` varchar(30) NOT NULL DEFAULT '' COMMENT '类型',
+  `topic_pic` varchar(1024) NOT NULL DEFAULT '' COMMENT '专题图片',
+  `topic_pic_thumb` varchar(1024) NOT NULL DEFAULT '' COMMENT '专题缩略图',
+  `topic_pic_slide` varchar(1024) NOT NULL DEFAULT '' COMMENT '专题幻灯片',
+  `topic_key` varchar(255) NOT NULL DEFAULT '' COMMENT '关键词',
+  `topic_des` varchar(255) NOT NULL DEFAULT '' COMMENT '描述',
+  `topic_title` varchar(255) NOT NULL DEFAULT '' COMMENT '标题',
+  `topic_blurb` varchar(255) NOT NULL DEFAULT '' COMMENT '简介',
+  `topic_remarks` varchar(100) NOT NULL DEFAULT '' COMMENT '备注',
+  `topic_level` int unsigned NOT NULL DEFAULT 0 COMMENT '等级',
+  `topic_tag` varchar(100) NOT NULL DEFAULT '' COMMENT '标签',
+  `topic_rel_vod` varchar(255) NOT NULL DEFAULT '' COMMENT '关联视频',
+  `topic_rel_art` varchar(255) NOT NULL DEFAULT '' COMMENT '关联文章',
+  `topic_content` mediumtext NOT NULL COMMENT '内容',
+  `topic_time` int unsigned NOT NULL DEFAULT 0 COMMENT '更新时间',
+  `topic_time_add` int unsigned NOT NULL DEFAULT 0 COMMENT '添加时间',
+  `topic_hits` int unsigned NOT NULL DEFAULT 0 COMMENT '点击数',
+  PRIMARY KEY (`topic_id`),
+  KEY `idx_topic_status` (`topic_status`),
+  KEY `idx_topic_sort` (`topic_sort`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='专题';
 
 CREATE TABLE IF NOT EXISTS `bb_vod` (
@@ -484,14 +502,31 @@ CREATE TABLE IF NOT EXISTS `bb_session_token` (
 
 -- 角色表
 CREATE TABLE IF NOT EXISTS `bb_role` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(64) NOT NULL COMMENT '角色名称',
-  `description` varchar(255) NOT NULL DEFAULT '' COMMENT '角色描述',
-  `permissions` json NOT NULL COMMENT '权限列表',
-  `created_at` int unsigned NOT NULL DEFAULT 0,
-  `updated_at` int unsigned NOT NULL DEFAULT 0,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uniq_name` (`name`)
+  `role_id` int unsigned NOT NULL AUTO_INCREMENT,
+  `role_name` varchar(128) NOT NULL DEFAULT '' COMMENT '角色名称',
+  `role_en` varchar(128) NOT NULL DEFAULT '' COMMENT '角色英文名',
+  `role_status` tinyint unsigned NOT NULL DEFAULT 1 COMMENT '状态',
+  `role_lock` tinyint unsigned NOT NULL DEFAULT 0 COMMENT '锁定',
+  `role_letter` char(1) NOT NULL DEFAULT '' COMMENT '首字母',
+  `role_color` varchar(6) NOT NULL DEFAULT '' COMMENT '颜色',
+  `role_actor_id` int unsigned NOT NULL DEFAULT 0 COMMENT '演员ID',
+  `role_actor_name` varchar(128) NOT NULL DEFAULT '' COMMENT '演员名称',
+  `role_pic` varchar(1024) NOT NULL DEFAULT '' COMMENT '角色图片',
+  `role_blurb` varchar(255) NOT NULL DEFAULT '' COMMENT '简介',
+  `role_remarks` varchar(100) NOT NULL DEFAULT '' COMMENT '备注',
+  `role_tag` varchar(100) NOT NULL DEFAULT '' COMMENT '标签',
+  `role_class` varchar(255) NOT NULL DEFAULT '' COMMENT '分类',
+  `role_level` int unsigned NOT NULL DEFAULT 0 COMMENT '等级',
+  `role_tpl` varchar(30) NOT NULL DEFAULT '' COMMENT '模板',
+  `role_jumpurl` varchar(150) NOT NULL DEFAULT '' COMMENT '跳转URL',
+  `role_content` mediumtext NOT NULL COMMENT '内容',
+  `role_time` int unsigned NOT NULL DEFAULT 0 COMMENT '更新时间',
+  `role_time_add` int unsigned NOT NULL DEFAULT 0 COMMENT '添加时间',
+  `role_hits` int unsigned NOT NULL DEFAULT 0 COMMENT '点击数',
+  PRIMARY KEY (`role_id`),
+  KEY `idx_role_status` (`role_status`),
+  KEY `idx_role_name` (`role_name`),
+  KEY `idx_role_en` (`role_en`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='角色';
 
 -- API Key 表
@@ -522,14 +557,29 @@ CREATE TABLE IF NOT EXISTS `bb_actor` (
 -- 文章表
 CREATE TABLE IF NOT EXISTS `bb_article` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) NOT NULL COMMENT '文章标题',
-  `content` longtext NOT NULL COMMENT '文章内容',
-  `summary` varchar(500) NOT NULL DEFAULT '' COMMENT '文章摘要',
-  `cover` varchar(255) NOT NULL DEFAULT '' COMMENT '文章封面',
-  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态',
+  `type_id` smallint unsigned NOT NULL DEFAULT 0 COMMENT '分类ID',
+  `type_id_1` smallint unsigned NOT NULL DEFAULT 0 COMMENT '副分类ID',
+  `name` varchar(255) NOT NULL DEFAULT '' COMMENT '文章标题',
+  `sub` varchar(255) NOT NULL DEFAULT '' COMMENT '副标题',
+  `letter` char(1) NOT NULL DEFAULT '' COMMENT '首字母',
+  `color` varchar(6) NOT NULL DEFAULT '' COMMENT '颜色',
+  `pic` varchar(1024) NOT NULL DEFAULT '' COMMENT '文章图片',
+  `pic_thumb` varchar(1024) NOT NULL DEFAULT '' COMMENT '缩略图',
+  `author` varchar(128) NOT NULL DEFAULT '' COMMENT '作者',
+  `source` varchar(128) NOT NULL DEFAULT '' COMMENT '来源',
+  `tag` varchar(100) NOT NULL DEFAULT '' COMMENT '标签',
+  `blurb` varchar(255) NOT NULL DEFAULT '' COMMENT '简介',
+  `remarks` varchar(100) NOT NULL DEFAULT '' COMMENT '备注',
+  `content` mediumtext NOT NULL COMMENT '内容',
+  `level` int unsigned NOT NULL DEFAULT 0 COMMENT '等级',
+  `status` tinyint unsigned NOT NULL DEFAULT 1 COMMENT '状态',
+  `jump_url` varchar(255) NOT NULL DEFAULT '' COMMENT '跳转URL',
+  `hits` int unsigned NOT NULL DEFAULT 0 COMMENT '点击数',
   `created_at` int unsigned NOT NULL DEFAULT 0,
   `updated_at` int unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
+  KEY `idx_type_id` (`type_id`),
+  KEY `idx_type_id_1` (`type_id_1`),
   KEY `idx_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='文章';
 
@@ -538,59 +588,88 @@ CREATE TABLE IF NOT EXISTS `bb_attachment` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL COMMENT '附件名称',
   `path` varchar(255) NOT NULL COMMENT '附件路径',
+  `url` varchar(255) NOT NULL DEFAULT '' COMMENT '附件URL',
   `size` int unsigned NOT NULL DEFAULT 0 COMMENT '文件大小',
   `mime_type` varchar(64) NOT NULL DEFAULT '' COMMENT 'MIME 类型',
+  `ext` varchar(32) NOT NULL DEFAULT '' COMMENT '文件扩展名',
+  `md5` varchar(32) NOT NULL DEFAULT '' COMMENT 'MD5值',
+  `module` varchar(64) NOT NULL DEFAULT '' COMMENT '模块',
+  `ref_id` int unsigned NOT NULL DEFAULT 0 COMMENT '关联ID',
+  `admin_id` int unsigned NOT NULL DEFAULT 0 COMMENT '管理员ID',
+  `member_id` int unsigned NOT NULL DEFAULT 0 COMMENT '会员ID',
+  `status` tinyint unsigned NOT NULL DEFAULT 1 COMMENT '状态',
   `created_at` int unsigned NOT NULL DEFAULT 0,
+  `updated_at` int unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
-  KEY `idx_created_at` (`created_at`)
+  KEY `idx_created_at` (`created_at`),
+  KEY `idx_module` (`module`),
+  KEY `idx_ref_id` (`ref_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='附件';
 
 -- 评论表
 CREATE TABLE IF NOT EXISTS `bb_comment` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `vod_id` int unsigned NOT NULL DEFAULT 0 COMMENT '视频ID',
-  `member_id` int unsigned NOT NULL DEFAULT 0 COMMENT '会员ID',
+  `mid` int unsigned NOT NULL DEFAULT 0 COMMENT '视频ID',
+  `user_id` int unsigned NOT NULL DEFAULT 0 COMMENT '会员ID',
   `content` text NOT NULL COMMENT '评论内容',
   `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态',
   `created_at` int unsigned NOT NULL DEFAULT 0,
   `updated_at` int unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
-  KEY `idx_vod_id` (`vod_id`),
-  KEY `idx_member_id` (`member_id`),
+  KEY `idx_mid` (`mid`),
+  KEY `idx_user_id` (`user_id`),
   KEY `idx_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='评论';
 
 -- 留言板表
 CREATE TABLE IF NOT EXISTS `bb_gbook` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int unsigned NOT NULL DEFAULT 0 COMMENT '会员ID',
   `name` varchar(128) NOT NULL COMMENT '留言者名称',
   `email` varchar(128) NOT NULL DEFAULT '' COMMENT '邮箱',
   `content` text NOT NULL COMMENT '留言内容',
+  `reply` text COMMENT '回复内容',
+  `reply_time` int unsigned NOT NULL DEFAULT 0 COMMENT '回复时间',
   `status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '状态',
   `created_at` int unsigned NOT NULL DEFAULT 0,
+  `updated_at` int unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
+  KEY `idx_user_id` (`user_id`),
   KEY `idx_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='留言板';
 
 -- 下载器表
 CREATE TABLE IF NOT EXISTS `bb_downloader` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(128) NOT NULL COMMENT '下载器名称',
-  `url` varchar(255) NOT NULL COMMENT '下载器地址',
-  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态',
+  `from_key` varchar(64) NOT NULL COMMENT '下载器编码',
+  `display_name` varchar(128) NOT NULL DEFAULT '' COMMENT '显示名称',
+  `description` varchar(255) NOT NULL DEFAULT '' COMMENT '描述',
+  `tip` varchar(255) NOT NULL DEFAULT '' COMMENT '提示信息',
+  `parse_url` varchar(512) NOT NULL DEFAULT '' COMMENT '解析地址',
+  `parse_mode` tinyint unsigned NOT NULL DEFAULT 0 COMMENT '解析模式',
+  `target` varchar(16) NOT NULL DEFAULT '_self' COMMENT '打开方式',
+  `downloader_code` mediumtext COMMENT '自定义下载器代码',
+  `sort` int unsigned NOT NULL DEFAULT 0 COMMENT '排序',
+  `status` tinyint unsigned NOT NULL DEFAULT 1 COMMENT '状态',
   `created_at` int unsigned NOT NULL DEFAULT 0,
   `updated_at` int unsigned NOT NULL DEFAULT 0,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_from_key` (`from_key`),
+  KEY `idx_status_sort` (`status`, `sort`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='下载器';
 
 -- 服务器组表
 CREATE TABLE IF NOT EXISTS `bb_server_group` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(128) NOT NULL COMMENT '服务器组名称',
-  `description` varchar(255) NOT NULL DEFAULT '' COMMENT '描述',
+  `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
+  `status` tinyint unsigned NOT NULL DEFAULT 1 COMMENT '状态',
+  `sort` int unsigned NOT NULL DEFAULT 0 COMMENT '排序',
   `created_at` int unsigned NOT NULL DEFAULT 0,
   `updated_at` int unsigned NOT NULL DEFAULT 0,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_status` (`status`),
+  KEY `idx_sort` (`sort`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='服务器组';
 
 -- 主题配置表
