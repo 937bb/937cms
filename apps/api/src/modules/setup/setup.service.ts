@@ -240,10 +240,10 @@ export class SetupService {
 
       const now = nowTs();
 
-      // 强制初始化模式：跳过管理员创建
-      if (!forceReinit) {
-        if (adminCount > 0) {
-          throw new BadRequestException('database already has admin, abort setup (use forceReinit to skip)');
+      // 创建管理员：forceReinit时如果没有管理员则创建，否则检查是否已存在
+      if (adminCount === 0) {
+        if (!adminUser || !adminPassword) {
+          throw new BadRequestException('adminUser and adminPassword required when no admin exists');
         }
         const hash = await bcrypt.hash(adminPassword, 10);
         await dbConn.query('INSERT INTO bb_admin (username, password_hash, role, created_at, updated_at) VALUES (?,?,?,?,?)', [
@@ -253,6 +253,8 @@ export class SetupService {
           now,
           now,
         ]);
+      } else if (!forceReinit) {
+        throw new BadRequestException('database already has admin, abort setup (use forceReinit to skip)');
       }
 
       await dbConn.query(
