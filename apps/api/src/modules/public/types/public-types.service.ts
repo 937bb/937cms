@@ -28,7 +28,7 @@ export class PublicTypesService {
       try {
         if (r.type_extend) extend = JSON.parse(r.type_extend);
       } catch {
-        // ignore
+        // 忽略
       }
       return {
         id: r.type_id,

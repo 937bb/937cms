@@ -82,7 +82,7 @@ export class CronParser {
       current.setMilliseconds(0);
       current.setMinutes(current.getMinutes() + 1);
 
-      // Search for next run within 4 years
+      // 在 4 年内搜索下一次运行
       const maxIterations = 365 * 4 * 24 * 60;
       for (let i = 0; i < maxIterations; i++) {
         const minute = current.getMinutes();

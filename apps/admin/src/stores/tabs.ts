@@ -23,7 +23,7 @@ export const useTabsStore = defineStore('tabs', () => {
         activeTab.value = data.activeTab || '';
       }
     } catch {
-      // ignore
+      // 忽略
     }
   }
 
@@ -32,7 +32,7 @@ export const useTabsStore = defineStore('tabs', () => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ tabs: tabs.value, activeTab: activeTab.value }));
     } catch {
-      // ignore
+      // 忽略
     }
   }
 

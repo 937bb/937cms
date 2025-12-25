@@ -32,13 +32,13 @@ export class CollectService {
   ) {}
 
   async reapStaleRuns(opts?: { staleSeconds?: number; limit?: number }) {
-    const staleSeconds = Math.max(60, Number(opts?.staleSeconds || 600)); // default 10min
+    const staleSeconds = Math.max(60, Number(opts?.staleSeconds || 600)); // 默认 10 分钟
     const limit = Math.max(1, Math.min(200, Number(opts?.limit || 50)));
     const pool = this.db.getPool();
     const t = nowSec();
     const cutoff = t - staleSeconds;
 
-    // Select stale running runs (status=1) that stopped updating for too long.
+    // 选择长时间未更新的运行中任务 (status=1) 已停止更新太长时间.
     const [rows] = await pool.query<any[]>(
       'SELECT id FROM bb_collect_run WHERE status = 1 AND finished_at = 0 AND updated_at < ? ORDER BY id ASC LIMIT ?',
       [cutoff, limit],
@@ -216,7 +216,7 @@ export class CollectService {
     const pushWorkers = Math.max(1, Number(input.push_workers ?? 1));
     const pushIntervalSeconds = Math.max(0, Number(input.push_interval_seconds ?? 2));
     const maxWorkers = Math.max(1, Number(input.max_workers ?? 2));
-    const cron = String(input.cron || '').trim(); // supports "3600" or "@every 3600"
+    const cron = String(input.cron || '').trim(); // 支持 "3600" 或 "@every 3600"
     const status = Number(input.status ?? 1) ? 1 : 0;
     const sourceIds = Array.isArray(input.source_ids) ? input.source_ids.map((n) => Number(n)).filter(Boolean) : [];
 
@@ -558,7 +558,7 @@ export class CollectService {
     params.push(id);
     await pool.query(`UPDATE bb_collect_run SET ${fields.join(', ')} WHERE id = ?`, params);
 
-    // If task_id is provided, update the task and aggregate statistics from all tasks
+    // 如果提供了 task_id，更新任务并聚合所有任务的统计信息
     if (input.task_id) {
       const taskId = Number(input.task_id);
       await this.collectTask.updateTaskProgress({
@@ -570,12 +570,12 @@ export class CollectService {
         errorCount: input.error_count,
       });
 
-      // If task is completed or failed, mark it as such
+      // 如果任务已完成或失败，标记为相应状态
       if (input.status === 2 || input.status === 3) {
         await this.collectTask.completeTask(taskId, input.status as 2 | 3, input.message);
       }
 
-      // Aggregate statistics from all tasks in this run
+      // 聚合此运行中所有任务的统计信息
       const stats = await this.collectTask.getTaskStats(id);
       if (stats.ok) {
         const aggregated = stats.stats;
@@ -637,18 +637,18 @@ export class CollectService {
     if (!rows?.[0]) throw new BadRequestException('run not found');
 
     const status = Number(rows[0].status);
-    // Can only cancel pending (0) or running (1) tasks
+    // 只能取消待处理 (0) 或运行中的 (1) 任务
     if (status !== 0 && status !== 1) {
       throw new BadRequestException('run already finished');
     }
 
     const t = nowSec();
-    // Use transaction to ensure atomicity
+    // 使用事务确保原子性
     const conn = await pool.getConnection();
     try {
       await conn.beginTransaction();
 
-      // Update run status
+      // 更新运行状态
       await conn.query('UPDATE bb_collect_run SET status = 3, message = ?, finished_at = ?, updated_at = ? WHERE id = ?', [
         'cancelled by user',
         t,
@@ -656,7 +656,7 @@ export class CollectService {
         id,
       ]);
 
-      // Cancel all associated tasks (including running ones)
+      // 取消所有关联的任务 (包括运行中的任务)
       await conn.query('UPDATE bb_collect_task SET status = 3, finished_at = ?, updated_at = ? WHERE run_id = ? AND status IN (0, 1, 2)', [
         t,
         t,

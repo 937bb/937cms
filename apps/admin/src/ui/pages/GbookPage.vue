@@ -109,7 +109,7 @@ function onCheck(keys: number[]) {
   checkedIds.value = keys;
 }
 
-// Reply
+// 回复
 const showReply = ref(false);
 const replying = ref(false);
 const replyTarget = ref<any>(null);

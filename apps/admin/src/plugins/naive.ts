@@ -40,10 +40,10 @@ import {
   NTreeSelect,
 } from 'naive-ui';
 
-// Important: Naive UI component `.name` is like "Button"/"MessageProvider",
-// but we use `<n-button>`/`<n-message-provider>` in templates, which resolves
-// to registered name `NButton`/`NMessageProvider`. So we must register by the
-// imported identifier name (prefixed with `N`), not by `.name`.
+// 重要：Naive UI 组件 `.name` 类似于 "Button"/"MessageProvider"，
+// 但我们在模板中使用 `<n-button>`/`<n-message-provider>`，它解析为
+// 注册的名称 `NButton`/`NMessageProvider`。所以我们必须通过
+// 导入的标识符名称（前缀为 `N`）进行注册，而不是通过 `.name`。
 const namedComponents: Record<string, any> = {
   NConfigProvider,
   NGlobalStyle,

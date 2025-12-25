@@ -148,7 +148,7 @@ async function openExtend(row: TypeItem) {
     extendForm.lang = Array.isArray(ext.lang) ? ext.lang.join(',') : (ext.lang || '');
     extendForm.year = Array.isArray(ext.year) ? ext.year.join(',') : (ext.year || '');
   } catch {
-    // ignore
+    // 忽略
   }
   showExtendModal.value = true;
 }

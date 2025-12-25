@@ -49,7 +49,7 @@ type PullResponse struct {
 type ReportRequest struct {
 	ID                int64  `json:"id"`
 	TaskID            int64  `json:"task_id,omitempty"`
-	Status            int    `json:"status,omitempty"` // 1 running,2 done,3 failed
+	Status            int    `json:"status,omitempty"` // 1=运行中,2=完成,3=失败
 	ProgressPage      int    `json:"progress_page,omitempty"`
 	ProgressTotalPage int    `json:"progress_total_pages,omitempty"`
 	PushedCount       int    `json:"pushed_count,omitempty"`
@@ -59,7 +59,7 @@ type ReportRequest struct {
 	Message           string `json:"message,omitempty"`
 }
 
-// FlexInt handles JSON values that may be string or int
+// FlexInt 处理可能是字符串或整数的 JSON 值
 type FlexInt int
 
 func (f *FlexInt) UnmarshalJSON(b []byte) error {
@@ -89,7 +89,7 @@ type ProvideListJSON struct {
 type ReceiveResponse struct {
 	Code FlexInt `json:"code"`
 	Msg  string  `json:"msg"`
-	// code 1=created, 2=updated
+	// code 1=已创建, 2=已更新
 }
 
 func main() {
@@ -195,7 +195,7 @@ func runOnce(client *http.Client, apiBase, token string, runID int64, task PullR
 
 	filterKws := splitKeywords(job.FilterKeywords)
 
-	// Process only the single source from the task
+	// 仅处理来自任务的单个源
 	if len(task.Sources) == 0 {
 		return fmt.Errorf("no source provided")
 	}
@@ -206,7 +206,7 @@ func runOnce(client *http.Client, apiBase, token string, runID int64, task PullR
 		return fmt.Errorf("source base_url empty")
 	}
 
-	// Use current_page and total_pages from the run for resumable collection
+	// 使用运行中的 current_page 和 total_pages 进行可恢复的采集
 	startPage := int64(task.Run.CurrentPage)
 	if startPage < 1 {
 		startPage = 1
@@ -216,7 +216,7 @@ func runOnce(client *http.Client, apiBase, token string, runID int64, task PullR
 		pageCount = 1
 	}
 
-	// Concurrent page fetching with worker pool
+	// 使用工作线程池进行并发页面获取
 	type pageResult struct {
 		page      int64
 		items     []map[string]interface{}
@@ -228,7 +228,7 @@ func runOnce(client *http.Client, apiBase, token string, runID int64, task PullR
 	resultChan := make(chan pageResult, maxWorkers*2)
 	doneChan := make(chan struct{})
 
-	// Start workers
+	// 启动工作线程
 	for i := 0; i < maxWorkers; i++ {
 		go func() {
 			for page := range pageChan {

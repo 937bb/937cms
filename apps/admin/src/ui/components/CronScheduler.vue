@@ -119,7 +119,7 @@ watch(
       const minute = parts.minute[0] || 0;
       const hour = parts.hour[0] || 0;
 
-      // Check if it's hourly (hour is *, day is *, month is *, weekday is *)
+      // 检查是否为每小时 (小时为 *, 天为 *, 月份为 *, 工作日为 *)
       if (parts.hour.length === 24 && parts.day.length === 31 && parts.month.length === 12 && parts.weekday.length === 7) {
         period.value = 'hourly';
         minuteValue.value = minute;

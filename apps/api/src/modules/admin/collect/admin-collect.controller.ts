@@ -98,7 +98,7 @@ export class AdminCollectController {
   async runJob(@Body() body: DeleteDto) {
     const sourceIds = Array.isArray(body.source_ids) ? body.source_ids.map((id) => Number(id)).filter(Number.isFinite) : undefined;
     const res = await this.collect.createRun(Number(body.id), sourceIds);
-    // Fire and forget: runner will pick it up soon.
+    // 异步执行，不等待结果: runner 将很快处理.
     this.runner.kick().catch(() => void 0);
     return res;
   }

@@ -99,7 +99,7 @@ async function bootstrap() {
       app.use(/^\/console(\/.*)?$/, (req, res) => res.sendFile(adminIndex));
     }
   } catch {
-    // ignore
+    // 忽略
   }
 
   // Hard-limit HTTP methods to reduce exposed surface area.

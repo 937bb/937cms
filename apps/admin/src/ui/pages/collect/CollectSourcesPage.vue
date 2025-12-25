@@ -263,7 +263,7 @@ async function saveAllBinds() {
   if (!currentSource.value) return;
   savingBinds.value = true;
   try {
-    // Send all bindings including those with local_type_id = 0 (to delete them)
+    // 发送所有绑定，包括 local_type_id = 0 的绑定 (用于删除它们)
     const bindings = remoteTypes.value.map((r) => ({
       remote_type_id: r.type_id,
       remote_type_name: r.type_name,
@@ -308,7 +308,7 @@ async function applyBatchBindSelected() {
   }
   selectedRemoteIds.value = [];
   selectAll.value = false;
-  // Auto-save to database
+  // 自动保存到数据库
   await saveAllBinds();
 }
 

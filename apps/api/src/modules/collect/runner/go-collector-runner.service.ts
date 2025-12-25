@@ -18,7 +18,7 @@ export class GoCollectorRunnerService implements OnModuleInit, OnModuleDestroy {
   ) {}
 
   onModuleInit() {
-    // Check for pending tasks every minute (cron scheduler handles job enqueueing)
+    // 每分钟检查待处理任务（cron 调度器处理任务入队）
     this.timer = setInterval(() => this.kick().catch(() => void 0), 60000);
   }
 
