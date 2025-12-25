@@ -19,7 +19,7 @@ export class GoCollectorRunnerService implements OnModuleInit, OnModuleDestroy {
 
   onModuleInit() {
     // Polling loop: if there is pending run, spawn Go collector once.
-    this.timer = setInterval(() => this.kick().catch(() => void 0), 3000);
+    this.timer = setInterval(() => this.kick().catch(() => void 0), 60000);
   }
 
   onModuleDestroy() {

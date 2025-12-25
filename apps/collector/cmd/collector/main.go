@@ -112,10 +112,10 @@ func main() {
 		task, err := pull(client, strings.TrimRight(*apiBase, "/"), *token, *workerID)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "pull error:", err)
-			time.Sleep(*pollSleep)
 			if *once {
 				os.Exit(1)
 			}
+			time.Sleep(*pollSleep)
 			continue
 		}
 		if task.Run == nil {
