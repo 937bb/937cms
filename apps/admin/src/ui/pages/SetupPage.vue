@@ -44,22 +44,27 @@
 
         <n-divider title-placement="left">管理员账号</n-divider>
 
-        <n-form-item label="强制初始化">
-          <n-switch v-model:value="model.forceReinit" />
-          <n-text depth="3" style="margin-left: 12px">已有数据库时跳过管理员创建</n-text>
+        <n-form-item label="站点名称" path="siteName">
+          <n-input v-model:value="model.siteName" placeholder="我的站点" />
+        </n-form-item>
+        <n-form-item label="管理员用户名" path="adminUser">
+          <n-input v-model:value="model.adminUser" placeholder="admin" />
+        </n-form-item>
+        <n-form-item label="管理员密码" path="adminPassword">
+          <n-input v-model:value="model.adminPassword" type="password" show-password-on="click" placeholder="至少 6 位" />
         </n-form-item>
 
-        <template v-if="!model.forceReinit">
-          <n-form-item label="站点名称" path="siteName">
-            <n-input v-model:value="model.siteName" placeholder="我的站点" />
-          </n-form-item>
-          <n-form-item label="管理员用户名" path="adminUser">
-            <n-input v-model:value="model.adminUser" placeholder="admin" />
-          </n-form-item>
-          <n-form-item label="管理员密码" path="adminPassword">
-            <n-input v-model:value="model.adminPassword" type="password" show-password-on="click" placeholder="至少 6 位" />
-          </n-form-item>
-        </template>
+        <n-divider title-placement="left">数据库选项</n-divider>
+
+        <n-form-item label="覆盖数据库">
+          <n-radio-group v-model:value="model.overwriteDatabase">
+            <n-space>
+              <n-radio :value="false">保留现有数据</n-radio>
+              <n-radio :value="true">覆盖并重建</n-radio>
+            </n-space>
+          </n-radio-group>
+          <n-text depth="3" style="margin-top: 8px; display: block">首次初始化选「保留现有数据」，重新初始化选「覆盖并重建」</n-text>
+        </n-form-item>
       </n-form>
 
       <n-space justify="end">
@@ -105,7 +110,7 @@ const model = reactive({
   adminUser: 'admin',
   adminPassword: '',
   siteName: '',
-  forceReinit: false,
+  overwriteDatabase: false,
 });
 
 const rules: FormRules = {
@@ -164,11 +169,8 @@ async function onSubmit() {
     msg.warning('请先测试 MySQL 连接');
     return;
   }
-  // 强制初始化模式跳过表单验证
-  if (!model.forceReinit) {
-    const ok = await formRef.value?.validate().catch(() => false);
-    if (!ok) return;
-  }
+  const ok = await formRef.value?.validate().catch(() => false);
+  if (!ok) return;
   loading.value = true;
   try {
     const payload: Record<string, any> = { ...model };
