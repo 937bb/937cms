@@ -18,7 +18,7 @@ export class GoCollectorRunnerService implements OnModuleInit, OnModuleDestroy {
   ) {}
 
   onModuleInit() {
-    // Polling loop: if there is pending run, spawn Go collector once.
+    // Check for pending tasks every minute (cron scheduler handles job enqueueing)
     this.timer = setInterval(() => this.kick().catch(() => void 0), 60000);
   }
 

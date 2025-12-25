@@ -15,6 +15,7 @@ import { SystemSettingsService } from '../admin/system/system-settings.service';
 import { RedisCacheService } from '../../cache/redis-cache.service';
 import { RedisCacheConfigService } from '../../cache/redis-cache-config.service';
 import { VodQueryCacheService } from '../../cache/vod-query-cache.service';
+import { CronSchedulerService } from './cron/cron-scheduler.service';
 
 @Module({
   imports: [DbModule, ConfigModule],
@@ -33,6 +34,7 @@ import { VodQueryCacheService } from '../../cache/vod-query-cache.service';
     CollectSearchService,
     ReceiveVodService,
     SystemSettingsService,
+    CronSchedulerService,
   ],
   exports: [CollectService, CollectTaskService, CollectSettingsService, GoCollectorRunnerService, CollectTypeBindService, CollectSearchService],
 })

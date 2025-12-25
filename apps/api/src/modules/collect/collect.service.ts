@@ -4,6 +4,7 @@ import { loadEnv } from '../../env';
 import { RuntimeConfigService } from '../../config/runtime-config.service';
 import { CollectSettingsService } from './settings/collect-settings.service';
 import { CollectTaskService } from './collect-task.service';
+import { CronSchedulerService } from './cron/cron-scheduler.service';
 
 export type CollectRunStatus = 0 | 1 | 2 | 3; // 0=pending,1=running,2=done,3=failed
 
@@ -27,6 +28,7 @@ export class CollectService {
     private readonly cfg: RuntimeConfigService,
     private readonly collectSettings: CollectSettingsService,
     private readonly collectTask: CollectTaskService,
+    private readonly cronScheduler?: CronSchedulerService,
   ) {}
 
   async reapStaleRuns(opts?: { staleSeconds?: number; limit?: number }) {
@@ -323,6 +325,14 @@ export class CollectService {
       }
     }
 
+    // Update cron scheduler if cron or status changed
+    if (this.cronScheduler && (input.cron !== undefined || input.status !== undefined)) {
+      const [job] = await pool.query<any[]>('SELECT cron, status FROM bb_collect_job WHERE id = ? LIMIT 1', [id]);
+      if (job?.[0]) {
+        await this.cronScheduler.updateJobSchedule(id, job[0].cron, job[0].status);
+      }
+    }
+
     return { ok: true };
   }
 
@@ -331,6 +341,9 @@ export class CollectService {
     const pool = this.db.getPool();
     await pool.query('DELETE FROM bb_collect_job_source WHERE job_id = ?', [id]);
     await pool.query('DELETE FROM bb_collect_job WHERE id = ? LIMIT 1', [id]);
+    if (this.cronScheduler) {
+      this.cronScheduler.clearJobSchedule(id);
+    }
     return { ok: true };
   }
 

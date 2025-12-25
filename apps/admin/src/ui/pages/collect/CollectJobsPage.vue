@@ -35,8 +35,8 @@
         <n-form-item label="推送间隔（秒）">
           <n-input-number v-model:value="form.push_interval_seconds" :min="0" :max="3600" />
         </n-form-item>
-        <n-form-item label="定时（秒）">
-          <n-input v-model:value="form.cron" placeholder="例如：3600（空=不定时）" />
+        <n-form-item label="定时执行">
+          <CronScheduler v-model="form.cron" />
         </n-form-item>
         <n-form-item label="启用">
           <n-switch v-model:value="form.status" />
@@ -64,6 +64,7 @@ import type { DataTableColumns } from 'naive-ui';
 import { NButton, NPopconfirm, NTag, useMessage } from 'naive-ui';
 import { computed, h, onMounted, reactive, ref } from 'vue';
 import { http } from '../../../lib/http';
+import CronScheduler from '../../components/CronScheduler.vue';
 
 type JobItem = {
   id: number;
