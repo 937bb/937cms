@@ -739,12 +739,15 @@ CREATE TABLE IF NOT EXISTS `bb_ulog` (
 -- 采集任务表
 CREATE TABLE IF NOT EXISTS `bb_collect_task` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `job_id` int unsigned NOT NULL DEFAULT 0 COMMENT '采集任务ID',
-  `status` varchar(32) NOT NULL DEFAULT 'pending' COMMENT '状态',
+  `run_id` int unsigned NOT NULL DEFAULT 0 COMMENT '采集运行ID',
+  `source_id` int unsigned NOT NULL DEFAULT 0 COMMENT '采集源ID',
+  `status` tinyint unsigned NOT NULL DEFAULT 0 COMMENT '0=待处理,1=运行中,2=完成,3=失败',
+  `started_at` int unsigned NOT NULL DEFAULT 0,
   `created_at` int unsigned NOT NULL DEFAULT 0,
   `updated_at` int unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
-  KEY `idx_job_id` (`job_id`),
+  KEY `idx_run_id` (`run_id`),
+  KEY `idx_source_id` (`source_id`),
   KEY `idx_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='采集任务';
 
