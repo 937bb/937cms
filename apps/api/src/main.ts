@@ -8,6 +8,7 @@ import path from 'node:path';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 import { HttpLoggingMiddleware } from './common/middleware/http-logging.middleware';
 import { SecurityHeadersMiddleware } from './common/middleware/security-headers.middleware';
+import { MigrationService } from './db/migration.service';
 
 function normalizePrefix(raw: string, fallback: string) {
   const v = String(raw || '').trim() || fallback;
@@ -130,6 +131,16 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('docs', app, document);
+
+  // Run pending migrations if system is configured
+  if (bootConfigured) {
+    try {
+      const migrationService = app.get(MigrationService);
+      await migrationService.runMigrations();
+    } catch (e) {
+      console.warn('Migration execution failed:', e);
+    }
+  }
 
   await app.listen(env.PORT);
 }
