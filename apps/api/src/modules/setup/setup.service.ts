@@ -302,6 +302,9 @@ export class SetupService {
         'INSERT IGNORE INTO bb_migration (version, name, executed_at) VALUES (?,?,?)',
         ['000', 'initial_schema', now],
       );
+
+      // 6) 执行待处理的迁移
+      await this.runPendingMigrations(dbConn);
     } finally {
       await dbConn.end();
     }
@@ -329,6 +332,42 @@ export class SetupService {
       platform: process.platform,
       arch: process.arch,
     };
+  }
+
+  /**
+   * 执行待处理的迁移
+   */
+  private async runPendingMigrations(dbConn: any) {
+    const migrationsDir = path.join(process.cwd(), 'sql', 'migrations');
+    const files = await fs.readdir(migrationsDir).catch(() => []);
+    const sqlFiles = files.filter(f => f.endsWith('.sql')).sort();
+
+    for (const file of sqlFiles) {
+      const version = file.replace('.sql', '').replace(/_.*/, '');
+      const [executed] = await dbConn.query<any[]>(
+        'SELECT 1 FROM bb_migration WHERE version = ?',
+        [version],
+      );
+
+      if (!executed || executed.length === 0) {
+        const migrationPath = path.join(migrationsDir, file);
+        const migrationSQL = await fs.readFile(migrationPath, 'utf8');
+        const statements = splitSQL(migrationSQL).filter(Boolean);
+
+        for (const stmt of statements) {
+          const t = stmt.trim();
+          if (!t) continue;
+          await dbConn.query(t);
+        }
+
+        const now = nowTs();
+        await dbConn.query(
+          'INSERT INTO bb_migration (version, name, executed_at) VALUES (?,?,?)',
+          [version, file, now],
+        );
+        this.logger.log(`迁移已执行: ${file}`);
+      }
+    }
   }
 
   /**
