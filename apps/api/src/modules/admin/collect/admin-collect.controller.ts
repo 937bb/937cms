@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CollectService } from '../../collect/collect.service';
+import { CollectTaskService } from '../../collect/collect-task.service';
 import { GoCollectorRunnerService } from '../../collect/runner/go-collector-runner.service';
 import { CollectSearchService } from '../../collect/collect-search.service';
 import { AdminGuard } from '../auth/admin.guard';
@@ -22,6 +23,7 @@ class SaveSourceDto {
 
 class DeleteDto {
   id!: number;
+  source_ids?: number[];
 }
 
 class CreateJobDto {
@@ -47,6 +49,7 @@ class SaveJobDto extends CreateJobDto {
 export class AdminCollectController {
   constructor(
     private readonly collect: CollectService,
+    private readonly collectTask: CollectTaskService,
     private readonly runner: GoCollectorRunnerService,
     private readonly searchService: CollectSearchService,
   ) {}
@@ -93,7 +96,8 @@ export class AdminCollectController {
 
   @Post('jobs/run')
   async runJob(@Body() body: DeleteDto) {
-    const res = await this.collect.createRun(Number(body.id));
+    const sourceIds = Array.isArray(body.source_ids) ? body.source_ids.map((id) => Number(id)).filter(Number.isFinite) : undefined;
+    const res = await this.collect.createRun(Number(body.id), sourceIds);
     // Fire and forget: runner will pick it up soon.
     this.runner.kick().catch(() => void 0);
     return res;
@@ -134,6 +138,23 @@ export class AdminCollectController {
       ? sourceIdsRaw.split(',').map((n) => Number(n.trim())).filter(Boolean)
       : [];
     return this.searchService.searchVideos(keyword, sourceIds);
+  }
+
+  @Get('tasks')
+  async listTasks(
+    @Query('page') page?: string,
+    @Query('pageSize') pageSize?: string,
+    @Query('runId') runId?: string,
+    @Query('sourceId') sourceId?: string,
+    @Query('status') status?: string,
+  ) {
+    return this.collectTask.listTasks({
+      page: Math.max(1, Number(page || 1)),
+      pageSize: Math.min(100, Math.max(1, Number(pageSize || 20))),
+      runId: runId ? Number(runId) : undefined,
+      sourceId: sourceId ? Number(sourceId) : undefined,
+      status: status !== undefined ? Number(status) : undefined,
+    });
   }
 
   @Post('search/collect')

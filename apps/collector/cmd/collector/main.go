@@ -226,6 +226,7 @@ func runOnce(client *http.Client, apiBase, token string, runID int64, task PullR
 
 	pageChan := make(chan int64, maxWorkers*2)
 	resultChan := make(chan pageResult, maxWorkers*2)
+	doneChan := make(chan struct{})
 
 	// Start workers
 	for i := 0; i < maxWorkers; i++ {
@@ -254,12 +255,23 @@ func runOnce(client *http.Client, apiBase, token string, runID int64, task PullR
 		}()
 	}
 
-	// Send pages to workers
+	// Send pages to workers (dynamically updated as pageCount changes)
 	go func() {
-		for page := startPage; page <= pageCount; page++ {
-			pageChan <- page
+		nextPage := startPage
+		for {
+			if nextPage <= pageCount {
+				pageChan <- nextPage
+				nextPage++
+			} else {
+				select {
+				case <-doneChan:
+					close(pageChan)
+					return
+				default:
+					time.Sleep(100 * time.Millisecond)
+				}
+			}
 		}
-		close(pageChan)
 	}()
 
 	// Collect results and push items
@@ -271,11 +283,12 @@ func runOnce(client *http.Client, apiBase, token string, runID int64, task PullR
 	lastErr := ""
 	processedPages := 0
 	maxPage := startPage
+	hasError := false
 
 	limiter := time.NewTicker(pushInterval)
 	defer limiter.Stop()
 
-	for processedPages < int(pageCount-startPage+1) {
+	for {
 		result := <-resultChan
 		processedPages++
 
@@ -287,10 +300,11 @@ func runOnce(client *http.Client, apiBase, token string, runID int64, task PullR
 			fmt.Printf("[Collector] Fetch error on page %d: %v\n", result.page, result.err)
 			errors++
 			lastErr = result.err.Error()
+			hasError = true
 			_ = report(client, apiBase, token, ReportRequest{
 				ID:                runID,
 				TaskID:            task.Run.TaskID,
-				Status:            1,
+				Status:            3,
 				ProgressPage:      int(result.page),
 				ProgressTotalPage: int(pageCount),
 				PushedCount:       pushed,
@@ -342,8 +356,17 @@ func runOnce(client *http.Client, apiBase, token string, runID int64, task PullR
 			ErrorCount:        errors,
 			Message:           fmt.Sprintf("source=%s page=%d/%d pushed=%d created=%d updated=%d skipped=%d errors=%d lastError=%s", src.Name, result.page, pageCount, pushed, created, updated, skipped, errors, lastErr),
 		})
+
+		// Check if all pages are done
+		if result.page == pageCount && maxPage == pageCount {
+			close(doneChan)
+			break
+		}
 	}
 
+	if hasError {
+		return fmt.Errorf("collection completed with errors: %s", lastErr)
+	}
 	return nil
 }
 

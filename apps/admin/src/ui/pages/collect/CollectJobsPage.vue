@@ -204,7 +204,7 @@ async function runOnce(id: number) {
   runningIds.value.add(id);
   try {
     await http.post('/admin/collect/jobs/run', { id });
-    msg.success('已加入队列（run）');
+    msg.success('已加入队列');
   } catch (e: any) {
     msg.error(String(e?.response?.data?.message || e?.message || '执行失败'));
   } finally {

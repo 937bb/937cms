@@ -334,7 +334,7 @@ export class CollectService {
     return { ok: true };
   }
 
-  async createRun(jobId: number) {
+  async createRun(jobId: number, sourceIds?: number[]) {
     if (!jobId) throw new BadRequestException('jobId invalid');
     const pool = this.db.getPool();
     const [job] = await pool.query<any[]>('SELECT id FROM bb_collect_job WHERE id = ? LIMIT 1', [jobId]);
@@ -348,15 +348,24 @@ export class CollectService {
     const runId = Number(res.insertId);
 
     // 获取该任务关联的所有采集源
-    const [srcRows] = await pool.query<any[]>(
-      'SELECT source_id FROM bb_collect_job_source WHERE job_id = ? ORDER BY source_id ASC',
-      [jobId],
-    );
-    const sourceIds = (srcRows || []).map((r) => Number(r.source_id)).filter(Boolean);
+    let finalSourceIds = sourceIds;
+    if (!finalSourceIds || finalSourceIds.length === 0) {
+      const [srcRows] = await pool.query<any[]>(
+        'SELECT source_id FROM bb_collect_job_source WHERE job_id = ? ORDER BY source_id ASC',
+        [jobId],
+      );
+      finalSourceIds = (srcRows || []).map((r) => Number(r.source_id)).filter(Boolean);
+    }
 
     // 为每个采集源创建独立的采集任务（支持多线路并发）
-    if (sourceIds.length) {
-      await this.collectTask.createTasksForRun(runId, sourceIds);
+    if (finalSourceIds.length) {
+      await this.collectTask.createTasksForRun(runId, finalSourceIds);
+    } else {
+      // 如果没有关联的采集源，标记为失败
+      await pool.query(
+        'UPDATE bb_collect_run SET status = 3, message = ?, finished_at = ?, updated_at = ? WHERE id = ?',
+        ['no sources bound to this job', t, t, runId],
+      );
     }
 
     return { ok: true, id: runId };
@@ -505,6 +514,10 @@ export class CollectService {
       if (![0, 1, 2, 3].includes(status)) throw new BadRequestException('status invalid');
       fields.push('status = ?');
       params.push(status);
+      if (status === 1) {
+        fields.push('started_at = ?');
+        params.push(nowSec());
+      }
       if (status === 2 || status === 3) {
         fields.push('finished_at = ?');
         params.push(nowSec());
@@ -616,12 +629,35 @@ export class CollectService {
       throw new BadRequestException('run already finished');
     }
 
-    await pool.query('UPDATE bb_collect_run SET status = 3, message = ?, finished_at = ?, updated_at = ? WHERE id = ?', [
-      'cancelled by user',
-      nowSec(),
-      nowSec(),
-      id,
-    ]);
+    const t = nowSec();
+    // Use transaction to ensure atomicity
+    const conn = await pool.getConnection();
+    try {
+      await conn.beginTransaction();
+
+      // Update run status
+      await conn.query('UPDATE bb_collect_run SET status = 3, message = ?, finished_at = ?, updated_at = ? WHERE id = ?', [
+        'cancelled by user',
+        t,
+        t,
+        id,
+      ]);
+
+      // Cancel all associated tasks (including running ones)
+      await conn.query('UPDATE bb_collect_task SET status = 3, finished_at = ?, updated_at = ? WHERE run_id = ? AND status IN (0, 1, 2)', [
+        t,
+        t,
+        id,
+      ]);
+
+      await conn.commit();
+    } catch (e) {
+      await conn.rollback();
+      throw e;
+    } finally {
+      conn.release();
+    }
+
     return { ok: true };
   }
 
