@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { getSetupStatusCached } from '../lib/setup-status';
 import { useAuthStore } from '../stores/auth';
 import { useTabsStore } from '../stores/tabs';
+import { customRoutes } from './custom-routes';
 
 import AdminLayout from '../ui/layouts/AdminLayout.vue';
 import SetupPage from '../ui/pages/SetupPage.vue';
@@ -114,6 +115,7 @@ const routes: RouteRecordRaw[] = [
       { path: 'vod/duplicates', component: DuplicatesPage },
       { path: 'user/admins', component: AdminsPage },
       { path: 'tools/poster', component: PosterSearchPage },
+      ...customRoutes,
     ],
   },
   { path: '/:pathMatch(.*)*', redirect: '/dashboard' },
