@@ -1,0 +1,57 @@
+{
+  "themeId": "example-theme",
+  "name": "示例主题",
+  "version": "1.0.0",
+  "description": "这是一个示例主题配置文件",
+  "author": "开发者名称",
+  "homepage": "https://example.com",
+  "repository": "https://github.com/example/example-theme",
+  "configSchema": {
+    "title": {
+      "type": "string",
+      "label": "网站标题",
+      "description": "网站名称",
+      "default": "我的网站",
+      "required": true
+    },
+    "primaryColor": {
+      "type": "color",
+      "label": "主色调",
+      "description": "主题主色调",
+      "default": "#1890ff"
+    },
+    "logo": {
+      "type": "image",
+      "label": "网站Logo",
+      "description": "网站Logo图片"
+    },
+    "footerText": {
+      "type": "textarea",
+      "label": "页脚文本",
+      "description": "页脚显示的文本内容"
+    },
+    "itemsPerPage": {
+      "type": "number",
+      "label": "每页显示数量",
+      "description": "列表每页显示的项目数",
+      "default": 20
+    },
+    "enableComments": {
+      "type": "boolean",
+      "label": "启用评论",
+      "description": "是否启用评论功能",
+      "default": true
+    },
+    "theme": {
+      "type": "select",
+      "label": "主题风格",
+      "description": "选择主题风格",
+      "default": "light",
+      "options": [
+        { "label": "浅色", "value": "light" },
+        { "label": "深色", "value": "dark" },
+        { "label": "自动", "value": "auto" }
+      ]
+    }
+  }
+}
