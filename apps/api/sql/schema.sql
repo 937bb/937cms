@@ -585,14 +585,19 @@ CREATE TABLE IF NOT EXISTS `bb_api_key` (
 
 -- 演员表
 CREATE TABLE IF NOT EXISTS `bb_actor` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(128) NOT NULL COMMENT '演员名称',
-  `description` text NOT NULL COMMENT '演员描述',
-  `image` varchar(255) NOT NULL DEFAULT '' COMMENT '演员图片',
-  `created_at` int unsigned NOT NULL DEFAULT 0,
-  `updated_at` int unsigned NOT NULL DEFAULT 0,
-  PRIMARY KEY (`id`),
-  KEY `idx_name` (`name`)
+  `actor_id` int unsigned NOT NULL AUTO_INCREMENT,
+  `actor_name` varchar(128) NOT NULL COMMENT '演员名称',
+  `actor_en` varchar(128) NOT NULL DEFAULT '' COMMENT '英文名称',
+  `actor_pic` varchar(255) NOT NULL DEFAULT '' COMMENT '演员图片',
+  `actor_sex` tinyint unsigned NOT NULL DEFAULT 0 COMMENT '性别',
+  `actor_area` varchar(50) NOT NULL DEFAULT '' COMMENT '地区',
+  `actor_status` tinyint unsigned NOT NULL DEFAULT 1 COMMENT '状态',
+  `actor_level` tinyint unsigned NOT NULL DEFAULT 0 COMMENT '等级',
+  `actor_hits` int unsigned NOT NULL DEFAULT 0 COMMENT '点击数',
+  `actor_time_add` int unsigned NOT NULL DEFAULT 0 COMMENT '添加时间',
+  `actor_time` int unsigned NOT NULL DEFAULT 0 COMMENT '更新时间',
+  PRIMARY KEY (`actor_id`),
+  KEY `idx_actor_name` (`actor_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='演员';
 
 -- 文章表
@@ -746,6 +751,10 @@ CREATE TABLE IF NOT EXISTS `bb_collect_task` (
   `status` tinyint unsigned NOT NULL DEFAULT 0 COMMENT '0=待处理,1=运行中,2=完成,3=失败',
   `current_page` int unsigned NOT NULL DEFAULT 1 COMMENT '当前页码',
   `total_pages` int unsigned NOT NULL DEFAULT 0 COMMENT '总页数',
+  `created_count` int unsigned NOT NULL DEFAULT 0 COMMENT '新增数量',
+  `updated_count` int unsigned NOT NULL DEFAULT 0 COMMENT '更新数量',
+  `error_count` int unsigned NOT NULL DEFAULT 0 COMMENT '错误数量',
+  `error_message` varchar(500) NOT NULL DEFAULT '' COMMENT '错误信息',
   `started_at` int unsigned NOT NULL DEFAULT 0,
   `finished_at` int unsigned NOT NULL DEFAULT 0 COMMENT '完成时间',
   `created_at` int unsigned NOT NULL DEFAULT 0,
