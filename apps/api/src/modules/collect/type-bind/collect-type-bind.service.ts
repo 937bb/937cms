@@ -9,7 +9,7 @@ function nowSec() {
 export class CollectTypeBindService {
   // Cache: sourceId -> { map, expireAt }
   private bindMapCache = new Map<number, { map: Map<number, number>; expireAt: number }>();
-  private readonly cacheTTL = 60; // 60 seconds
+  private readonly cacheTTL = 5; // 5 seconds (reduced for faster updates)
 
   constructor(private readonly db: MySQLService) {}
 
