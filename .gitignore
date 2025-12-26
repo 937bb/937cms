@@ -17,6 +17,12 @@ output
 # But include collector dist (compiled binary)
 !apps/collector/dist
 
+# Collector source code (only keep dist binary)
+apps/collector/cmd/
+apps/collector/.cache/
+apps/collector/go.mod
+apps/collector/go.sum
+
 # Environment
 .env
 .env.local
