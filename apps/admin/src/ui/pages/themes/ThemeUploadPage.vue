@@ -29,6 +29,9 @@
                 :value="theme.isActive === 1"
                 @update:value="() => handleActivate(theme.themeId)"
               />
+              <n-button size="small" @click="() => handleConfig(theme)">
+                配置
+              </n-button>
               <n-button text type="error" size="small" @click="() => handleDelete(theme.themeId)">
                 删除
               </n-button>
@@ -37,12 +40,87 @@
         </n-list-item>
       </n-list>
     </n-card>
+
+    <!-- 配置编辑模态框 -->
+    <n-modal
+      v-model:show="showConfigModal"
+      :title="`配置 ${editingTheme?.name}`"
+      preset="card"
+      style="width: 600px"
+    >
+      <n-form v-if="editingTheme">
+        <n-form-item
+          v-for="(field, key) in editingTheme.configSchema"
+          :key="key"
+          :label="field.label"
+        >
+          <n-input
+            v-if="field.type === 'string'"
+            v-model:value="editingConfig[key]"
+            :placeholder="field.description"
+          />
+          <n-input-number
+            v-else-if="field.type === 'number'"
+            v-model:value="editingConfig[key]"
+            style="width: 100%"
+          />
+          <n-switch
+            v-else-if="field.type === 'boolean'"
+            v-model:value="editingConfig[key]"
+          />
+          <n-color-picker
+            v-else-if="field.type === 'color'"
+            v-model:value="editingConfig[key]"
+          />
+          <n-select
+            v-else-if="field.type === 'select'"
+            v-model:value="editingConfig[key]"
+            :options="field.options"
+          />
+          <n-input
+            v-else-if="field.type === 'textarea'"
+            v-model:value="editingConfig[key]"
+            type="textarea"
+            :placeholder="field.description"
+          />
+          <n-input
+            v-else
+            v-model:value="editingConfig[key]"
+            :placeholder="field.description"
+          />
+        </n-form-item>
+      </n-form>
+      <template #footer>
+        <n-space justify="end">
+          <n-button @click="showConfigModal = false">取消</n-button>
+          <n-button type="primary" @click="handleSaveConfig">保存</n-button>
+        </n-space>
+      </template>
+    </n-modal>
   </n-space>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { NCard, NSpace, NUpload, NButton, NText, NList, NListItem, NSwitch, useMessage, useDialog } from 'naive-ui';
+import {
+  NCard,
+  NSpace,
+  NUpload,
+  NButton,
+  NText,
+  NList,
+  NListItem,
+  NSwitch,
+  NModal,
+  NForm,
+  NFormItem,
+  NInput,
+  NInputNumber,
+  NColorPicker,
+  NSelect,
+  useMessage,
+  useDialog,
+} from 'naive-ui';
 import { http } from '../../../lib/http';
 import { useAuthStore } from '../../../stores/auth';
 
@@ -51,6 +129,9 @@ const dialog = useDialog();
 const auth = useAuthStore();
 const token = ref(auth.token);
 const themes = ref<any[]>([]);
+const showConfigModal = ref(false);
+const editingTheme = ref<any>(null);
+const editingConfig = ref<Record<string, any>>({});
 
 async function loadThemes() {
   try {
@@ -68,6 +149,30 @@ function handleUploadFinish({ file }: any) {
 
 function handleUploadError() {
   msg.error('上传失败');
+}
+
+async function handleConfig(theme: any) {
+  try {
+    const res = await http.get(`/admin/theme/${theme.themeId}`);
+    editingTheme.value = res.data;
+    editingConfig.value = { ...res.data.config };
+    showConfigModal.value = true;
+  } catch (e: any) {
+    msg.error(e?.response?.data?.message || '加载配置失败');
+  }
+}
+
+async function handleSaveConfig() {
+  try {
+    await http.put(`/admin/theme/${editingTheme.value.themeId}/config`, {
+      config: editingConfig.value,
+    });
+    msg.success('配置保存成功');
+    showConfigModal.value = false;
+    loadThemes();
+  } catch (e: any) {
+    msg.error(e?.response?.data?.message || '保存失败');
+  }
 }
 
 async function handleActivate(themeId: string) {
