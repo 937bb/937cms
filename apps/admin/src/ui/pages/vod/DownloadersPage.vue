@@ -9,7 +9,12 @@
     </n-card>
 
     <n-modal v-model:show="showModal">
-      <n-card :title="form.id ? '编辑下载器' : '添加下载器'" closable style="width: 600px" @close="showModal = false">
+      <n-card
+        :title="form.id ? '编辑下载器' : '添加下载器'"
+        closable
+        style="width: 600px"
+        @close="showModal = false"
+      >
         <n-form :model="form" label-placement="left" label-width="100">
           <n-form-item label="编码">
             <n-input v-model:value="form.from_key" placeholder="唯一标识，如：thunder" />
@@ -33,7 +38,13 @@
             </n-radio-group>
           </n-form-item>
           <n-form-item label="打开方式">
-            <n-select v-model:value="form.target" :options="[{ label: '当前窗口', value: '_self' }, { label: '新窗口', value: '_blank' }]" />
+            <n-select
+              v-model:value="form.target"
+              :options="[
+                { label: '当前窗口', value: '_self' },
+                { label: '新窗口', value: '_blank' },
+              ]"
+            />
           </n-form-item>
           <n-form-item label="排序">
             <n-input-number v-model:value="form.sort" :min="0" />
@@ -45,7 +56,11 @@
             </n-radio-group>
           </n-form-item>
           <n-form-item label="自定义代码">
-            <n-input v-model:value="form.downloader_code" type="textarea" :autosize="{ minRows: 4, maxRows: 10 }" />
+            <n-input
+              v-model:value="form.downloader_code"
+              type="textarea"
+              :autosize="{ minRows: 4, maxRows: 10 }"
+            />
           </n-form-item>
         </n-form>
         <template #footer>
@@ -65,7 +80,15 @@ import { NButton, NPopconfirm, NTag, useMessage } from 'naive-ui';
 import { h, onMounted, reactive, ref } from 'vue';
 import { http } from '../../../lib/http';
 
-type DownloaderRow = { id: number; from_key: string; display_name: string; description: string; parse_mode: number; status: number; sort: number };
+type DownloaderRow = {
+  id: number;
+  from_key: string;
+  display_name: string;
+  description: string;
+  parse_mode: number;
+  status: number;
+  sort: number;
+};
 
 const msg = useMessage();
 const loading = ref(false);
@@ -73,7 +96,19 @@ const saving = ref(false);
 const showModal = ref(false);
 const items = ref<DownloaderRow[]>([]);
 
-const form = reactive({ id: 0, from_key: '', display_name: '', description: '', tip: '', parse_url: '', parse_mode: 0, target: '_self', sort: 0, status: 1, downloader_code: '' });
+const form = reactive({
+  id: 0,
+  from_key: '',
+  display_name: '',
+  description: '',
+  tip: '',
+  parse_url: '',
+  parse_mode: 0,
+  target: '_self',
+  sort: 0,
+  status: 1,
+  downloader_code: '',
+});
 
 async function load() {
   loading.value = true;
@@ -88,7 +123,19 @@ async function load() {
 }
 
 function openAdd() {
-  Object.assign(form, { id: 0, from_key: '', display_name: '', description: '', tip: '', parse_url: '', parse_mode: 0, target: '_self', sort: 0, status: 1, downloader_code: '' });
+  Object.assign(form, {
+    id: 0,
+    from_key: '',
+    display_name: '',
+    description: '',
+    tip: '',
+    parse_url: '',
+    parse_mode: 0,
+    target: '_self',
+    sort: 0,
+    status: 1,
+    downloader_code: '',
+  });
   showModal.value = true;
 }
 
@@ -97,9 +144,17 @@ async function openEdit(id: number) {
     const res = await http.get('/admin/downloaders/detail', { params: { id } });
     const item = res.data?.item || {};
     Object.assign(form, {
-      id: item.id || 0, from_key: item.from_key || '', display_name: item.display_name || '', description: item.description || '',
-      tip: item.tip || '', parse_url: item.parse_url || '', parse_mode: item.parse_mode ?? 0, target: item.target || '_self',
-      sort: item.sort || 0, status: item.status ?? 1, downloader_code: item.downloader_code || '',
+      id: item.id || 0,
+      from_key: item.from_key || '',
+      display_name: item.display_name || '',
+      description: item.description || '',
+      tip: item.tip || '',
+      parse_url: item.parse_url || '',
+      parse_mode: item.parse_mode ?? 0,
+      target: item.target || '_self',
+      sort: item.sort || 0,
+      status: item.status ?? 1,
+      downloader_code: item.downloader_code || '',
     });
     showModal.value = true;
   } catch (e: any) {
@@ -108,7 +163,10 @@ async function openEdit(id: number) {
 }
 
 async function save() {
-  if (!form.from_key) { msg.warning('请输入编码'); return; }
+  if (!form.from_key) {
+    msg.warning('请输入编码');
+    return;
+  }
   saving.value = true;
   try {
     await http.post('/admin/downloaders/save', form);
@@ -143,7 +201,7 @@ const columns: DataTableColumns<DownloaderRow> = [
   { title: '编码', key: 'from_key', width: 120 },
   { title: '显示名称', key: 'display_name', minWidth: 150 },
   { title: '描述', key: 'description', minWidth: 200 },
-  { title: '模式', key: 'parse_mode', width: 80, render: (r) => r.parse_mode ? '解析' : '直链' },
+  { title: '模式', key: 'parse_mode', width: 80, render: (r) => (r.parse_mode ? '解析' : '直链') },
   { title: '排序', key: 'sort', width: 80 },
   { title: '状态', key: 'status', width: 80, render: (r) => statusTag(r.status) },
   {
@@ -152,14 +210,29 @@ const columns: DataTableColumns<DownloaderRow> = [
     width: 160,
     render: (row) =>
       h('div', { style: 'display:flex; gap:8px;' }, [
-        h(NButton, { size: 'small', tertiary: true, onClick: () => openEdit(row.id) }, { default: () => '编辑' }),
-        h(NPopconfirm, { onPositiveClick: () => remove(row.id) }, {
-          trigger: () => h(NButton, { size: 'small', tertiary: true, type: 'error' }, { default: () => '删除' }),
-          default: () => '确认删除？',
-        }),
+        h(
+          NButton,
+          { size: 'small', tertiary: true, onClick: () => openEdit(row.id) },
+          { default: () => '编辑' }
+        ),
+        h(
+          NPopconfirm,
+          { onPositiveClick: () => remove(row.id) },
+          {
+            trigger: () =>
+              h(
+                NButton,
+                { size: 'small', tertiary: true, type: 'error' },
+                { default: () => '删除' }
+              ),
+            default: () => '确认删除？',
+          }
+        ),
       ]),
   },
 ];
 
-onMounted(() => { load(); });
+onMounted(() => {
+  load();
+});
 </script>

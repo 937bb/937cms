@@ -86,7 +86,11 @@ const columns: DataTableColumns<any> = [
     render: (row) =>
       h(NSpace, {}, () => [
         h(NButton, { size: 'small', onClick: () => openEdit(row) }, () => '编辑'),
-        h(NButton, { size: 'small', type: 'error', onClick: () => confirmDelete(row.id) }, () => '删除'),
+        h(
+          NButton,
+          { size: 'small', type: 'error', onClick: () => confirmDelete(row.id) },
+          () => '删除'
+        ),
       ]),
   },
 ];

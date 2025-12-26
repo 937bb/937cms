@@ -3,26 +3,55 @@
     <n-card title="资讯管理">
       <template #header-extra>
         <n-space>
-          <n-input v-model:value="keyword" placeholder="搜索标题/标签" clearable style="width: 200px" @keyup.enter="search" />
-          <n-select v-model:value="statusFilter" :options="statusOptions" placeholder="状态" clearable style="width: 100px" />
+          <n-input
+            v-model:value="keyword"
+            placeholder="搜索标题/标签"
+            clearable
+            style="width: 200px"
+            @keyup.enter="search"
+          />
+          <n-select
+            v-model:value="statusFilter"
+            :options="statusOptions"
+            placeholder="状态"
+            clearable
+            style="width: 100px"
+          />
           <n-button @click="search">搜索</n-button>
           <n-button type="primary" @click="openEdit()">添加资讯</n-button>
         </n-space>
       </template>
 
-      <n-data-table :columns="columns" :data="list" :loading="loading" :row-key="(r: any) => r.id" @update:checked-row-keys="onCheck" />
+      <n-data-table
+        :columns="columns"
+        :data="list"
+        :loading="loading"
+        :row-key="(r: any) => r.id"
+        @update:checked-row-keys="onCheck"
+      />
 
       <n-space justify="space-between" style="margin-top: 16px">
         <n-space>
           <n-button :disabled="!checkedIds.length" @click="batchStatus(1)">批量启用</n-button>
           <n-button :disabled="!checkedIds.length" @click="batchStatus(0)">批量禁用</n-button>
-          <n-button :disabled="!checkedIds.length" type="error" @click="batchDel">批量删除</n-button>
+          <n-button :disabled="!checkedIds.length" type="error" @click="batchDel"
+            >批量删除</n-button
+          >
         </n-space>
-        <n-pagination v-model:page="page" :page-count="Math.ceil(total / pageSize)" @update:page="load" />
+        <n-pagination
+          v-model:page="page"
+          :page-count="Math.ceil(total / pageSize)"
+          @update:page="load"
+        />
       </n-space>
     </n-card>
 
-    <n-modal v-model:show="showEdit" preset="card" :title="editForm.id ? '编辑资讯' : '添加资讯'" style="width: 800px">
+    <n-modal
+      v-model:show="showEdit"
+      preset="card"
+      :title="editForm.id ? '编辑资讯' : '添加资讯'"
+      style="width: 800px"
+    >
       <n-form ref="formRef" :model="editForm" label-placement="left" label-width="80">
         <n-form-item label="标题" path="name">
           <n-input v-model:value="editForm.name" placeholder="资讯标题" />
@@ -111,7 +140,10 @@ const columns: DataTableColumns<any> = [
     title: '状态',
     key: 'status',
     width: 80,
-    render: (row) => h(NTag, { type: row.status ? 'success' : 'default', size: 'small' }, () => (row.status ? '启用' : '禁用')),
+    render: (row) =>
+      h(NTag, { type: row.status ? 'success' : 'default', size: 'small' }, () =>
+        row.status ? '启用' : '禁用'
+      ),
   },
   {
     title: '操作',
@@ -129,7 +161,12 @@ async function load() {
   loading.value = true;
   try {
     const res = await http.get('/admin/articles', {
-      params: { page: page.value, pageSize: pageSize.value, keyword: keyword.value || undefined, status: statusFilter.value ?? undefined },
+      params: {
+        page: page.value,
+        pageSize: pageSize.value,
+        keyword: keyword.value || undefined,
+        status: statusFilter.value ?? undefined,
+      },
     });
     list.value = res.data.list;
     total.value = res.data.total;
@@ -158,7 +195,18 @@ function openEdit(row?: any) {
   if (row) {
     editForm.value = { ...row };
   } else {
-    editForm.value = { typeId: 0, name: '', author: '', source: '', pic: '', tag: '', blurb: '', content: '', level: 0, status: 1 };
+    editForm.value = {
+      typeId: 0,
+      name: '',
+      author: '',
+      source: '',
+      pic: '',
+      tag: '',
+      blurb: '',
+      content: '',
+      level: 0,
+      status: 1,
+    };
   }
   showEdit.value = true;
 }

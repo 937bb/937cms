@@ -10,34 +10,54 @@
     <!-- 统计卡片 -->
     <n-grid :cols="4" :x-gap="16" :y-gap="16" responsive="screen">
       <n-gi>
-        <n-card :bordered="false" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">
+        <n-card
+          :bordered="false"
+          style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+        >
           <n-space vertical align="center">
-            <n-text style="color: white; font-size: 28px; font-weight: bold">{{ stats.vods.total }}</n-text>
-            <n-text style="color: rgba(255,255,255,0.8); font-size: 14px">总视频数</n-text>
+            <n-text style="color: white; font-size: 28px; font-weight: bold">{{
+              stats.vods.total
+            }}</n-text>
+            <n-text style="color: rgba(255, 255, 255, 0.8); font-size: 14px">总视频数</n-text>
           </n-space>
         </n-card>
       </n-gi>
       <n-gi>
-        <n-card :bordered="false" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%)">
+        <n-card
+          :bordered="false"
+          style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
+        >
           <n-space vertical align="center">
-            <n-text style="color: white; font-size: 28px; font-weight: bold">{{ stats.vods.todayNew }}</n-text>
-            <n-text style="color: rgba(255,255,255,0.8); font-size: 14px">今日新增</n-text>
+            <n-text style="color: white; font-size: 28px; font-weight: bold">{{
+              stats.vods.todayNew
+            }}</n-text>
+            <n-text style="color: rgba(255, 255, 255, 0.8); font-size: 14px">今日新增</n-text>
           </n-space>
         </n-card>
       </n-gi>
       <n-gi>
-        <n-card :bordered="false" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)">
+        <n-card
+          :bordered="false"
+          style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"
+        >
           <n-space vertical align="center">
-            <n-text style="color: white; font-size: 28px; font-weight: bold">{{ stats.vods.todayUpdated }}</n-text>
-            <n-text style="color: rgba(255,255,255,0.8); font-size: 14px">今日更新</n-text>
+            <n-text style="color: white; font-size: 28px; font-weight: bold">{{
+              stats.vods.todayUpdated
+            }}</n-text>
+            <n-text style="color: rgba(255, 255, 255, 0.8); font-size: 14px">今日更新</n-text>
           </n-space>
         </n-card>
       </n-gi>
       <n-gi>
-        <n-card :bordered="false" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)">
+        <n-card
+          :bordered="false"
+          style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)"
+        >
           <n-space vertical align="center">
-            <n-text style="color: white; font-size: 28px; font-weight: bold">{{ stats.types.total }}</n-text>
-            <n-text style="color: rgba(255,255,255,0.8); font-size: 14px">分类总数</n-text>
+            <n-text style="color: white; font-size: 28px; font-weight: bold">{{
+              stats.types.total
+            }}</n-text>
+            <n-text style="color: rgba(255, 255, 255, 0.8); font-size: 14px">分类总数</n-text>
           </n-space>
         </n-card>
       </n-gi>
@@ -46,18 +66,28 @@
     <!-- 播放和收藏统计 -->
     <n-grid :cols="2" :x-gap="16" :y-gap="16" responsive="screen">
       <n-gi>
-        <n-card :bordered="false" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)">
+        <n-card
+          :bordered="false"
+          style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)"
+        >
           <n-space vertical align="center">
-            <n-text style="color: white; font-size: 28px; font-weight: bold">{{ stats.plays.today }}</n-text>
-            <n-text style="color: rgba(255,255,255,0.8); font-size: 14px">今日播放量</n-text>
+            <n-text style="color: white; font-size: 28px; font-weight: bold">{{
+              stats.plays.today
+            }}</n-text>
+            <n-text style="color: rgba(255, 255, 255, 0.8); font-size: 14px">今日播放量</n-text>
           </n-space>
         </n-card>
       </n-gi>
       <n-gi>
-        <n-card :bordered="false" style="background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%)">
+        <n-card
+          :bordered="false"
+          style="background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%)"
+        >
           <n-space vertical align="center">
-            <n-text style="color: white; font-size: 28px; font-weight: bold">{{ stats.favorites.total }}</n-text>
-            <n-text style="color: rgba(255,255,255,0.8); font-size: 14px">总收藏数</n-text>
+            <n-text style="color: white; font-size: 28px; font-weight: bold">{{
+              stats.favorites.total
+            }}</n-text>
+            <n-text style="color: rgba(255, 255, 255, 0.8); font-size: 14px">总收藏数</n-text>
           </n-space>
         </n-card>
       </n-gi>

@@ -6,8 +6,19 @@
       </template>
 
       <n-space align="center" wrap style="margin-bottom: 12px">
-        <n-input v-model:value="filters.keyword" placeholder="搜索角色名" style="width: 200px" clearable />
-        <n-select v-model:value="filters.status" :options="statusOptions" clearable placeholder="状态" style="width: 120px" />
+        <n-input
+          v-model:value="filters.keyword"
+          placeholder="搜索角色名"
+          style="width: 200px"
+          clearable
+        />
+        <n-select
+          v-model:value="filters.status"
+          :options="statusOptions"
+          clearable
+          placeholder="状态"
+          style="width: 120px"
+        />
         <n-button secondary :loading="loading" @click="load">查询</n-button>
       </n-space>
 
@@ -35,7 +46,12 @@
     </n-card>
 
     <n-modal v-model:show="showModal">
-      <n-card :title="form.role_id ? '编辑角色' : '添加角色'" closable style="width: 600px" @close="showModal = false">
+      <n-card
+        :title="form.role_id ? '编辑角色' : '添加角色'"
+        closable
+        style="width: 600px"
+        @close="showModal = false"
+      >
         <n-form :model="form" label-placement="left" label-width="100">
           <n-form-item label="角色名">
             <n-input v-model:value="form.role_name" />
@@ -68,7 +84,11 @@
             <n-input v-model:value="form.role_blurb" />
           </n-form-item>
           <n-form-item label="详细介绍">
-            <n-input v-model:value="form.role_content" type="textarea" :autosize="{ minRows: 4, maxRows: 10 }" />
+            <n-input
+              v-model:value="form.role_content"
+              type="textarea"
+              :autosize="{ minRows: 4, maxRows: 10 }"
+            />
           </n-form-item>
         </n-form>
         <template #footer>
@@ -88,7 +108,16 @@ import { NButton, NPopconfirm, NTag, useMessage } from 'naive-ui';
 import { computed, h, onMounted, reactive, ref } from 'vue';
 import { http } from '../../../lib/http';
 
-type RoleRow = { role_id: number; role_name: string; role_en: string; role_pic: string; role_actor_name: string; role_status: number; role_level: number; role_hits: number };
+type RoleRow = {
+  role_id: number;
+  role_name: string;
+  role_en: string;
+  role_pic: string;
+  role_actor_name: string;
+  role_status: number;
+  role_level: number;
+  role_hits: number;
+};
 
 const msg = useMessage();
 const loading = ref(false);
@@ -102,31 +131,76 @@ const pageSize = ref(20);
 const selectedIds = ref<number[]>([]);
 
 const filters = reactive({ keyword: '', status: null as number | null });
-const statusOptions = [{ label: '启用', value: 1 }, { label: '禁用', value: 0 }];
+const statusOptions = [
+  { label: '启用', value: 1 },
+  { label: '禁用', value: 0 },
+];
 
 const pagination = computed<PaginationProps>(() => ({
-  page: page.value, pageSize: pageSize.value, itemCount: total.value, showSizePicker: true, pageSizes: [10, 20, 50],
-  onUpdatePage: (p: number) => { page.value = p; load(); },
-  onUpdatePageSize: (s: number) => { pageSize.value = s; page.value = 1; load(); },
+  page: page.value,
+  pageSize: pageSize.value,
+  itemCount: total.value,
+  showSizePicker: true,
+  pageSizes: [10, 20, 50],
+  onUpdatePage: (p: number) => {
+    page.value = p;
+    load();
+  },
+  onUpdatePageSize: (s: number) => {
+    pageSize.value = s;
+    page.value = 1;
+    load();
+  },
 }));
 
 const form = reactive<Record<string, any>>({
-  role_id: 0, role_name: '', role_en: '', role_status: 1, role_letter: '', role_actor_id: 0, role_actor_name: '',
-  role_pic: '', role_blurb: '', role_level: 0, role_content: '',
+  role_id: 0,
+  role_name: '',
+  role_en: '',
+  role_status: 1,
+  role_letter: '',
+  role_actor_id: 0,
+  role_actor_name: '',
+  role_pic: '',
+  role_blurb: '',
+  role_level: 0,
+  role_content: '',
 });
 
 async function load() {
   loading.value = true;
   try {
-    const res = await http.get('/admin/roles', { params: { page: page.value, pageSize: pageSize.value, keyword: filters.keyword || undefined, status: filters.status ?? undefined } });
+    const res = await http.get('/admin/roles', {
+      params: {
+        page: page.value,
+        pageSize: pageSize.value,
+        keyword: filters.keyword || undefined,
+        status: filters.status ?? undefined,
+      },
+    });
     items.value = res.data?.items || [];
     total.value = Number(res.data?.total || 0);
-  } catch (e: any) { msg.error(String(e?.response?.data?.message || e?.message || '加载失败')); }
-  finally { loading.value = false; }
+  } catch (e: any) {
+    msg.error(String(e?.response?.data?.message || e?.message || '加载失败'));
+  } finally {
+    loading.value = false;
+  }
 }
 
 function openAdd() {
-  Object.assign(form, { role_id: 0, role_name: '', role_en: '', role_status: 1, role_letter: '', role_actor_id: 0, role_actor_name: '', role_pic: '', role_blurb: '', role_level: 0, role_content: '' });
+  Object.assign(form, {
+    role_id: 0,
+    role_name: '',
+    role_en: '',
+    role_status: 1,
+    role_letter: '',
+    role_actor_id: 0,
+    role_actor_name: '',
+    role_pic: '',
+    role_blurb: '',
+    role_level: 0,
+    role_content: '',
+  });
   showModal.value = true;
 }
 
@@ -135,55 +209,93 @@ async function openEdit(id: number) {
     const res = await http.get('/admin/roles/detail', { params: { id } });
     const item = res.data?.item || {};
     Object.assign(form, {
-      role_id: item.role_id || 0, role_name: item.role_name || '', role_en: item.role_en || '',
-      role_status: Number(item.role_status) || 0, role_letter: item.role_letter || '',
-      role_actor_id: Number(item.role_actor_id) || 0, role_actor_name: item.role_actor_name || '',
-      role_pic: item.role_pic || '', role_blurb: item.role_blurb || '', role_level: Number(item.role_level) || 0,
+      role_id: item.role_id || 0,
+      role_name: item.role_name || '',
+      role_en: item.role_en || '',
+      role_status: Number(item.role_status) || 0,
+      role_letter: item.role_letter || '',
+      role_actor_id: Number(item.role_actor_id) || 0,
+      role_actor_name: item.role_actor_name || '',
+      role_pic: item.role_pic || '',
+      role_blurb: item.role_blurb || '',
+      role_level: Number(item.role_level) || 0,
       role_content: item.role_content || '',
     });
     showModal.value = true;
-  } catch (e: any) { msg.error(String(e?.response?.data?.message || e?.message || '加载详情失败')); }
+  } catch (e: any) {
+    msg.error(String(e?.response?.data?.message || e?.message || '加载详情失败'));
+  }
 }
 
 async function save() {
-  if (!form.role_name) { msg.warning('请输入角色名'); return; }
+  if (!form.role_name) {
+    msg.warning('请输入角色名');
+    return;
+  }
   saving.value = true;
   try {
     await http.post('/admin/roles/save', form);
     msg.success('保存成功');
     showModal.value = false;
     await load();
-  } catch (e: any) { msg.error(String(e?.response?.data?.message || e?.message || '保存失败')); }
-  finally { saving.value = false; }
+  } catch (e: any) {
+    msg.error(String(e?.response?.data?.message || e?.message || '保存失败'));
+  } finally {
+    saving.value = false;
+  }
 }
 
 async function remove(id: number) {
-  try { await http.post('/admin/roles/delete', { role_id: id }); msg.success('已删除'); await load(); }
-  catch (e: any) { msg.error(String(e?.response?.data?.message || e?.message || '删除失败')); }
+  try {
+    await http.post('/admin/roles/delete', { role_id: id });
+    msg.success('已删除');
+    await load();
+  } catch (e: any) {
+    msg.error(String(e?.response?.data?.message || e?.message || '删除失败'));
+  }
 }
 
-function handleCheck(keys: DataTableRowKey[]) { selectedIds.value = keys as number[]; }
+function handleCheck(keys: DataTableRowKey[]) {
+  selectedIds.value = keys as number[];
+}
 
 async function batchEnable() {
   if (!selectedIds.value.length) return;
-  try { await http.post('/admin/roles/batch-update-status', { ids: selectedIds.value, status: 1 }); msg.success('批量启用成功'); await load(); }
-  catch (e: any) { msg.error(String(e?.response?.data?.message || e?.message || '操作失败')); }
+  try {
+    await http.post('/admin/roles/batch-update-status', { ids: selectedIds.value, status: 1 });
+    msg.success('批量启用成功');
+    await load();
+  } catch (e: any) {
+    msg.error(String(e?.response?.data?.message || e?.message || '操作失败'));
+  }
 }
 
 async function batchDisable() {
   if (!selectedIds.value.length) return;
-  try { await http.post('/admin/roles/batch-update-status', { ids: selectedIds.value, status: 0 }); msg.success('批量禁用成功'); await load(); }
-  catch (e: any) { msg.error(String(e?.response?.data?.message || e?.message || '操作失败')); }
+  try {
+    await http.post('/admin/roles/batch-update-status', { ids: selectedIds.value, status: 0 });
+    msg.success('批量禁用成功');
+    await load();
+  } catch (e: any) {
+    msg.error(String(e?.response?.data?.message || e?.message || '操作失败'));
+  }
 }
 
 async function batchDelete() {
   if (!selectedIds.value.length) return;
-  try { await http.post('/admin/roles/batch-delete', { ids: selectedIds.value }); msg.success('批量删除成功'); await load(); }
-  catch (e: any) { msg.error(String(e?.response?.data?.message || e?.message || '操作失败')); }
+  try {
+    await http.post('/admin/roles/batch-delete', { ids: selectedIds.value });
+    msg.success('批量删除成功');
+    await load();
+  } catch (e: any) {
+    msg.error(String(e?.response?.data?.message || e?.message || '操作失败'));
+  }
 }
 
 function statusTag(status: number) {
-  return Number(status) ? h(NTag, { type: 'success', size: 'small' }, { default: () => '启用' }) : h(NTag, { type: 'default', size: 'small' }, { default: () => '禁用' });
+  return Number(status)
+    ? h(NTag, { type: 'success', size: 'small' }, { default: () => '启用' })
+    : h(NTag, { type: 'default', size: 'small' }, { default: () => '禁用' });
 }
 
 const columns: DataTableColumns<RoleRow> = [
@@ -196,13 +308,34 @@ const columns: DataTableColumns<RoleRow> = [
   { title: '点击', key: 'role_hits', width: 80 },
   { title: '状态', key: 'role_status', width: 80, render: (r) => statusTag(r.role_status) },
   {
-    title: '操作', key: 'actions', width: 160,
-    render: (row) => h('div', { style: 'display:flex; gap:8px;' }, [
-      h(NButton, { size: 'small', tertiary: true, onClick: () => openEdit(row.role_id) }, { default: () => '编辑' }),
-      h(NPopconfirm, { onPositiveClick: () => remove(row.role_id) }, { trigger: () => h(NButton, { size: 'small', tertiary: true, type: 'error' }, { default: () => '删除' }), default: () => '确认删除？' }),
-    ]),
+    title: '操作',
+    key: 'actions',
+    width: 160,
+    render: (row) =>
+      h('div', { style: 'display:flex; gap:8px;' }, [
+        h(
+          NButton,
+          { size: 'small', tertiary: true, onClick: () => openEdit(row.role_id) },
+          { default: () => '编辑' }
+        ),
+        h(
+          NPopconfirm,
+          { onPositiveClick: () => remove(row.role_id) },
+          {
+            trigger: () =>
+              h(
+                NButton,
+                { size: 'small', tertiary: true, type: 'error' },
+                { default: () => '删除' }
+              ),
+            default: () => '确认删除？',
+          }
+        ),
+      ]),
   },
 ];
 
-onMounted(() => { load(); });
+onMounted(() => {
+  load();
+});
 </script>

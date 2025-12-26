@@ -20,4 +20,3 @@ export async function uploadFile(opts: { file: File; dir?: string; mode?: Upload
     mime: string;
   };
 }
-

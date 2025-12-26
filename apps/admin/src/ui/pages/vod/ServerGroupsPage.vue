@@ -9,7 +9,12 @@
     </n-card>
 
     <n-modal v-model:show="showModal">
-      <n-card :title="form.id ? '编辑服务器组' : '添加服务器组'" closable style="width: 500px" @close="showModal = false">
+      <n-card
+        :title="form.id ? '编辑服务器组' : '添加服务器组'"
+        closable
+        style="width: 500px"
+        @close="showModal = false"
+      >
         <n-form :model="form" label-placement="left" label-width="80">
           <n-form-item label="名称">
             <n-input v-model:value="form.name" />
@@ -75,7 +80,13 @@ async function openEdit(id: number) {
   try {
     const res = await http.get('/admin/server-groups/detail', { params: { id } });
     const item = res.data?.item || {};
-    Object.assign(form, { id: item.id || 0, name: item.name || '', remark: item.remark || '', sort: item.sort || 0, status: item.status ?? 1 });
+    Object.assign(form, {
+      id: item.id || 0,
+      name: item.name || '',
+      remark: item.remark || '',
+      sort: item.sort || 0,
+      status: item.status ?? 1,
+    });
     showModal.value = true;
   } catch (e: any) {
     msg.error(String(e?.response?.data?.message || e?.message || '加载详情失败'));
@@ -83,7 +94,10 @@ async function openEdit(id: number) {
 }
 
 async function save() {
-  if (!form.name) { msg.warning('请输入名称'); return; }
+  if (!form.name) {
+    msg.warning('请输入名称');
+    return;
+  }
   saving.value = true;
   try {
     await http.post('/admin/server-groups/save', form);
@@ -125,14 +139,29 @@ const columns: DataTableColumns<ServerGroupRow> = [
     width: 160,
     render: (row) =>
       h('div', { style: 'display:flex; gap:8px;' }, [
-        h(NButton, { size: 'small', tertiary: true, onClick: () => openEdit(row.id) }, { default: () => '编辑' }),
-        h(NPopconfirm, { onPositiveClick: () => remove(row.id) }, {
-          trigger: () => h(NButton, { size: 'small', tertiary: true, type: 'error' }, { default: () => '删除' }),
-          default: () => '确认删除？',
-        }),
+        h(
+          NButton,
+          { size: 'small', tertiary: true, onClick: () => openEdit(row.id) },
+          { default: () => '编辑' }
+        ),
+        h(
+          NPopconfirm,
+          { onPositiveClick: () => remove(row.id) },
+          {
+            trigger: () =>
+              h(
+                NButton,
+                { size: 'small', tertiary: true, type: 'error' },
+                { default: () => '删除' }
+              ),
+            default: () => '确认删除？',
+          }
+        ),
       ]),
   },
 ];
 
-onMounted(() => { load(); });
+onMounted(() => {
+  load();
+});
 </script>

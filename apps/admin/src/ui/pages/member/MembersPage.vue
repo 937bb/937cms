@@ -3,9 +3,27 @@
     <n-card title="会员列表">
       <!-- 筛选栏 -->
       <n-space align="center" wrap style="margin-bottom: 12px">
-        <n-input v-model:value="filters.q" placeholder="用户名/昵称/邮箱" style="width: 200px" clearable @keyup.enter="load" />
-        <n-select v-model:value="filters.groupId" :options="groupOptions" clearable placeholder="会员组" style="min-width: 180px" />
-        <n-select v-model:value="filters.status" :options="statusOptions" clearable placeholder="状态" style="width: 120px" />
+        <n-input
+          v-model:value="filters.q"
+          placeholder="用户名/昵称/邮箱"
+          style="width: 200px"
+          clearable
+          @keyup.enter="load"
+        />
+        <n-select
+          v-model:value="filters.groupId"
+          :options="groupOptions"
+          clearable
+          placeholder="会员组"
+          style="min-width: 180px"
+        />
+        <n-select
+          v-model:value="filters.status"
+          :options="statusOptions"
+          clearable
+          placeholder="状态"
+          style="width: 120px"
+        />
         <n-button type="primary" :loading="loading" @click="load">查询</n-button>
       </n-space>
 
@@ -43,13 +61,24 @@
           show-size-picker
           :page-sizes="[20, 50, 100]"
           @update:page="load"
-          @update:page-size="(s: number) => { pageSize = s; page = 1; load(); }"
+          @update:page-size="
+            (s: number) => {
+              pageSize = s;
+              page = 1;
+              load();
+            }
+          "
         />
       </n-space>
     </n-card>
 
     <!-- 编辑会员弹窗 -->
-    <n-modal v-model:show="showEdit" preset="card" title="编辑会员" style="max-width: 720px; width: 100%">
+    <n-modal
+      v-model:show="showEdit"
+      preset="card"
+      title="编辑会员"
+      style="max-width: 720px; width: 100%"
+    >
       <n-form :model="editForm" label-placement="left" label-width="100">
         <n-form-item label="ID">
           <n-input :value="String(editForm.id || '')" disabled />
@@ -73,7 +102,12 @@
           <n-input-number v-model:value="editForm.points" :min="0" style="width: 100%" />
         </n-form-item>
         <n-form-item label="到期时间">
-          <n-date-picker v-model:value="editForm.expire_at" type="datetime" clearable style="width: 100%" />
+          <n-date-picker
+            v-model:value="editForm.expire_at"
+            type="datetime"
+            clearable
+            style="width: 100%"
+          />
           <template #feedback>留空或0表示永久有效</template>
         </n-form-item>
         <n-form-item label="状态">
@@ -90,13 +124,23 @@
     </n-modal>
 
     <!-- 重置密码弹窗 -->
-    <n-modal v-model:show="showReset" preset="card" title="重置会员密码" style="max-width: 480px; width: 100%">
+    <n-modal
+      v-model:show="showReset"
+      preset="card"
+      title="重置会员密码"
+      style="max-width: 480px; width: 100%"
+    >
       <n-form :model="resetForm" label-placement="left" label-width="80">
         <n-form-item label="会员ID">
           <n-input :value="String(resetForm.id || '')" disabled />
         </n-form-item>
         <n-form-item label="新密码">
-          <n-input v-model:value="resetForm.password" type="password" show-password-on="click" placeholder="至少 6 位" />
+          <n-input
+            v-model:value="resetForm.password"
+            type="password"
+            show-password-on="click"
+            placeholder="至少 6 位"
+          />
         </n-form-item>
       </n-form>
       <n-space justify="end">
@@ -168,7 +212,9 @@ const statusOptions = [
 ];
 
 // 会员组选项
-const groupOptions = computed(() => groups.value.map((g) => ({ label: `${g.id} - ${g.name}`, value: g.id })));
+const groupOptions = computed(() =>
+  groups.value.map((g) => ({ label: `${g.id} - ${g.name}`, value: g.id }))
+);
 
 // 编辑表单
 const editForm = reactive<any>({
@@ -309,7 +355,11 @@ async function remove(id: number) {
 async function batchEnable() {
   if (selectedIds.value.length === 0) return;
   try {
-    await http.post('/admin/members/batch-update-field', { ids: selectedIds.value, field: 'status', value: 1 });
+    await http.post('/admin/members/batch-update-field', {
+      ids: selectedIds.value,
+      field: 'status',
+      value: 1,
+    });
     msg.success('批量启用成功');
     await load();
   } catch (e: any) {
@@ -321,7 +371,11 @@ async function batchEnable() {
 async function batchDisable() {
   if (selectedIds.value.length === 0) return;
   try {
-    await http.post('/admin/members/batch-update-field', { ids: selectedIds.value, field: 'status', value: 0 });
+    await http.post('/admin/members/batch-update-field', {
+      ids: selectedIds.value,
+      field: 'status',
+      value: 0,
+    });
     msg.success('批量禁用成功');
     await load();
   } catch (e: any) {
@@ -363,7 +417,12 @@ const columns: DataTableColumns<MemberItem> = [
   { title: '邮箱', key: 'email', width: 180, ellipsis: { tooltip: true } },
   { title: '会员组', key: 'group_name', width: 100 },
   { title: '积分', key: 'points', width: 80 },
-  { title: '最后登录', key: 'last_login_at', width: 160, render: (r) => formatTime(r.last_login_at) },
+  {
+    title: '最后登录',
+    key: 'last_login_at',
+    width: 160,
+    render: (r) => formatTime(r.last_login_at),
+  },
   { title: '状态', key: 'status', width: 80, render: (r) => statusTag(Number(r.status)) },
   {
     title: '操作',
@@ -371,12 +430,29 @@ const columns: DataTableColumns<MemberItem> = [
     width: 200,
     render: (row) =>
       h('div', { style: 'display:flex; gap:8px; flex-wrap:wrap;' }, [
-        h(NButton, { size: 'small', tertiary: true, onClick: () => openEdit(row) }, { default: () => '编辑' }),
-        h(NButton, { size: 'small', tertiary: true, onClick: () => openReset(row.id) }, { default: () => '重置密码' }),
-        h(NPopconfirm, { onPositiveClick: () => remove(row.id) }, {
-          trigger: () => h(NButton, { size: 'small', tertiary: true, type: 'error' }, { default: () => '删除' }),
-          default: () => '确认删除该会员？',
-        }),
+        h(
+          NButton,
+          { size: 'small', tertiary: true, onClick: () => openEdit(row) },
+          { default: () => '编辑' }
+        ),
+        h(
+          NButton,
+          { size: 'small', tertiary: true, onClick: () => openReset(row.id) },
+          { default: () => '重置密码' }
+        ),
+        h(
+          NPopconfirm,
+          { onPositiveClick: () => remove(row.id) },
+          {
+            trigger: () =>
+              h(
+                NButton,
+                { size: 'small', tertiary: true, type: 'error' },
+                { default: () => '删除' }
+              ),
+            default: () => '确认删除该会员？',
+          }
+        ),
       ]),
   },
 ];

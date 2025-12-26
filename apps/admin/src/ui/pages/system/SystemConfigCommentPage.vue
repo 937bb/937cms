@@ -3,9 +3,18 @@
     <n-card title="评论配置">
       <n-tabs type="line" animated>
         <n-tab-pane name="gbook" tab="留言板">
-          <n-form :model="model.gbook" label-placement="left" label-width="160" style="max-width: 760px">
+          <n-form
+            :model="model.gbook"
+            label-placement="left"
+            label-width="160"
+            style="max-width: 760px"
+          >
             <n-form-item label="启用留言板">
-              <n-switch v-model:value="model.gbook.status" :checked-value="1" :unchecked-value="0" />
+              <n-switch
+                v-model:value="model.gbook.status"
+                :checked-value="1"
+                :unchecked-value="0"
+              />
             </n-form-item>
             <n-form-item label="留言需要审核">
               <n-switch v-model:value="model.gbook.audit" :checked-value="1" :unchecked-value="0" />
@@ -14,7 +23,11 @@
               <n-switch v-model:value="model.gbook.login" :checked-value="1" :unchecked-value="0" />
             </n-form-item>
             <n-form-item label="留言验证码">
-              <n-switch v-model:value="model.gbook.verify" :checked-value="1" :unchecked-value="0" />
+              <n-switch
+                v-model:value="model.gbook.verify"
+                :checked-value="1"
+                :unchecked-value="0"
+              />
             </n-form-item>
             <n-form-item label="每页数量">
               <n-input-number v-model:value="model.gbook.pagesize" :min="1" :max="200" />
@@ -26,19 +39,40 @@
         </n-tab-pane>
 
         <n-tab-pane name="comment" tab="评论">
-          <n-form :model="model.comment" label-placement="left" label-width="160" style="max-width: 760px">
+          <n-form
+            :model="model.comment"
+            label-placement="left"
+            label-width="160"
+            style="max-width: 760px"
+          >
             <n-form-item label="启用评论">
-              <n-switch v-model:value="model.comment.status" :checked-value="1" :unchecked-value="0" />
+              <n-switch
+                v-model:value="model.comment.status"
+                :checked-value="1"
+                :unchecked-value="0"
+              />
             </n-form-item>
             <n-form-item label="评论需要审核">
-              <n-switch v-model:value="model.comment.audit" :checked-value="1" :unchecked-value="0" />
+              <n-switch
+                v-model:value="model.comment.audit"
+                :checked-value="1"
+                :unchecked-value="0"
+              />
               <template #feedback>开启后，新评论写入为未审核（前台不展示）。</template>
             </n-form-item>
             <n-form-item label="评论必须登录">
-              <n-switch v-model:value="model.comment.login" :checked-value="1" :unchecked-value="0" />
+              <n-switch
+                v-model:value="model.comment.login"
+                :checked-value="1"
+                :unchecked-value="0"
+              />
             </n-form-item>
             <n-form-item label="评论验证码">
-              <n-switch v-model:value="model.comment.verify" :checked-value="1" :unchecked-value="0" />
+              <n-switch
+                v-model:value="model.comment.verify"
+                :checked-value="1"
+                :unchecked-value="0"
+              />
             </n-form-item>
             <n-form-item label="每页数量">
               <n-input-number v-model:value="model.comment.pagesize" :min="1" :max="200" />

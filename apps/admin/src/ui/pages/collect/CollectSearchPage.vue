@@ -30,7 +30,12 @@
         <n-space justify="space-between" align="center" style="margin-bottom: 12px">
           <span>共搜索到 {{ totalCount }} 条结果（来自 {{ searchResults.length }} 个采集源）</span>
           <n-space>
-            <n-button type="info" :disabled="!selectedItems.length" :loading="collecting" @click="collectSelected">
+            <n-button
+              type="info"
+              :disabled="!selectedItems.length"
+              :loading="collecting"
+              @click="collectSelected"
+            >
               采集选中 ({{ selectedItems.length }})
             </n-button>
           </n-space>
@@ -71,23 +76,33 @@
 
     <!-- 采集结果弹窗 -->
     <n-modal v-model:show="showResultModal" preset="card" style="max-width: 900px; width: 100%">
-      <template #header>
-        采集结果统计
-      </template>
+      <template #header> 采集结果统计 </template>
       <n-space vertical size="large">
-        <n-space justify="space-between" align="center" style="padding: 16px; background: #f5f5f5; border-radius: 4px">
+        <n-space
+          justify="space-between"
+          align="center"
+          style="padding: 16px; background: #f5f5f5; border-radius: 4px"
+        >
           <n-statistic label="总数" :value="collectResults.length" />
           <n-statistic label="成功" :value="successCount" type="success" />
           <n-statistic label="失败" :value="failureCount" type="error" />
           <n-progress
             type="circle"
-            :percentage="collectResults.length ? Math.round((successCount / collectResults.length) * 100) : 0"
+            :percentage="
+              collectResults.length ? Math.round((successCount / collectResults.length) * 100) : 0
+            "
             :stroke-width="8"
             :show-indicator="false"
             style="width: 80px"
           />
         </n-space>
-        <n-data-table :columns="resultColumns" :data="collectResults" :bordered="false" size="small" max-height="400" />
+        <n-data-table
+          :columns="resultColumns"
+          :data="collectResults"
+          :bordered="false"
+          size="small"
+          max-height="400"
+        />
       </n-space>
       <template #footer>
         <n-space justify="end">
@@ -152,22 +167,14 @@ const showResultModal = ref(false);
 const collectResults = ref<CollectResult[]>([]);
 
 const sourceOptions = computed(() =>
-  sources.value
-    .filter((s) => s.status === 1)
-    .map((s) => ({ label: s.name, value: s.id }))
+  sources.value.filter((s) => s.status === 1).map((s) => ({ label: s.name, value: s.id }))
 );
 
-const totalCount = computed(() =>
-  searchResults.value.reduce((sum, r) => sum + r.items.length, 0)
-);
+const totalCount = computed(() => searchResults.value.reduce((sum, r) => sum + r.items.length, 0));
 
-const successCount = computed(() =>
-  collectResults.value.filter((r) => r.success).length
-);
+const successCount = computed(() => collectResults.value.filter((r) => r.success).length);
 
-const failureCount = computed(() =>
-  collectResults.value.filter((r) => !r.success).length
-);
+const failureCount = computed(() => collectResults.value.filter((r) => !r.success).length);
 
 const selectedItems = computed(() => {
   const items: Array<{ source_id: number; vod_id: number }> = [];
@@ -219,7 +226,10 @@ async function search() {
 
 async function collectSingle(sourceId: number, vodId: number) {
   try {
-    const res = await http.post('/admin/collect/search/collect', { source_id: sourceId, vod_id: vodId });
+    const res = await http.post('/admin/collect/search/collect', {
+      source_id: sourceId,
+      vod_id: vodId,
+    });
     if (res.data?.ok) {
       msg.success(res.data.message || '采集成功');
     } else {
@@ -237,11 +247,15 @@ async function collectSelected() {
   }
   collecting.value = true;
   try {
-    const res = await http.post('/admin/collect/search/collect-batch', { items: selectedItems.value });
+    const res = await http.post('/admin/collect/search/collect-batch', {
+      items: selectedItems.value,
+    });
     collectResults.value = (res.data?.results || []) as CollectResult[];
     showResultModal.value = true;
     const successCount = collectResults.value.filter((r) => r.success).length;
-    msg.success(`采集完成：成功 ${successCount}，失败 ${collectResults.value.length - successCount}`);
+    msg.success(
+      `采集完成：成功 ${successCount}，失败 ${collectResults.value.length - successCount}`
+    );
     checkedKeys.value = [];
   } catch (e: any) {
     msg.error(String(e?.response?.data?.message || e?.message || '批量采集失败'));
@@ -258,7 +272,14 @@ const columns: DataTableColumns<SearchItem> = [
     width: 80,
     render: (row) =>
       row.vod_pic
-        ? h(NImage, { src: row.vod_pic, width: 50, height: 70, objectFit: 'cover', lazy: true, fallbackSrc: '/placeholder.png' })
+        ? h(NImage, {
+            src: row.vod_pic,
+            width: 50,
+            height: 70,
+            objectFit: 'cover',
+            lazy: true,
+            fallbackSrc: '/placeholder.png',
+          })
         : '-',
   },
   { title: '视频名称', key: 'vod_name', minWidth: 200 },
@@ -273,7 +294,11 @@ const columns: DataTableColumns<SearchItem> = [
     render: (row) => {
       const lines = (row.vod_play_from || '').split('$$$').filter(Boolean);
       if (!lines.length) return '-';
-      return h('div', { style: 'display: flex; flex-wrap: wrap; gap: 4px;' }, lines.map((line) => h(NTag, { size: 'small', type: 'info' }, { default: () => line })));
+      return h(
+        'div',
+        { style: 'display: flex; flex-wrap: wrap; gap: 4px;' },
+        lines.map((line) => h(NTag, { size: 'small', type: 'info' }, { default: () => line }))
+      );
     },
   },
   {
@@ -297,7 +322,11 @@ const resultColumns: DataTableColumns<CollectResult> = [
     key: 'success',
     width: 80,
     render: (row) =>
-      h(NTag, { type: row.success ? 'success' : 'error', size: 'small' }, { default: () => (row.success ? '成功' : '失败') }),
+      h(
+        NTag,
+        { type: row.success ? 'success' : 'error', size: 'small' },
+        { default: () => (row.success ? '成功' : '失败') }
+      ),
   },
   { title: '消息', key: 'message' },
 ];

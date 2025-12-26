@@ -24,7 +24,12 @@
           <n-input v-model:value="model.user" placeholder="user@example.com" />
         </n-form-item>
         <n-form-item label="SMTP 密码">
-          <n-input v-model:value="model.pass" type="password" show-password-on="click" placeholder="授权码或密码" />
+          <n-input
+            v-model:value="model.pass"
+            type="password"
+            show-password-on="click"
+            placeholder="授权码或密码"
+          />
         </n-form-item>
         <n-form-item label="发件人地址">
           <n-input v-model:value="model.from" placeholder="留空则使用 SMTP 用户名" />
@@ -41,7 +46,9 @@
 
         <n-form-item label="测试邮箱">
           <n-input v-model:value="testEmail" placeholder="输入收件人邮箱" style="width: 300px" />
-          <n-button :loading="testing" style="margin-left: 12px" @click="onTest">发送测试邮件</n-button>
+          <n-button :loading="testing" style="margin-left: 12px" @click="onTest"
+            >发送测试邮件</n-button
+          >
         </n-form-item>
 
         <n-divider title-placement="left">邮件模板</n-divider>
@@ -57,21 +64,36 @@
           <n-input v-model:value="model.tpl.regTitle" placeholder="注册验证码 - {sitename}" />
         </n-form-item>
         <n-form-item label="注册验证内容">
-          <n-input v-model:value="model.tpl.regBody" type="textarea" :autosize="{ minRows: 2 }" placeholder="变量: {code} {time}" />
+          <n-input
+            v-model:value="model.tpl.regBody"
+            type="textarea"
+            :autosize="{ minRows: 2 }"
+            placeholder="变量: {code} {time}"
+          />
         </n-form-item>
 
         <n-form-item label="绑定验证标题">
           <n-input v-model:value="model.tpl.bindTitle" placeholder="绑定验证码 - {sitename}" />
         </n-form-item>
         <n-form-item label="绑定验证内容">
-          <n-input v-model:value="model.tpl.bindBody" type="textarea" :autosize="{ minRows: 2 }" placeholder="变量: {code} {time}" />
+          <n-input
+            v-model:value="model.tpl.bindBody"
+            type="textarea"
+            :autosize="{ minRows: 2 }"
+            placeholder="变量: {code} {time}"
+          />
         </n-form-item>
 
         <n-form-item label="找回密码标题">
           <n-input v-model:value="model.tpl.findpassTitle" placeholder="找回密码 - {sitename}" />
         </n-form-item>
         <n-form-item label="找回密码内容">
-          <n-input v-model:value="model.tpl.findpassBody" type="textarea" :autosize="{ minRows: 2 }" placeholder="变量: {code} {time}" />
+          <n-input
+            v-model:value="model.tpl.findpassBody"
+            type="textarea"
+            :autosize="{ minRows: 2 }"
+            placeholder="变量: {code} {time}"
+          />
         </n-form-item>
       </n-form>
 
@@ -168,7 +190,9 @@ async function onTest() {
   }
   testing.value = true;
   try {
-    const res = await http.post('/admin/system-settings/email/test', { to: testEmail.value.trim() });
+    const res = await http.post('/admin/system-settings/email/test', {
+      to: testEmail.value.trim(),
+    });
     if (res.data?.ok) {
       msg.success(res.data.message || '发送成功');
     } else {

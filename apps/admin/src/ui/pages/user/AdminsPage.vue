@@ -6,7 +6,13 @@
         <n-button secondary :loading="loading" @click="load">刷新</n-button>
       </n-space>
 
-      <n-data-table :columns="columns" :data="items" :bordered="false" :loading="loading" :row-key="(r: any) => r.id" />
+      <n-data-table
+        :columns="columns"
+        :data="items"
+        :bordered="false"
+        :loading="loading"
+        :row-key="(r: any) => r.id"
+      />
     </n-card>
 
     <!-- 新增弹窗 -->
@@ -16,7 +22,12 @@
           <n-input v-model:value="createForm.username" placeholder="至少 3 位" />
         </n-form-item>
         <n-form-item label="密码" required>
-          <n-input v-model:value="createForm.password" type="password" show-password-on="click" placeholder="至少 6 位" />
+          <n-input
+            v-model:value="createForm.password"
+            type="password"
+            show-password-on="click"
+            placeholder="至少 6 位"
+          />
         </n-form-item>
         <n-form-item label="角色">
           <n-input v-model:value="createForm.role" placeholder="admin" />
@@ -32,7 +43,12 @@
     <n-modal v-model:show="showReset" preset="card" title="重置密码" style="max-width: 400px">
       <n-form label-placement="left" label-width="100">
         <n-form-item label="新密码" required>
-          <n-input v-model:value="resetForm.newPassword" type="password" show-password-on="click" placeholder="至少 6 位" />
+          <n-input
+            v-model:value="resetForm.newPassword"
+            type="password"
+            show-password-on="click"
+            placeholder="至少 6 位"
+          />
         </n-form-item>
       </n-form>
       <n-space justify="end">
@@ -48,7 +64,12 @@
           <n-input v-model:value="pwdForm.oldPassword" type="password" show-password-on="click" />
         </n-form-item>
         <n-form-item label="新密码" required>
-          <n-input v-model:value="pwdForm.newPassword" type="password" show-password-on="click" placeholder="至少 6 位" />
+          <n-input
+            v-model:value="pwdForm.newPassword"
+            type="password"
+            show-password-on="click"
+            placeholder="至少 6 位"
+          />
         </n-form-item>
       </n-form>
       <n-space justify="end">
@@ -64,7 +85,13 @@ import { NButton, NPopconfirm, useMessage } from 'naive-ui';
 import { h, onMounted, reactive, ref } from 'vue';
 import { http } from '../../../lib/http';
 
-type AdminItem = { id: number; username: string; role: string; created_at: number; updated_at: number };
+type AdminItem = {
+  id: number;
+  username: string;
+  role: string;
+  created_at: number;
+  updated_at: number;
+};
 
 const msg = useMessage();
 const loading = ref(false);
@@ -179,11 +206,24 @@ const columns: DataTableColumns<AdminItem> = [
     width: 180,
     render: (row) =>
       h('div', { style: 'display:flex;gap:8px' }, [
-        h(NButton, { size: 'small', tertiary: true, onClick: () => openReset(row) }, { default: () => '重置密码' }),
-        h(NPopconfirm, { onPositiveClick: () => onDelete(row.id) }, {
-          trigger: () => h(NButton, { size: 'small', tertiary: true, type: 'error' }, { default: () => '删除' }),
-          default: () => '确认删除？',
-        }),
+        h(
+          NButton,
+          { size: 'small', tertiary: true, onClick: () => openReset(row) },
+          { default: () => '重置密码' }
+        ),
+        h(
+          NPopconfirm,
+          { onPositiveClick: () => onDelete(row.id) },
+          {
+            trigger: () =>
+              h(
+                NButton,
+                { size: 'small', tertiary: true, type: 'error' },
+                { default: () => '删除' }
+              ),
+            default: () => '确认删除？',
+          }
+        ),
       ]),
   },
 ];

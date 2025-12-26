@@ -15,13 +15,22 @@
       <n-data-table :columns="columns" :data="items" :bordered="false" :loading="loading" />
     </n-card>
 
-    <n-modal v-model:show="showModal" preset="card" title="采集任务" style="max-width: 860px; width: 100%">
+    <n-modal
+      v-model:show="showModal"
+      preset="card"
+      title="采集任务"
+      style="max-width: 860px; width: 100%"
+    >
       <n-form :model="form" label-placement="left" label-width="170" style="max-width: 760px">
         <n-form-item label="任务名称">
           <n-input v-model:value="form.name" placeholder="例如：全量采集（五个资源站）" />
         </n-form-item>
         <n-form-item label="采集时间范围（小时）">
-          <n-select v-model:value="form.collect_time" :options="collectTimeOptions" style="max-width: 320px" />
+          <n-select
+            v-model:value="form.collect_time"
+            :options="collectTimeOptions"
+            style="max-width: 320px"
+          />
         </n-form-item>
         <n-form-item label="分页请求间隔（秒）">
           <n-input-number v-model:value="form.interval_seconds" :min="0" :max="3600" />
@@ -110,7 +119,9 @@ const collectTimeOptions = [
   { label: '168（最近 7 天）', value: 168 },
 ];
 
-const sourceOptions = computed(() => sources.value.map((s) => ({ label: `${s.id} - ${s.name}`, value: s.id })));
+const sourceOptions = computed(() =>
+  sources.value.map((s) => ({ label: `${s.id} - ${s.name}`, value: s.id }))
+);
 
 function openCreate() {
   Object.assign(form, {
@@ -147,7 +158,10 @@ function openEdit(row: JobItem) {
 async function load() {
   loading.value = true;
   try {
-    const [srcRes, jobRes] = await Promise.all([http.get('/admin/collect/sources'), http.get('/admin/collect/jobs')]);
+    const [srcRes, jobRes] = await Promise.all([
+      http.get('/admin/collect/sources'),
+      http.get('/admin/collect/jobs'),
+    ]);
     sources.value = (srcRes.data?.items || []) as SourceItem[];
     items.value = (jobRes.data?.items || []) as JobItem[];
   } catch (e: any) {
@@ -176,7 +190,9 @@ async function save() {
       push_workers: Number(form.push_workers || 1),
       push_interval_seconds: Number(form.push_interval_seconds || 0),
       max_workers: Number(form.max_workers || 1),
-      source_ids: form.source_ids.map((n: any) => Number(n)).filter((n: number) => Number.isFinite(n)),
+      source_ids: form.source_ids
+        .map((n: any) => Number(n))
+        .filter((n: number) => Number.isFinite(n)),
     };
     if (!payload.id) await http.post('/admin/collect/jobs/create', payload);
     else await http.post('/admin/collect/jobs/save', payload);
@@ -219,7 +235,7 @@ function renderSources(row: JobItem) {
   return h(
     'div',
     { style: 'display:flex; flex-wrap:wrap; gap:6px;' },
-    ids.map((id) => h(NTag, { size: 'small' }, { default: () => String(id) })),
+    ids.map((id) => h(NTag, { size: 'small' }, { default: () => String(id) }))
   );
 }
 
@@ -249,22 +265,38 @@ const columns: DataTableColumns<JobItem> = [
     key: 'actions',
     width: 260,
     render: (row) =>
-      h(
-        'div',
-        { style: 'display:flex; gap:8px; flex-wrap:wrap;' },
-        [
-          h(NButton, { size: 'small', type: 'primary', tertiary: true, loading: runningIds.value.has(row.id), disabled: runningIds.value.has(row.id), onClick: () => runOnce(row.id) }, { default: () => '立即执行' }),
-          h(NButton, { size: 'small', tertiary: true, onClick: () => openEdit(row) }, { default: () => '编辑' }),
-          h(
-            NPopconfirm,
-            { onPositiveClick: () => remove(row.id) },
-            {
-              trigger: () => h(NButton, { size: 'small', tertiary: true, type: 'error' }, { default: () => '删除' }),
-              default: () => '确认删除该任务？',
-            },
-          ),
-        ],
-      ),
+      h('div', { style: 'display:flex; gap:8px; flex-wrap:wrap;' }, [
+        h(
+          NButton,
+          {
+            size: 'small',
+            type: 'primary',
+            tertiary: true,
+            loading: runningIds.value.has(row.id),
+            disabled: runningIds.value.has(row.id),
+            onClick: () => runOnce(row.id),
+          },
+          { default: () => '立即执行' }
+        ),
+        h(
+          NButton,
+          { size: 'small', tertiary: true, onClick: () => openEdit(row) },
+          { default: () => '编辑' }
+        ),
+        h(
+          NPopconfirm,
+          { onPositiveClick: () => remove(row.id) },
+          {
+            trigger: () =>
+              h(
+                NButton,
+                { size: 'small', tertiary: true, type: 'error' },
+                { default: () => '删除' }
+              ),
+            default: () => '确认删除该任务？',
+          }
+        ),
+      ]),
   },
 ];
 
@@ -272,4 +304,3 @@ onMounted(() => {
   load().catch(() => void 0);
 });
 </script>
-

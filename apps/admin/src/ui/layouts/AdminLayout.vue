@@ -22,7 +22,9 @@
         <n-space justify="space-between" align="center" style="width: 100%">
           <n-breadcrumb>
             <n-breadcrumb-item v-for="(item, idx) in breadcrumbs" :key="idx">
-              <router-link v-if="item.path && idx < breadcrumbs.length - 1" :to="item.path">{{ item.label }}</router-link>
+              <router-link v-if="item.path && idx < breadcrumbs.length - 1" :to="item.path">{{
+                item.label
+              }}</router-link>
               <span v-else>{{ item.label }}</span>
             </n-breadcrumb-item>
           </n-breadcrumb>
@@ -140,11 +142,26 @@ const menuOptions: MenuOption[] = [
         label: '视频筛选',
         key: '/filters',
         children: [
-          { label: link('无地址视频', '/content/vods?filter=nourl'), key: '/content/vods?filter=nourl' },
-          { label: link('已锁定视频', '/content/vods?filter=locked'), key: '/content/vods?filter=locked' },
-          { label: link('未审核视频', '/content/vods?filter=pending'), key: '/content/vods?filter=pending' },
-          { label: link('需积分视频', '/content/vods?filter=points'), key: '/content/vods?filter=points' },
-          { label: link('有分集剧情', '/content/vods?filter=plot'), key: '/content/vods?filter=plot' },
+          {
+            label: link('无地址视频', '/content/vods?filter=nourl'),
+            key: '/content/vods?filter=nourl',
+          },
+          {
+            label: link('已锁定视频', '/content/vods?filter=locked'),
+            key: '/content/vods?filter=locked',
+          },
+          {
+            label: link('未审核视频', '/content/vods?filter=pending'),
+            key: '/content/vods?filter=pending',
+          },
+          {
+            label: link('需积分视频', '/content/vods?filter=points'),
+            key: '/content/vods?filter=points',
+          },
+          {
+            label: link('有分集剧情', '/content/vods?filter=plot'),
+            key: '/content/vods?filter=plot',
+          },
         ],
       },
     ],
@@ -173,7 +190,10 @@ const menuOptions: MenuOption[] = [
         key: '/security',
         children: [
           { label: link('API Key 管理', '/security/api-keys'), key: '/security/api-keys' },
-          { label: link('会话 Token 配置', '/security/session-token'), key: '/security/session-token' },
+          {
+            label: link('会话 Token 配置', '/security/session-token'),
+            key: '/security/session-token',
+          },
         ],
       },
     ],
@@ -209,9 +229,7 @@ const menuOptions: MenuOption[] = [
     label: '资讯',
     key: '/article',
     icon: renderIcon(FileTextOutlined),
-    children: [
-      { label: link('资讯管理', '/content/articles'), key: '/content/articles' },
-    ],
+    children: [{ label: link('资讯管理', '/content/articles'), key: '/content/articles' }],
   },
   {
     label: '会员',
@@ -228,9 +246,7 @@ const menuOptions: MenuOption[] = [
     label: '工具',
     key: '/tools',
     icon: renderIcon(ToolOutlined),
-    children: [
-      { label: link('海报搜索', '/tools/poster'), key: '/tools/poster' },
-    ],
+    children: [{ label: link('海报搜索', '/tools/poster'), key: '/tools/poster' }],
   },
 ];
 

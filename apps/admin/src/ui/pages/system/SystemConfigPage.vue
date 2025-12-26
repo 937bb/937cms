@@ -18,10 +18,18 @@
           <UploadInput v-model="model.siteFavicon" dir="icon" accept="image/*,.ico" />
         </n-form-item>
         <n-form-item label="搜索占位词">
-          <n-input v-model:value="model.searchPlaceholder" placeholder="搜索电影、电视剧、综艺、动漫" />
+          <n-input
+            v-model:value="model.searchPlaceholder"
+            placeholder="搜索电影、电视剧、综艺、动漫"
+          />
         </n-form-item>
         <n-form-item label="热门搜索词">
-          <n-input v-model:value="model.searchHot" type="textarea" :rows="2" placeholder="庆余年,误杀,..." />
+          <n-input
+            v-model:value="model.searchHot"
+            type="textarea"
+            :rows="2"
+            placeholder="庆余年,误杀,..."
+          />
           <template #feedback>多个关键词用英文逗号分隔</template>
         </n-form-item>
         <n-form-item label="站点关键词">

@@ -89,6 +89,9 @@ async function bootstrap() {
   const dataDir = path.resolve(env.CMS_DATA_DIR || path.join(process.cwd(), 'data'));
   app.use('/uploads', express.static(path.join(dataDir, 'uploads')));
 
+  // 提供主题文件服务
+  app.use('/themes', express.static(path.join(dataDir, 'themes')));
+
   // 提供管理后台（已构建的前端）。API 路由继续使用 `/admin/*`。
   // 后台挂载在 `/console/*` 以避免与 API 路径冲突。
   try {

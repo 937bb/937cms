@@ -6,9 +6,17 @@
         <n-tab-pane name="tables" tab="数据表">
           <n-space style="margin-bottom: 12px">
             <n-button :loading="loadingTables" @click="loadTables">刷新</n-button>
-            <n-button type="warning" :loading="optimizing" @click="optimizeAll">优化所有表</n-button>
+            <n-button type="warning" :loading="optimizing" @click="optimizeAll"
+              >优化所有表</n-button
+            >
           </n-space>
-          <n-data-table :columns="tableColumns" :data="tables" :loading="loadingTables" :bordered="false" size="small" />
+          <n-data-table
+            :columns="tableColumns"
+            :data="tables"
+            :loading="loadingTables"
+            :bordered="false"
+            size="small"
+          />
         </n-tab-pane>
 
         <!-- 批量替换 -->
@@ -18,10 +26,19 @@
           </n-alert>
           <n-form label-placement="left" label-width="100">
             <n-form-item label="选择表">
-              <n-select v-model:value="replaceForm.table" :options="tableOptions" placeholder="选择要操作的表" />
+              <n-select
+                v-model:value="replaceForm.table"
+                :options="tableOptions"
+                placeholder="选择要操作的表"
+              />
             </n-form-item>
             <n-form-item label="选择字段">
-              <n-select v-model:value="replaceForm.field" :options="fieldOptions" placeholder="选择要替换的字段" :disabled="!replaceForm.table" />
+              <n-select
+                v-model:value="replaceForm.field"
+                :options="fieldOptions"
+                placeholder="选择要替换的字段"
+                :disabled="!replaceForm.table"
+              />
             </n-form-item>
             <n-form-item label="搜索内容">
               <n-input v-model:value="replaceForm.search" placeholder="要搜索的内容" />
@@ -54,7 +71,10 @@
             <n-button type="primary" :loading="querying" @click="doQuery">执行查询</n-button>
           </n-space>
           <div v-if="queryResult">
-            <n-text depth="3">查询耗时: {{ queryResult.duration }}ms，返回 {{ queryResult.rowCount }} 条记录</n-text>
+            <n-text depth="3"
+              >查询耗时: {{ queryResult.duration }}ms，返回
+              {{ queryResult.rowCount }} 条记录</n-text
+            >
             <n-data-table
               v-if="queryResult.rows.length"
               :columns="queryColumns"
@@ -90,7 +110,8 @@
           </n-space>
           <div v-if="executeResult">
             <n-text>执行耗时: {{ executeResult.duration }}ms</n-text><br />
-            <n-text>影响行数: {{ executeResult.affectedRows }}</n-text><br />
+            <n-text>影响行数: {{ executeResult.affectedRows }}</n-text
+            ><br />
             <n-text v-if="executeResult.insertId">插入 ID: {{ executeResult.insertId }}</n-text>
           </div>
         </n-tab-pane>
@@ -185,8 +206,16 @@ const tableColumns: DataTableColumns<TableInfo> = [
     width: 150,
     render: (row) =>
       h('div', { style: 'display:flex;gap:8px' }, [
-        h(NButton, { size: 'tiny', tertiary: true, onClick: () => optimizeTable(row.name) }, { default: () => '优化' }),
-        h(NButton, { size: 'tiny', tertiary: true, onClick: () => repairTable(row.name) }, { default: () => '修复' }),
+        h(
+          NButton,
+          { size: 'tiny', tertiary: true, onClick: () => optimizeTable(row.name) },
+          { default: () => '优化' }
+        ),
+        h(
+          NButton,
+          { size: 'tiny', tertiary: true, onClick: () => repairTable(row.name) },
+          { default: () => '修复' }
+        ),
       ]),
   },
 ];
@@ -198,18 +227,24 @@ const fieldOptions = ref<{ label: string; value: string }[]>([]);
 
 const tableOptions = computed(() => tables.value.map((t) => ({ label: t.name, value: t.name })));
 
-watch(() => replaceForm.table, async (table) => {
-  if (!table) {
-    fieldOptions.value = [];
-    return;
+watch(
+  () => replaceForm.table,
+  async (table) => {
+    if (!table) {
+      fieldOptions.value = [];
+      return;
+    }
+    try {
+      const res = await http.get('/admin/database/describe', { params: { table } });
+      fieldOptions.value = (res.data?.columns || []).map((c: any) => ({
+        label: c.Field,
+        value: c.Field,
+      }));
+    } catch {
+      fieldOptions.value = [];
+    }
   }
-  try {
-    const res = await http.get('/admin/database/describe', { params: { table } });
-    fieldOptions.value = (res.data?.columns || []).map((c: any) => ({ label: c.Field, value: c.Field }));
-  } catch {
-    fieldOptions.value = [];
-  }
-});
+);
 
 async function doReplace() {
   if (!replaceForm.table || !replaceForm.field || !replaceForm.search) {
@@ -258,7 +293,12 @@ async function doQuery() {
 // SQL 执行
 const executeSql = ref('');
 const executing = ref(false);
-const executeResult = ref<{ affectedRows: number; changedRows: number; insertId: number; duration: number } | null>(null);
+const executeResult = ref<{
+  affectedRows: number;
+  changedRows: number;
+  insertId: number;
+  duration: number;
+} | null>(null);
 
 async function doExecute() {
   if (!executeSql.value.trim()) {
@@ -268,7 +308,10 @@ async function doExecute() {
   executing.value = true;
   executeResult.value = null;
   try {
-    const res = await http.post('/admin/database/execute', { sql: executeSql.value, confirmed: true });
+    const res = await http.post('/admin/database/execute', {
+      sql: executeSql.value,
+      confirmed: true,
+    });
     executeResult.value = res.data;
     msg.success('执行成功');
   } catch (e: any) {

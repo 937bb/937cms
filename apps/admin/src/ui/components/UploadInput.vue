@@ -2,7 +2,13 @@
   <n-space vertical size="small" style="width: 100%">
     <n-space align="center" style="width: 100%">
       <n-input v-model:value="innerValue" :placeholder="placeholder" style="flex: 1" />
-      <input ref="fileInputRef" type="file" :accept="accept" style="display: none" @change="onChooseFile" />
+      <input
+        ref="fileInputRef"
+        type="file"
+        :accept="accept"
+        style="display: none"
+        @change="onChooseFile"
+      />
       <n-button secondary :loading="uploading" @click="openFilePicker">上传</n-button>
       <n-button tertiary :disabled="uploading" @click="clear">清空</n-button>
     </n-space>
@@ -34,7 +40,7 @@ const props = withDefaults(
     accept: 'image/*',
     placeholder: '请输入图片 URL 或上传文件',
     showPreview: true,
-  },
+  }
 );
 
 const emit = defineEmits<{
@@ -50,7 +56,7 @@ watch(
   () => props.modelValue,
   (v) => {
     innerValue.value = v || '';
-  },
+  }
 );
 watch(innerValue, (v) => emit('update:modelValue', v || ''));
 
@@ -101,4 +107,3 @@ async function onChooseFile(e: Event) {
   background: rgba(0, 0, 0, 0.02);
 }
 </style>
-

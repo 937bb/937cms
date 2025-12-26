@@ -2,8 +2,19 @@
   <n-space vertical size="large">
     <n-card title="附件管理">
       <n-space align="center" wrap style="margin-bottom: 12px">
-        <n-input v-model:value="filters.keyword" placeholder="搜索文件名" style="width: 200px" clearable />
-        <n-select v-model:value="filters.module" :options="moduleOptions" clearable placeholder="模块" style="width: 120px" />
+        <n-input
+          v-model:value="filters.keyword"
+          placeholder="搜索文件名"
+          style="width: 200px"
+          clearable
+        />
+        <n-select
+          v-model:value="filters.module"
+          :options="moduleOptions"
+          clearable
+          placeholder="模块"
+          style="width: 120px"
+        />
         <n-button secondary :loading="loading" @click="load">查询</n-button>
       </n-space>
 
@@ -73,15 +84,27 @@ const pagination = computed<PaginationProps>(() => ({
   itemCount: total.value,
   showSizePicker: true,
   pageSizes: [10, 20, 50],
-  onUpdatePage: (p: number) => { page.value = p; load(); },
-  onUpdatePageSize: (s: number) => { pageSize.value = s; page.value = 1; load(); },
+  onUpdatePage: (p: number) => {
+    page.value = p;
+    load();
+  },
+  onUpdatePageSize: (s: number) => {
+    pageSize.value = s;
+    page.value = 1;
+    load();
+  },
 }));
 
 async function load() {
   loading.value = true;
   try {
     const res = await http.get('/admin/attachments', {
-      params: { page: page.value, pageSize: pageSize.value, keyword: filters.keyword || undefined, module: filters.module || undefined },
+      params: {
+        page: page.value,
+        pageSize: pageSize.value,
+        keyword: filters.keyword || undefined,
+        module: filters.module || undefined,
+      },
     });
     items.value = res.data?.items || [];
     total.value = Number(res.data?.total || 0);
@@ -102,7 +125,9 @@ async function remove(id: number) {
   }
 }
 
-function handleCheck(keys: DataTableRowKey[]) { selectedIds.value = keys as number[]; }
+function handleCheck(keys: DataTableRowKey[]) {
+  selectedIds.value = keys as number[];
+}
 
 async function batchDelete() {
   if (!selectedIds.value.length) return;
@@ -110,7 +135,9 @@ async function batchDelete() {
     await http.post('/admin/attachments/batch-delete', { ids: selectedIds.value });
     msg.success('批量删除成功');
     await load();
-  } catch (e: any) { msg.error(String(e?.response?.data?.message || e?.message || '操作失败')); }
+  } catch (e: any) {
+    msg.error(String(e?.response?.data?.message || e?.message || '操作失败'));
+  }
 }
 
 function formatSize(bytes: number) {
@@ -138,13 +165,24 @@ const columns: DataTableColumns<AttachmentRow> = [
     width: 120,
     render: (row) =>
       h('div', { style: 'display:flex; gap:8px;' }, [
-        h(NPopconfirm, { onPositiveClick: () => remove(row.id) }, {
-          trigger: () => h(NButton, { size: 'small', tertiary: true, type: 'error' }, { default: () => '删除' }),
-          default: () => '确认删除？',
-        }),
+        h(
+          NPopconfirm,
+          { onPositiveClick: () => remove(row.id) },
+          {
+            trigger: () =>
+              h(
+                NButton,
+                { size: 'small', tertiary: true, type: 'error' },
+                { default: () => '删除' }
+              ),
+            default: () => '确认删除？',
+          }
+        ),
       ]),
   },
 ];
 
-onMounted(() => { load(); });
+onMounted(() => {
+  load();
+});
 </script>

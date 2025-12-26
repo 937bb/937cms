@@ -44,11 +44,22 @@
     </n-card>
 
     <!-- 新增/编辑弹窗 -->
-    <n-modal v-model:show="showModal" preset="card" :title="form._editing ? '编辑播放器' : '新增播放器'" style="max-width: 800px; width: 100%">
+    <n-modal
+      v-model:show="showModal"
+      preset="card"
+      :title="form._editing ? '编辑播放器' : '新增播放器'"
+      style="max-width: 800px; width: 100%"
+    >
       <n-form :model="form" label-placement="left" label-width="140">
         <n-form-item label="播放器编码" required>
-          <n-input v-model:value="form.from_key" :disabled="!!form._editing" placeholder="例如：ckm3u8 / dbm3u8 / qq" />
-          <template #feedback>对应采集资源的播放来源标识，用于匹配播放源。只能包含字母、数字、下划线。</template>
+          <n-input
+            v-model:value="form.from_key"
+            :disabled="!!form._editing"
+            placeholder="例如：ckm3u8 / dbm3u8 / qq"
+          />
+          <template #feedback
+            >对应采集资源的播放来源标识，用于匹配播放源。只能包含字母、数字、下划线。</template
+          >
         </n-form-item>
         <n-form-item label="显示名称">
           <n-input v-model:value="form.display_name" placeholder="例如：CK资源 / 腾讯视频" />
@@ -69,7 +80,10 @@
           </template>
         </n-form-item>
         <n-form-item v-if="Number(form.parse_mode) === 1" label="解析地址">
-          <n-input v-model:value="form.parse_url" placeholder="例如：https://jx.example.com/?url=" />
+          <n-input
+            v-model:value="form.parse_url"
+            placeholder="例如：https://jx.example.com/?url="
+          />
           <template #feedback>解析接口地址，视频地址会拼接在后面</template>
         </n-form-item>
         <n-form-item label="打开方式">
@@ -94,17 +108,37 @@
     </n-modal>
 
     <!-- 导入弹窗 -->
-    <n-modal v-model:show="showImportModal" preset="card" title="导入播放器配置" style="max-width: 600px; width: 100%">
+    <n-modal
+      v-model:show="showImportModal"
+      preset="card"
+      title="导入播放器配置"
+      style="max-width: 600px; width: 100%"
+    >
       <div
-        style="border: 2px dashed #d9d9d9; border-radius: 8px; padding: 24px; text-align: center; cursor: pointer; transition: border-color 0.2s"
+        style="
+          border: 2px dashed #d9d9d9;
+          border-radius: 8px;
+          padding: 24px;
+          text-align: center;
+          cursor: pointer;
+          transition: border-color 0.2s;
+        "
         @click="($refs.fileInput as HTMLInputElement)?.click()"
         @dragover.prevent="$event.currentTarget.style.borderColor = '#18a058'"
         @dragleave="$event.currentTarget.style.borderColor = '#d9d9d9'"
         @drop.prevent="handleFileDrop"
       >
-        <input ref="fileInput" type="file" accept=".txt,.json" style="display: none" @change="handleFileInput" />
+        <input
+          ref="fileInput"
+          type="file"
+          accept=".txt,.json"
+          style="display: none"
+          @change="handleFileInput"
+        />
         <n-icon size="48" :depth="3">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z" />
+          </svg>
         </n-icon>
         <p style="margin: 8px 0 0; color: #666">点击选择文件 或 拖拽文件到此处</p>
         <p style="margin: 4px 0 0; color: #999; font-size: 12px">支持 .txt 或 .json 格式</p>
@@ -428,22 +462,31 @@ const columns: DataTableColumns<PlayerItem> = [
     key: 'actions',
     width: 220,
     render: (row) =>
-      h(
-        'div',
-        { style: 'display:flex; gap:8px;' },
-        [
-          h(NButton, { size: 'small', tertiary: true, onClick: () => openEdit(row) }, { default: () => '编辑' }),
-          h(NButton, { size: 'small', tertiary: true, onClick: () => exportOne(row.from_key) }, { default: () => '导出' }),
-          h(
-            NPopconfirm,
-            { onPositiveClick: () => remove(row.from_key) },
-            {
-              trigger: () => h(NButton, { size: 'small', tertiary: true, type: 'error' }, { default: () => '删除' }),
-              default: () => '确认删除该播放器？',
-            },
-          ),
-        ],
-      ),
+      h('div', { style: 'display:flex; gap:8px;' }, [
+        h(
+          NButton,
+          { size: 'small', tertiary: true, onClick: () => openEdit(row) },
+          { default: () => '编辑' }
+        ),
+        h(
+          NButton,
+          { size: 'small', tertiary: true, onClick: () => exportOne(row.from_key) },
+          { default: () => '导出' }
+        ),
+        h(
+          NPopconfirm,
+          { onPositiveClick: () => remove(row.from_key) },
+          {
+            trigger: () =>
+              h(
+                NButton,
+                { size: 'small', tertiary: true, type: 'error' },
+                { default: () => '删除' }
+              ),
+            default: () => '确认删除该播放器？',
+          }
+        ),
+      ]),
   },
 ];
 

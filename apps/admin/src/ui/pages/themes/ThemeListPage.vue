@@ -5,7 +5,12 @@
         <n-text depth="3">模板开发者可在 themes/ 目录下创建配置页面</n-text>
       </template>
 
-      <n-data-table :columns="columns" :data="list" :loading="loading" :row-key="(row: any) => row.id" />
+      <n-data-table
+        :columns="columns"
+        :data="list"
+        :loading="loading"
+        :row-key="(row: any) => row.id"
+      />
     </n-card>
   </n-space>
 </template>
@@ -43,7 +48,11 @@ const columns: DataTableColumns<any> = [
       h(NSpace, {}, () => [
         h(
           NButton,
-          { size: 'small', type: 'primary', onClick: () => router.push(`/themes/${row.theme_name}`) },
+          {
+            size: 'small',
+            type: 'primary',
+            onClick: () => router.push(`/themes/${row.theme_name}`),
+          },
           () => '配置'
         ),
       ]),

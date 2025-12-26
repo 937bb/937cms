@@ -11,22 +11,39 @@
             <n-form label-placement="left" label-width="140">
               <n-divider title-placement="left">基础信息</n-divider>
               <n-form-item label="LOGO(浅色)">
-                <UploadInput v-model="config.logoLight" dir="theme" placeholder="留空使用系统配置" />
+                <UploadInput
+                  v-model="config.logoLight"
+                  dir="theme"
+                  placeholder="留空使用系统配置"
+                />
               </n-form-item>
               <n-form-item label="LOGO(深色)">
                 <UploadInput v-model="config.logoDark" dir="theme" placeholder="留空使用系统配置" />
               </n-form-item>
               <n-form-item label="Favicon">
-                <UploadInput v-model="config.favicon" dir="icon" accept="image/*,.ico" placeholder="留空使用 /favicon.ico" />
+                <UploadInput
+                  v-model="config.favicon"
+                  dir="icon"
+                  accept="image/*,.ico"
+                  placeholder="留空使用 /favicon.ico"
+                />
               </n-form-item>
               <n-form-item label="加载占位图">
-                <UploadInput v-model="config.loadingPic" dir="theme" accept="image/*" placeholder="/mxpro/images/load.gif" />
+                <UploadInput
+                  v-model="config.loadingPic"
+                  dir="theme"
+                  accept="image/*"
+                  placeholder="/mxpro/images/load.gif"
+                />
               </n-form-item>
               <n-form-item label="搜索占位词">
                 <n-input v-model:value="config.searchPlaceholder" placeholder="留空使用系统配置" />
               </n-form-item>
               <n-form-item label="页脚后缀">
-                <n-input v-model:value="config.footerSuffix" placeholder="显示在站点名称后面的文字（可选）" />
+                <n-input
+                  v-model:value="config.footerSuffix"
+                  placeholder="显示在站点名称后面的文字（可选）"
+                />
               </n-form-item>
             </n-form>
           </NTabPane>
@@ -51,10 +68,12 @@
                   </n-form-item>
                   <n-form-item label="全局开关">
                     <n-space>
-                      <n-switch v-model:value="config.fixedGroupEnabled" /> <n-text>右下角浮动</n-text>
-                      <n-switch v-model:value="config.fixedGroupThemeToggle" /> <n-text>主题切换</n-text>
-                      <n-switch v-model:value="config.fixedGroupGbook" /> <n-text>留言</n-text>
-                      <n-switch v-model:value="config.fixedGroupRetop" /> <n-text>回到顶部</n-text>
+                      <n-switch v-model:value="config.fixedGroupEnabled" />
+                      <n-text>右下角浮动</n-text>
+                      <n-switch v-model:value="config.fixedGroupThemeToggle" />
+                      <n-text>主题切换</n-text> <n-switch v-model:value="config.fixedGroupGbook" />
+                      <n-text>留言</n-text> <n-switch v-model:value="config.fixedGroupRetop" />
+                      <n-text>回到顶部</n-text>
                     </n-space>
                   </n-form-item>
                   <n-form-item label="搜索提示校验">
@@ -70,13 +89,25 @@
                     <n-input v-model:value="config.navTypeIds" placeholder="parent 或 1,2,3" />
                   </n-form-item>
                   <n-form-item label="默认图标">
-                    <n-input v-model:value="config.navIconDefault" placeholder="icon-jl-o" style="width: 200px" />
+                    <n-input
+                      v-model:value="config.navIconDefault"
+                      placeholder="icon-jl-o"
+                      style="width: 200px"
+                    />
                   </n-form-item>
                   <n-form-item label="图标映射(1~7)">
                     <n-space vertical style="width: 100%">
                       <n-space v-for="i in 7" :key="i" align="center">
-                        <n-input-number v-model:value="config[`navNum${i}`]" :min="0" style="width: 120px" />
-                        <n-input v-model:value="config[`navIcon${i}`]" placeholder="icon-dy-o" style="width: 220px" />
+                        <n-input-number
+                          v-model:value="config[`navNum${i}`]"
+                          :min="0"
+                          style="width: 120px"
+                        />
+                        <n-input
+                          v-model:value="config[`navIcon${i}`]"
+                          placeholder="icon-dy-o"
+                          style="width: 220px"
+                        />
                         <n-text depth="3">typeId → icon</n-text>
                       </n-space>
                     </n-space>
@@ -90,25 +121,61 @@
                   <n-form-item label="自定义1">
                     <n-space align="center">
                       <n-switch v-model:value="config.navDiy1" />
-                      <n-input v-model:value="config.navDiy1Name" placeholder="名称" style="width: 160px" />
-                      <n-input v-model:value="config.navDiy1Url" placeholder="URL" style="width: 260px" />
-                      <n-input v-model:value="config.navDiy1Icon" placeholder="icon-diy" style="width: 160px" />
+                      <n-input
+                        v-model:value="config.navDiy1Name"
+                        placeholder="名称"
+                        style="width: 160px"
+                      />
+                      <n-input
+                        v-model:value="config.navDiy1Url"
+                        placeholder="URL"
+                        style="width: 260px"
+                      />
+                      <n-input
+                        v-model:value="config.navDiy1Icon"
+                        placeholder="icon-diy"
+                        style="width: 160px"
+                      />
                     </n-space>
                   </n-form-item>
                   <n-form-item label="自定义2">
                     <n-space align="center">
                       <n-switch v-model:value="config.navDiy2" />
-                      <n-input v-model:value="config.navDiy2Name" placeholder="名称" style="width: 160px" />
-                      <n-input v-model:value="config.navDiy2Url" placeholder="URL" style="width: 260px" />
-                      <n-input v-model:value="config.navDiy2Icon" placeholder="icon-diy" style="width: 160px" />
+                      <n-input
+                        v-model:value="config.navDiy2Name"
+                        placeholder="名称"
+                        style="width: 160px"
+                      />
+                      <n-input
+                        v-model:value="config.navDiy2Url"
+                        placeholder="URL"
+                        style="width: 260px"
+                      />
+                      <n-input
+                        v-model:value="config.navDiy2Icon"
+                        placeholder="icon-diy"
+                        style="width: 160px"
+                      />
                     </n-space>
                   </n-form-item>
                   <n-form-item label="APP 菜单">
                     <n-space align="center">
                       <n-switch v-model:value="config.navApp" />
-                      <n-input v-model:value="config.navAppName" placeholder="APP" style="width: 160px" />
-                      <n-input v-model:value="config.navAppUrl" placeholder="/app" style="width: 260px" />
-                      <n-input v-model:value="config.navAppIcon" placeholder="icon-phone-o" style="width: 160px" />
+                      <n-input
+                        v-model:value="config.navAppName"
+                        placeholder="APP"
+                        style="width: 160px"
+                      />
+                      <n-input
+                        v-model:value="config.navAppUrl"
+                        placeholder="/app"
+                        style="width: 260px"
+                      />
+                      <n-input
+                        v-model:value="config.navAppIcon"
+                        placeholder="icon-phone-o"
+                        style="width: 160px"
+                      />
                     </n-space>
                   </n-form-item>
                   <n-form-item label="快捷入口">
@@ -136,14 +203,22 @@
                     <n-text depth="3" style="margin-left: 12px">幻灯片右侧显示竖图海报</n-text>
                   </n-form-item>
                   <n-form-item label="推荐等级">
-                    <n-input v-model:value="config.slideLevel" placeholder="0 或 1,2,3" style="width: 200px" />
+                    <n-input
+                      v-model:value="config.slideLevel"
+                      placeholder="0 或 1,2,3"
+                      style="width: 200px"
+                    />
                     <n-text depth="3" style="margin-left: 12px">支持多选：1,2,3；0=不限制</n-text>
                   </n-form-item>
                   <n-form-item label="展示数量">
                     <n-input-number v-model:value="config.slideCount" :min="1" :max="20" />
                   </n-form-item>
                   <n-form-item label="排序依据">
-                    <n-input v-model:value="config.slideBy" placeholder="time" style="width: 120px" />
+                    <n-input
+                      v-model:value="config.slideBy"
+                      placeholder="time"
+                      style="width: 120px"
+                    />
                     <n-text depth="3" style="margin-left: 12px">time/hits/score</n-text>
                   </n-form-item>
                   <n-form-item label="排列顺序">
@@ -188,7 +263,11 @@
                     <n-input v-model:value="config.hotTitle" style="width: 200px" />
                   </n-form-item>
                   <n-form-item label="推荐等级">
-                    <n-input v-model:value="config.hotLevel" placeholder="0 或 1,2,3" style="width: 200px" />
+                    <n-input
+                      v-model:value="config.hotLevel"
+                      placeholder="0 或 1,2,3"
+                      style="width: 200px"
+                    />
                     <n-text depth="3" style="margin-left: 12px">支持多选：1,2,3；0=不限制</n-text>
                   </n-form-item>
                   <n-form-item label="视频数量">
@@ -204,17 +283,29 @@
                     <n-switch v-model:value="config.typeListEnabled" />
                   </n-form-item>
                   <n-form-item label="指定分类">
-                    <n-input v-model:value="config.typeListIds" style="width: 200px" placeholder="parent" />
+                    <n-input
+                      v-model:value="config.typeListIds"
+                      style="width: 200px"
+                      placeholder="parent"
+                    />
                     <n-text depth="3" style="margin-left: 12px">分类ID，多个用逗号分隔</n-text>
                   </n-form-item>
                   <n-form-item label="每分类数量">
                     <n-input-number v-model:value="config.typeListCount" :min="4" :max="30" />
                   </n-form-item>
                   <n-form-item label="排序依据">
-                    <n-input v-model:value="config.typeListBy" placeholder="time" style="width: 120px" />
+                    <n-input
+                      v-model:value="config.typeListBy"
+                      placeholder="time"
+                      style="width: 120px"
+                    />
                   </n-form-item>
                   <n-form-item label="年份筛选">
-                    <n-input v-model:value="config.typeListYear" placeholder="留空不限制" style="width: 200px" />
+                    <n-input
+                      v-model:value="config.typeListYear"
+                      placeholder="留空不限制"
+                      style="width: 200px"
+                    />
                   </n-form-item>
                   <n-form-item label="排列顺序">
                     <n-radio-group v-model:value="config.typeListOrder">
@@ -232,7 +323,11 @@
                     <n-switch v-model:value="config.rankEnabled" />
                   </n-form-item>
                   <n-form-item label="指定分类">
-                    <n-input v-model:value="config.rankIds" style="width: 200px" placeholder="parent" />
+                    <n-input
+                      v-model:value="config.rankIds"
+                      style="width: 200px"
+                      placeholder="parent"
+                    />
                   </n-form-item>
                   <n-form-item label="模块标题">
                     <n-input v-model:value="config.rankTitle" style="width: 200px" />
@@ -244,10 +339,18 @@
                     <n-input-number v-model:value="config.rankCount" :min="5" :max="20" />
                   </n-form-item>
                   <n-form-item label="排序依据">
-                    <n-input v-model:value="config.rankBy" placeholder="hits" style="width: 120px" />
+                    <n-input
+                      v-model:value="config.rankBy"
+                      placeholder="hits"
+                      style="width: 120px"
+                    />
                   </n-form-item>
                   <n-form-item label="年份筛选">
-                    <n-input v-model:value="config.rankYear" placeholder="留空不限制" style="width: 200px" />
+                    <n-input
+                      v-model:value="config.rankYear"
+                      placeholder="留空不限制"
+                      style="width: 200px"
+                    />
                   </n-form-item>
                   <n-form-item label="排列顺序">
                     <n-radio-group v-model:value="config.rankOrder">
@@ -282,7 +385,11 @@
                     <n-input v-model:value="config.relatedTitle" style="width: 200px" />
                   </n-form-item>
                   <n-form-item label="年份筛选">
-                    <n-input v-model:value="config.relatedYear" placeholder="留空不限制" style="width: 200px" />
+                    <n-input
+                      v-model:value="config.relatedYear"
+                      placeholder="留空不限制"
+                      style="width: 200px"
+                    />
                   </n-form-item>
                   <n-form-item label="视频数量">
                     <n-input-number v-model:value="config.relatedCount" :min="4" :max="30" />
@@ -355,13 +462,25 @@
                     <n-input-number v-model:value="config.categoryCount" :min="1" :max="30" />
                   </n-form-item>
                   <n-form-item label="推荐等级">
-                    <n-input v-model:value="config.categoryLevel" placeholder="0 或 1,2,3" style="width: 200px" />
+                    <n-input
+                      v-model:value="config.categoryLevel"
+                      placeholder="0 或 1,2,3"
+                      style="width: 200px"
+                    />
                   </n-form-item>
                   <n-form-item label="年份筛选">
-                    <n-input v-model:value="config.categoryYear" placeholder="留空不限制" style="width: 200px" />
+                    <n-input
+                      v-model:value="config.categoryYear"
+                      placeholder="留空不限制"
+                      style="width: 200px"
+                    />
                   </n-form-item>
                   <n-form-item label="排序依据">
-                    <n-input v-model:value="config.categoryBy" placeholder="time" style="width: 120px" />
+                    <n-input
+                      v-model:value="config.categoryBy"
+                      placeholder="time"
+                      style="width: 120px"
+                    />
                   </n-form-item>
 
                   <n-divider title-placement="left">分类页模块一</n-divider>
@@ -370,20 +489,40 @@
                   </n-form-item>
                   <n-form-item label="标题/副标题">
                     <n-space align="center">
-                      <n-input v-model:value="config.categoryMod1Title" placeholder="标题" style="width: 200px" />
-                      <n-input v-model:value="config.categoryMod1Subtitle" placeholder="副标题" style="width: 240px" />
+                      <n-input
+                        v-model:value="config.categoryMod1Title"
+                        placeholder="标题"
+                        style="width: 200px"
+                      />
+                      <n-input
+                        v-model:value="config.categoryMod1Subtitle"
+                        placeholder="副标题"
+                        style="width: 240px"
+                      />
                     </n-space>
                   </n-form-item>
                   <n-form-item label="排序/年份">
                     <n-space align="center">
-                      <n-input v-model:value="config.categoryMod1By" placeholder="time" style="width: 120px" />
-                      <n-input v-model:value="config.categoryMod1Year" placeholder="留空不限制" style="width: 200px" />
+                      <n-input
+                        v-model:value="config.categoryMod1By"
+                        placeholder="time"
+                        style="width: 120px"
+                      />
+                      <n-input
+                        v-model:value="config.categoryMod1Year"
+                        placeholder="留空不限制"
+                        style="width: 200px"
+                      />
                     </n-space>
                   </n-form-item>
                   <n-form-item label="数量/起始">
                     <n-space align="center">
                       <n-input-number v-model:value="config.categoryMod1Count" :min="1" :max="30" />
-                      <n-input-number v-model:value="config.categoryMod1Start" :min="1" :max="200" />
+                      <n-input-number
+                        v-model:value="config.categoryMod1Start"
+                        :min="1"
+                        :max="200"
+                      />
                     </n-space>
                   </n-form-item>
 
@@ -393,14 +532,26 @@
                   </n-form-item>
                   <n-form-item label="标题/副标题">
                     <n-space align="center">
-                      <n-input v-model:value="config.categoryMod2Title" placeholder="标题" style="width: 200px" />
-                      <n-input v-model:value="config.categoryMod2Subtitle" placeholder="副标题" style="width: 240px" />
+                      <n-input
+                        v-model:value="config.categoryMod2Title"
+                        placeholder="标题"
+                        style="width: 200px"
+                      />
+                      <n-input
+                        v-model:value="config.categoryMod2Subtitle"
+                        placeholder="副标题"
+                        style="width: 240px"
+                      />
                     </n-space>
                   </n-form-item>
                   <n-form-item label="数量/年份">
                     <n-space align="center">
                       <n-input-number v-model:value="config.categoryMod2Count" :min="1" :max="30" />
-                      <n-input v-model:value="config.categoryMod2Year" placeholder="留空不限制" style="width: 200px" />
+                      <n-input
+                        v-model:value="config.categoryMod2Year"
+                        placeholder="留空不限制"
+                        style="width: 200px"
+                      />
                     </n-space>
                   </n-form-item>
 
@@ -410,14 +561,30 @@
                   </n-form-item>
                   <n-form-item label="标题/副标题">
                     <n-space align="center">
-                      <n-input v-model:value="config.categoryMod3Title" placeholder="标题" style="width: 200px" />
-                      <n-input v-model:value="config.categoryMod3Subtitle" placeholder="副标题" style="width: 240px" />
+                      <n-input
+                        v-model:value="config.categoryMod3Title"
+                        placeholder="标题"
+                        style="width: 200px"
+                      />
+                      <n-input
+                        v-model:value="config.categoryMod3Subtitle"
+                        placeholder="副标题"
+                        style="width: 240px"
+                      />
                     </n-space>
                   </n-form-item>
                   <n-form-item label="排序/年份">
                     <n-space align="center">
-                      <n-input v-model:value="config.categoryMod3By" placeholder="time" style="width: 120px" />
-                      <n-input v-model:value="config.categoryMod3Year" placeholder="留空不限制" style="width: 200px" />
+                      <n-input
+                        v-model:value="config.categoryMod3By"
+                        placeholder="time"
+                        style="width: 120px"
+                      />
+                      <n-input
+                        v-model:value="config.categoryMod3Year"
+                        placeholder="留空不限制"
+                        style="width: 200px"
+                      />
                     </n-space>
                   </n-form-item>
                   <n-form-item label="数量">
@@ -431,9 +598,17 @@
                   <n-divider title-placement="left">列表页快捷页</n-divider>
                   <n-form-item label="今日更新">
                     <n-space align="center">
-                      <n-input v-model:value="config.todayTitle" placeholder="今日更新" style="width: 200px" />
+                      <n-input
+                        v-model:value="config.todayTitle"
+                        placeholder="今日更新"
+                        style="width: 200px"
+                      />
                       <n-input-number v-model:value="config.todayCount" :min="1" :max="200" />
-                      <n-input v-model:value="config.todayBy" placeholder="time" style="width: 120px" />
+                      <n-input
+                        v-model:value="config.todayBy"
+                        placeholder="time"
+                        style="width: 120px"
+                      />
                       <n-radio-group v-model:value="config.todayOrder">
                         <n-radio value="desc">倒序</n-radio>
                         <n-radio value="asc">正序</n-radio>
@@ -441,13 +616,25 @@
                     </n-space>
                   </n-form-item>
                   <n-form-item label="今日更新年份">
-                    <n-input v-model:value="config.todayYear" placeholder="留空不限制" style="width: 200px" />
+                    <n-input
+                      v-model:value="config.todayYear"
+                      placeholder="留空不限制"
+                      style="width: 200px"
+                    />
                   </n-form-item>
                   <n-form-item label="新片上线">
                     <n-space align="center">
-                      <n-input v-model:value="config.newTitle" placeholder="新片上线" style="width: 200px" />
+                      <n-input
+                        v-model:value="config.newTitle"
+                        placeholder="新片上线"
+                        style="width: 200px"
+                      />
                       <n-input-number v-model:value="config.newCount" :min="1" :max="200" />
-                      <n-input v-model:value="config.newBy" placeholder="time" style="width: 120px" />
+                      <n-input
+                        v-model:value="config.newBy"
+                        placeholder="time"
+                        style="width: 120px"
+                      />
                       <n-radio-group v-model:value="config.newOrder">
                         <n-radio value="desc">倒序</n-radio>
                         <n-radio value="asc">正序</n-radio>
@@ -455,15 +642,27 @@
                     </n-space>
                   </n-form-item>
                   <n-form-item label="新片上线年份">
-                    <n-input v-model:value="config.newYear" placeholder="留空不限制" style="width: 200px" />
+                    <n-input
+                      v-model:value="config.newYear"
+                      placeholder="留空不限制"
+                      style="width: 200px"
+                    />
                   </n-form-item>
 
                   <n-divider title-placement="left">热榜页面</n-divider>
                   <n-form-item label="最近热门">
                     <n-space align="center">
-                      <n-input v-model:value="config.hotPageTitle" placeholder="最近热门" style="width: 200px" />
+                      <n-input
+                        v-model:value="config.hotPageTitle"
+                        placeholder="最近热门"
+                        style="width: 200px"
+                      />
                       <n-input-number v-model:value="config.hotPageCount" :min="1" :max="200" />
-                      <n-input v-model:value="config.hotPageBy" placeholder="hits" style="width: 120px" />
+                      <n-input
+                        v-model:value="config.hotPageBy"
+                        placeholder="hits"
+                        style="width: 120px"
+                      />
                       <n-radio-group v-model:value="config.hotPageOrder">
                         <n-radio value="desc">倒序</n-radio>
                         <n-radio value="asc">正序</n-radio>
@@ -471,13 +670,25 @@
                     </n-space>
                   </n-form-item>
                   <n-form-item label="最近热门年份">
-                    <n-input v-model:value="config.hotPageYear" placeholder="留空不限制" style="width: 200px" />
+                    <n-input
+                      v-model:value="config.hotPageYear"
+                      placeholder="留空不限制"
+                      style="width: 200px"
+                    />
                   </n-form-item>
                   <n-form-item label="近期热门">
                     <n-space align="center">
-                      <n-input v-model:value="config.hotPage2Title" placeholder="近期热门" style="width: 200px" />
+                      <n-input
+                        v-model:value="config.hotPage2Title"
+                        placeholder="近期热门"
+                        style="width: 200px"
+                      />
                       <n-input-number v-model:value="config.hotPage2Count" :min="1" :max="200" />
-                      <n-input v-model:value="config.hotPage2By" placeholder="hits" style="width: 120px" />
+                      <n-input
+                        v-model:value="config.hotPage2By"
+                        placeholder="hits"
+                        style="width: 120px"
+                      />
                       <n-radio-group v-model:value="config.hotPage2Order">
                         <n-radio value="desc">倒序</n-radio>
                         <n-radio value="asc">正序</n-radio>
@@ -485,7 +696,11 @@
                     </n-space>
                   </n-form-item>
                   <n-form-item label="近期热门年份">
-                    <n-input v-model:value="config.hotPage2Year" placeholder="留空不限制" style="width: 200px" />
+                    <n-input
+                      v-model:value="config.hotPage2Year"
+                      placeholder="留空不限制"
+                      style="width: 200px"
+                    />
                   </n-form-item>
                 </n-form>
               </NTabPane>
@@ -525,10 +740,19 @@
                     <n-switch v-model:value="config.noticeEnabled" />
                   </n-form-item>
                   <n-form-item label="公告标题">
-                    <n-input v-model:value="config.noticeTitle" placeholder="网站公告" style="width: 300px" />
+                    <n-input
+                      v-model:value="config.noticeTitle"
+                      placeholder="网站公告"
+                      style="width: 300px"
+                    />
                   </n-form-item>
                   <n-form-item label="公告内容">
-                    <n-input v-model:value="config.noticeContent" type="textarea" :rows="3" placeholder="支持HTML，留空则不显示公告" />
+                    <n-input
+                      v-model:value="config.noticeContent"
+                      type="textarea"
+                      :rows="3"
+                      placeholder="支持HTML，留空则不显示公告"
+                    />
                   </n-form-item>
 
                   <n-divider title-placement="left">滚动公告</n-divider>
@@ -536,10 +760,18 @@
                     <n-switch v-model:value="config.scrollNoticeEnabled" />
                   </n-form-item>
                   <n-form-item label="滚动文字">
-                    <n-input v-model:value="config.scrollNoticeText" placeholder="滚动显示的公告文字" style="width: 400px" />
+                    <n-input
+                      v-model:value="config.scrollNoticeText"
+                      placeholder="滚动显示的公告文字"
+                      style="width: 400px"
+                    />
                   </n-form-item>
                   <n-form-item label="点击链接">
-                    <n-input v-model:value="config.scrollNoticeUrl" placeholder="点击公告跳转的URL（可选）" style="width: 400px" />
+                    <n-input
+                      v-model:value="config.scrollNoticeUrl"
+                      placeholder="点击公告跳转的URL（可选）"
+                      style="width: 400px"
+                    />
                   </n-form-item>
 
                   <n-divider title-placement="left">页脚自定义提示</n-divider>
@@ -547,7 +779,12 @@
                     <n-switch v-model:value="config.footerCustomEnabled" />
                   </n-form-item>
                   <n-form-item label="提示内容">
-                    <n-input v-model:value="config.footerCustomText" type="textarea" :rows="2" placeholder="支持HTML，显示在页脚版权上方" />
+                    <n-input
+                      v-model:value="config.footerCustomText"
+                      type="textarea"
+                      :rows="2"
+                      placeholder="支持HTML，显示在页脚版权上方"
+                    />
                   </n-form-item>
                 </n-form>
               </NTabPane>
@@ -569,10 +806,18 @@
                     <n-text depth="3" style="margin-left: 12px">检测到开发者工具时触发断点</n-text>
                   </n-form-item>
                   <n-form-item label="提示文案">
-                    <n-input v-model:value="config.blockTips" placeholder="你知道的太多了" style="width: 320px" />
+                    <n-input
+                      v-model:value="config.blockTips"
+                      placeholder="你知道的太多了"
+                      style="width: 320px"
+                    />
                   </n-form-item>
                   <n-form-item label="跳转地址">
-                    <n-input v-model:value="config.blockRedirectUrl" placeholder="检测到调试时跳转的URL（可选）" style="width: 320px" />
+                    <n-input
+                      v-model:value="config.blockRedirectUrl"
+                      placeholder="检测到调试时跳转的URL（可选）"
+                      style="width: 320px"
+                    />
                     <n-text depth="3" style="margin-left: 12px">填写后将跳转而非触发断点</n-text>
                   </n-form-item>
                 </n-form>
@@ -582,10 +827,20 @@
                 <n-form label-placement="left" label-width="140">
                   <n-divider title-placement="left">自定义样式/统计</n-divider>
                   <n-form-item label="自定义 CSS">
-                    <n-input v-model:value="config.customCss" type="textarea" :rows="3" placeholder="全站自定义 CSS（可选）" />
+                    <n-input
+                      v-model:value="config.customCss"
+                      type="textarea"
+                      :rows="3"
+                      placeholder="全站自定义 CSS（可选）"
+                    />
                   </n-form-item>
                   <n-form-item label="统计代码">
-                    <n-input v-model:value="config.statsCode" type="textarea" :rows="2" placeholder="统计/站点代码（可选）" />
+                    <n-input
+                      v-model:value="config.statsCode"
+                      type="textarea"
+                      :rows="2"
+                      placeholder="统计/站点代码（可选）"
+                    />
                   </n-form-item>
                 </n-form>
               </NTabPane>
@@ -596,22 +851,52 @@
             <n-form label-placement="left" label-width="140">
               <n-divider title-placement="left">广告代码（HTML）</n-divider>
               <n-form-item label="首页顶部广告">
-                <n-input v-model:value="config.adHomeTop" type="textarea" :rows="2" placeholder="HTML广告代码" />
+                <n-input
+                  v-model:value="config.adHomeTop"
+                  type="textarea"
+                  :rows="2"
+                  placeholder="HTML广告代码"
+                />
               </n-form-item>
               <n-form-item label="首页底部广告">
-                <n-input v-model:value="config.adHomeBottom" type="textarea" :rows="2" placeholder="HTML广告代码" />
+                <n-input
+                  v-model:value="config.adHomeBottom"
+                  type="textarea"
+                  :rows="2"
+                  placeholder="HTML广告代码"
+                />
               </n-form-item>
               <n-form-item label="详情页广告">
-                <n-input v-model:value="config.adDetail" type="textarea" :rows="2" placeholder="HTML广告代码" />
+                <n-input
+                  v-model:value="config.adDetail"
+                  type="textarea"
+                  :rows="2"
+                  placeholder="HTML广告代码"
+                />
               </n-form-item>
               <n-form-item label="播放页广告">
-                <n-input v-model:value="config.adPlayer" type="textarea" :rows="2" placeholder="HTML广告代码" />
+                <n-input
+                  v-model:value="config.adPlayer"
+                  type="textarea"
+                  :rows="2"
+                  placeholder="HTML广告代码"
+                />
               </n-form-item>
               <n-form-item label="搜索页广告">
-                <n-input v-model:value="config.adSearch" type="textarea" :rows="2" placeholder="HTML广告代码" />
+                <n-input
+                  v-model:value="config.adSearch"
+                  type="textarea"
+                  :rows="2"
+                  placeholder="HTML广告代码"
+                />
               </n-form-item>
               <n-form-item label="筛选页广告">
-                <n-input v-model:value="config.adScreen" type="textarea" :rows="2" placeholder="HTML广告代码" />
+                <n-input
+                  v-model:value="config.adScreen"
+                  type="textarea"
+                  :rows="2"
+                  placeholder="HTML广告代码"
+                />
               </n-form-item>
             </n-form>
           </NTabPane>

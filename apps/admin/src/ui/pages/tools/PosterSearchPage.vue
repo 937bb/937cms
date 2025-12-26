@@ -2,7 +2,8 @@
   <n-space vertical size="large">
     <n-card title="海报搜索">
       <n-alert type="info" :bordered="false" style="margin-bottom: 16px">
-        通过 TMDB 搜索电影/电视剧海报，点击复制按钮可复制海报链接。需要先在系统设置中配置 TMDB API Key。
+        通过 TMDB 搜索电影/电视剧海报，点击复制按钮可复制海报链接。需要先在系统设置中配置 TMDB API
+        Key。
       </n-alert>
 
       <n-space align="center" style="margin-bottom: 16px">
@@ -13,11 +14,7 @@
           clearable
           @keyup.enter="search()"
         />
-        <n-select
-          v-model:value="searchType"
-          :options="typeOptions"
-          style="width: 150px"
-        />
+        <n-select v-model:value="searchType" :options="typeOptions" style="width: 150px" />
         <n-button type="primary" :loading="searching" @click="search()">搜索</n-button>
       </n-space>
 
@@ -34,44 +31,78 @@
         <n-grid :cols="1" :x-gap="12" :y-gap="12">
           <template v-for="item in results" :key="item.id">
             <n-gi v-if="item.poster_urls?.length || item.backdrop_urls?.length">
-              <n-card size="small" hoverable style="position: relative; overflow: hidden; padding: 0">
-              <n-button size="tiny" style="position: absolute; top: 8px; right: 8px; z-index: 10" @click="openVideosModal(item)">
-                查找预告片
-              </n-button>
+              <n-card
+                size="small"
+                hoverable
+                style="position: relative; overflow: hidden; padding: 0"
+              >
+                <n-button
+                  size="tiny"
+                  style="position: absolute; top: 8px; right: 8px; z-index: 10"
+                  @click="openVideosModal(item)"
+                >
+                  查找预告片
+                </n-button>
 
-              <div style="padding: 12px">
-                <!-- 标题 -->
-                <n-ellipsis :line-clamp="1" :tooltip="{ width: 300 }">
-                  <strong style="font-size: 14px">{{ item.title }}</strong>
-                </n-ellipsis>
-                <n-text depth="3" style="font-size: 12px; display: block; margin-top: 3px">{{ item.release_date || '未知' }}</n-text>
+                <div style="padding: 12px">
+                  <!-- 标题 -->
+                  <n-ellipsis :line-clamp="1" :tooltip="{ width: 300 }">
+                    <strong style="font-size: 14px">{{ item.title }}</strong>
+                  </n-ellipsis>
+                  <n-text depth="3" style="font-size: 12px; display: block; margin-top: 3px">{{
+                    item.release_date || '未知'
+                  }}</n-text>
 
-                <!-- 海报和背景横向滚动 -->
-                <div style="overflow-x: auto; overflow-y: hidden; margin-top: 10px; height: 200px">
-                  <div style="display: flex; gap: 8px; height: 100%; min-width: min-content">
-                    <!-- 海报 -->
-                    <div v-for="(url, idx) in item.poster_urls?.slice(0, 6)" :key="`poster-${idx}`" style="flex: 0 0 60px">
-                      <div class="poster-thumb" @click="copyUrl(url, '海报')">
-                        <img :src="url" style="width: 100%; height: 100%; object-fit: cover" @error="(e: Event) => (e.target as HTMLImageElement).style.display = 'none'" />
-                        <div class="thumb-overlay">
-                          <n-button size="tiny" @click.stop="copyUrl(url, '海报')">复制</n-button>
+                  <!-- 海报和背景横向滚动 -->
+                  <div
+                    style="overflow-x: auto; overflow-y: hidden; margin-top: 10px; height: 200px"
+                  >
+                    <div style="display: flex; gap: 8px; height: 100%; min-width: min-content">
+                      <!-- 海报 -->
+                      <div
+                        v-for="(url, idx) in item.poster_urls?.slice(0, 6)"
+                        :key="`poster-${idx}`"
+                        style="flex: 0 0 60px"
+                      >
+                        <div class="poster-thumb" @click="copyUrl(url, '海报')">
+                          <img
+                            :src="url"
+                            style="width: 100%; height: 100%; object-fit: cover"
+                            @error="
+                              (e: Event) => ((e.target as HTMLImageElement).style.display = 'none')
+                            "
+                          />
+                          <div class="thumb-overlay">
+                            <n-button size="tiny" @click.stop="copyUrl(url, '海报')">复制</n-button>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <!-- 背景 -->
-                    <div v-for="(url, idx) in item.backdrop_urls?.slice(0, 5)" :key="`backdrop-${idx}`" style="flex: 0 0 280px">
-                      <div class="backdrop-thumb-fixed" @click="openBackdropSizeModal(url)">
-                        <img :src="url" style="width: 100%; height: 100%; object-fit: cover" @error="(e: Event) => (e.target as HTMLImageElement).style.display = 'none'" />
-                        <div class="thumb-overlay">
-                          <n-button size="tiny" @click.stop="openBackdropSizeModal(url)">复制</n-button>
+                      <!-- 背景 -->
+                      <div
+                        v-for="(url, idx) in item.backdrop_urls?.slice(0, 5)"
+                        :key="`backdrop-${idx}`"
+                        style="flex: 0 0 280px"
+                      >
+                        <div class="backdrop-thumb-fixed" @click="openBackdropSizeModal(url)">
+                          <img
+                            :src="url"
+                            style="width: 100%; height: 100%; object-fit: cover"
+                            @error="
+                              (e: Event) => ((e.target as HTMLImageElement).style.display = 'none')
+                            "
+                          />
+                          <div class="thumb-overlay">
+                            <n-button size="tiny" @click.stop="openBackdropSizeModal(url)"
+                              >复制</n-button
+                            >
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </n-card>
+              </n-card>
             </n-gi>
           </template>
         </n-grid>
@@ -83,7 +114,12 @@
     </n-card>
 
     <!-- 背景尺寸选择弹窗 -->
-    <n-modal v-model:show="showSizeModal" preset="card" title="选择背景尺寸" style="max-width: 400px">
+    <n-modal
+      v-model:show="showSizeModal"
+      preset="card"
+      title="选择背景尺寸"
+      style="max-width: 400px"
+    >
       <n-space vertical>
         <n-button
           v-for="opt in backdropSizeOptions"
@@ -97,19 +133,45 @@
     </n-modal>
 
     <!-- 预告片弹窗 -->
-    <n-modal v-model:show="showVideosModal" preset="card" title="预告片列表" style="max-width: 1200px">
+    <n-modal
+      v-model:show="showVideosModal"
+      preset="card"
+      title="预告片列表"
+      style="max-width: 1200px"
+    >
       <div v-if="!videosList.length" style="text-align: center; padding: 20px; color: #999">
         暂无预告片
       </div>
       <div v-else style="display: flex; flex-wrap: wrap; gap: 12px">
         <div v-for="v in videosList" :key="v.key" style="flex: 0 1 auto; min-width: 280px">
           <div style="margin-bottom: 6px">
-            <div style="font-weight: 500; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px">{{ v.name }}</div>
+            <div
+              style="
+                font-weight: 500;
+                margin-bottom: 2px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                font-size: 13px;
+              "
+            >
+              {{ v.name }}
+            </div>
             <div style="font-size: 11px; color: #999">{{ v.type }} · {{ v.site }}</div>
           </div>
-          <div style="width: 100%; height: 160px; margin-bottom: 6px; border-radius: 4px; overflow: hidden">
+          <div
+            style="
+              width: 100%;
+              height: 160px;
+              margin-bottom: 6px;
+              border-radius: 4px;
+              overflow: hidden;
+            "
+          >
             <iframe
-              :src="v.url.replace('watch?v=', 'embed/').replace('vimeo.com/', 'player.vimeo.com/video/')"
+              :src="
+                v.url.replace('watch?v=', 'embed/').replace('vimeo.com/', 'player.vimeo.com/video/')
+              "
               style="width: 100%; height: 100%; border: none"
               allow="autoplay; fullscreen; picture-in-picture"
             />
@@ -162,7 +224,9 @@ const showSizeModal = ref(false);
 const pendingBackdropPath = ref('');
 const showVideosModal = ref(false);
 const loadingVideos = ref(false);
-const videosList = ref<{ key: string; name: string; site: string; type: string; url: string }[]>([]);
+const videosList = ref<{ key: string; name: string; site: string; type: string; url: string }[]>(
+  []
+);
 
 const typeOptions = [
   { label: '全部', value: 'multi' },

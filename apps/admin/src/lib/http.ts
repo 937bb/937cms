@@ -10,7 +10,10 @@ function normalizePrefix(raw: unknown, fallback: string) {
   return withSlash.endsWith('/') ? withSlash.slice(0, -1) : withSlash;
 }
 
-const ADMIN_API_PREFIX = normalizePrefix((import.meta as any).env?.VITE_ADMIN_API_PREFIX, DEFAULT_ADMIN_PREFIX);
+const ADMIN_API_PREFIX = normalizePrefix(
+  (import.meta as any).env?.VITE_ADMIN_API_PREFIX,
+  DEFAULT_ADMIN_PREFIX
+);
 
 export function getToken(): string {
   return String(localStorage.getItem(TOKEN_KEY) || '');
@@ -58,5 +61,5 @@ http.interceptors.response.use(
       }
     }
     return Promise.reject(err);
-  },
+  }
 );

@@ -76,4 +76,3 @@ onMounted(() => {
   load().catch(() => void 0);
 });
 </script>
-

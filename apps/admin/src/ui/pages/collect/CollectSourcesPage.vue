@@ -11,7 +11,12 @@
       <n-data-table :columns="columns" :data="items" :bordered="false" :loading="loading" />
     </n-card>
 
-    <n-modal v-model:show="showModal" preset="card" title="采集源" style="max-width: 720px; width: 100%">
+    <n-modal
+      v-model:show="showModal"
+      preset="card"
+      title="采集源"
+      style="max-width: 720px; width: 100%"
+    >
       <n-form :model="form" label-placement="left" label-width="130">
         <n-form-item label="名称">
           <n-input v-model:value="form.name" placeholder="例如：XX 资源站" />
@@ -33,24 +38,50 @@
     </n-modal>
 
     <!-- 分类绑定弹窗 -->
-    <n-modal v-model:show="showBindModal" preset="card" title="分类绑定" style="max-width: 1600px; width: 98%">
+    <n-modal
+      v-model:show="showBindModal"
+      preset="card"
+      title="分类绑定"
+      style="max-width: 1600px; width: 98%"
+    >
       <n-space vertical size="large">
         <n-alert type="info" :bordered="false">
           勾选远程分类后，选择本地分类并点击"绑定选中项"进行批量绑定。或直接在表格中修改单条分类的绑定。
         </n-alert>
         <n-space align="center" wrap>
-          <n-button type="primary" :loading="fetchingRemote" @click="fetchRemoteTypes">刷新远程分类</n-button>
+          <n-button type="primary" :loading="fetchingRemote" @click="fetchRemoteTypes"
+            >刷新远程分类</n-button
+          >
           <n-divider vertical />
-          <n-checkbox v-model:checked="selectAll" @update:checked="toggleSelectAll">全选</n-checkbox>
+          <n-checkbox v-model:checked="selectAll" @update:checked="toggleSelectAll"
+            >全选</n-checkbox
+          >
           <span>已选 {{ selectedRemoteIds.length }} 项</span>
           <n-divider vertical />
           <span>绑定到：</span>
-          <n-select v-model:value="batchLocalType" :options="localTypeOptions" style="width: 220px" placeholder="选择本地分类" />
-          <n-button type="info" @click="applyBatchBindSelected" :disabled="!selectedRemoteIds.length">绑定选中项</n-button>
+          <n-select
+            v-model:value="batchLocalType"
+            :options="localTypeOptions"
+            style="width: 220px"
+            placeholder="选择本地分类"
+          />
+          <n-button
+            type="info"
+            @click="applyBatchBindSelected"
+            :disabled="!selectedRemoteIds.length"
+            >绑定选中项</n-button
+          >
           <n-divider vertical />
           <span>复制自：</span>
-          <n-select v-model:value="copyFromSourceId" :options="copySourceOptions" style="width: 220px" placeholder="选择采集源" />
-          <n-button type="warning" @click="copyBindingsFromSource" :disabled="!copyFromSourceId">一键复制</n-button>
+          <n-select
+            v-model:value="copyFromSourceId"
+            :options="copySourceOptions"
+            style="width: 220px"
+            placeholder="选择采集源"
+          />
+          <n-button type="warning" @click="copyBindingsFromSource" :disabled="!copyFromSourceId"
+            >一键复制</n-button
+          >
         </n-space>
         <n-data-table
           :columns="bindColumns"
@@ -235,8 +266,14 @@ async function fetchRemoteTypes() {
   fetchingRemote.value = true;
   try {
     // 先获取已有绑定
-    const bindRes = await http.get('/admin/collect/type-bind/list', { params: { source_id: currentSource.value.id } });
-    const bindings = (bindRes.data?.items || []) as Array<{ remote_type_id: number; remote_type_name: string; local_type_id: number }>;
+    const bindRes = await http.get('/admin/collect/type-bind/list', {
+      params: { source_id: currentSource.value.id },
+    });
+    const bindings = (bindRes.data?.items || []) as Array<{
+      remote_type_id: number;
+      remote_type_name: string;
+      local_type_id: number;
+    }>;
     const bindMap = new Map(bindings.map((b) => [b.remote_type_id, b.local_type_id]));
 
     // 获取远程分类
@@ -400,19 +437,27 @@ const bindColumns: DataTableColumns<RemoteType> = [
     key: 'local_type_id',
     width: 320,
     render: (row, index) =>
-      h('div', { style: `background-color: ${row.local_type_id === 0 ? '#fee' : 'transparent'}; padding: 4px; border-radius: 2px;` }, [
-        h(NSelect, {
-          value: row.local_type_id,
-          options: localTypeOptions.value,
-          style: 'width: 240px',
-          onUpdateValue: async (val: number) => {
-            remoteTypes.value[index].local_type_id = val;
-            // 直接保存单条绑定
-            await saveSingleBind(row.type_id, row.type_name, val);
-          },
-        }),
-        row.local_type_id === 0 ? h('span', { style: 'color: #f56a00; margin-left: 8px; font-size: 12px;' }, '未绑定') : null,
-      ]),
+      h(
+        'div',
+        {
+          style: `background-color: ${row.local_type_id === 0 ? '#fee' : 'transparent'}; padding: 4px; border-radius: 2px;`,
+        },
+        [
+          h(NSelect, {
+            value: row.local_type_id,
+            options: localTypeOptions.value,
+            style: 'width: 240px',
+            onUpdateValue: async (val: number) => {
+              remoteTypes.value[index].local_type_id = val;
+              // 直接保存单条绑定
+              await saveSingleBind(row.type_id, row.type_name, val);
+            },
+          }),
+          row.local_type_id === 0
+            ? h('span', { style: 'color: #f56a00; margin-left: 8px; font-size: 12px;' }, '未绑定')
+            : null,
+        ]
+      ),
   },
 ];
 
@@ -422,7 +467,12 @@ const columns: DataTableColumns<SourceItem> = [
   { title: 'ID', key: 'id', width: 80 },
   { title: '名称', key: 'name' },
   { title: '接口地址', key: 'base_url' },
-  { title: '类型', key: 'collect_type', width: 120, render: (row) => collectTypeMap[row.collect_type] || '未知' },
+  {
+    title: '类型',
+    key: 'collect_type',
+    width: 120,
+    render: (row) => collectTypeMap[row.collect_type] || '未知',
+  },
   {
     title: '状态',
     key: 'status',
@@ -434,31 +484,31 @@ const columns: DataTableColumns<SourceItem> = [
     key: 'actions',
     width: 260,
     render: (row) =>
-      h(
-        'div',
-        { style: 'display:flex; gap:8px;' },
-        [
-          h(
-            NButton,
-            { size: 'small', tertiary: true, type: 'info', onClick: () => openBindModal(row) },
-            { default: () => '分类绑定' },
-          ),
-          h(
-            NButton,
-            { size: 'small', tertiary: true, onClick: () => openEdit(row) },
-            { default: () => '编辑' },
-          ),
-          h(
-            NPopconfirm,
-            { onPositiveClick: () => remove(row.id) },
-            {
-              trigger: () =>
-                h(NButton, { size: 'small', tertiary: true, type: 'error' }, { default: () => '删除' }),
-              default: () => '确认删除该采集源？',
-            },
-          ),
-        ],
-      ),
+      h('div', { style: 'display:flex; gap:8px;' }, [
+        h(
+          NButton,
+          { size: 'small', tertiary: true, type: 'info', onClick: () => openBindModal(row) },
+          { default: () => '分类绑定' }
+        ),
+        h(
+          NButton,
+          { size: 'small', tertiary: true, onClick: () => openEdit(row) },
+          { default: () => '编辑' }
+        ),
+        h(
+          NPopconfirm,
+          { onPositiveClick: () => remove(row.id) },
+          {
+            trigger: () =>
+              h(
+                NButton,
+                { size: 'small', tertiary: true, type: 'error' },
+                { default: () => '删除' }
+              ),
+            default: () => '确认删除该采集源？',
+          }
+        ),
+      ]),
   },
 ];
 
@@ -466,4 +516,3 @@ onMounted(() => {
   load().catch(() => void 0);
 });
 </script>
-

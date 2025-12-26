@@ -61,3 +61,5 @@ apps/api/data/
 # OS temp files
 *.tmp
 *.bak
+*.zip
+/data/themes/

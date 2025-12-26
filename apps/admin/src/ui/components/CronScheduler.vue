@@ -21,7 +21,9 @@
     </n-space>
 
     <n-alert v-if="cronExpression" type="info" style="margin-top: 8px">
-      <div>Cron 表达式: <code>{{ cronExpression }}</code></div>
+      <div>
+        Cron 表达式: <code>{{ cronExpression }}</code>
+      </div>
       <div v-if="nextRun">下次执行: {{ nextRun }}</div>
     </n-alert>
   </n-space>
@@ -120,7 +122,12 @@ watch(
       const hour = parts.hour[0] || 0;
 
       // 检查是否为每小时 (小时为 *, 天为 *, 月份为 *, 工作日为 *)
-      if (parts.hour.length === 24 && parts.day.length === 31 && parts.month.length === 12 && parts.weekday.length === 7) {
+      if (
+        parts.hour.length === 24 &&
+        parts.day.length === 31 &&
+        parts.month.length === 12 &&
+        parts.weekday.length === 7
+      ) {
         period.value = 'hourly';
         minuteValue.value = minute;
       } else {
@@ -149,7 +156,7 @@ watch(
       customCron.value = newVal;
     }
   },
-  { immediate: true },
+  { immediate: true }
 );
 
 watch(cronExpression, (newVal) => {

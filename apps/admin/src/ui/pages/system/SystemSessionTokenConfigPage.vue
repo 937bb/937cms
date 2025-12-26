@@ -11,12 +11,8 @@
       </n-card>
 
       <n-space>
-        <n-button type="primary" :loading="saving" @click="handleSave">
-          保存配置
-        </n-button>
-        <n-button @click="handleReset">
-          重置
-        </n-button>
+        <n-button type="primary" :loading="saving" @click="handleSave"> 保存配置 </n-button>
+        <n-button @click="handleReset"> 重置 </n-button>
       </n-space>
 
       <n-card title="说明">
@@ -24,7 +20,8 @@
           <div>
             <strong>工作原理：</strong>
             <p>
-              Nuxt 服务端首次请求时，调用 /api/v1/auth/session-token 获取会话 Token，然后在所有 Public API 请求中携带此 Token。后端验证 Token 的有效性。
+              Nuxt 服务端首次请求时，调用 /api/v1/auth/session-token 获取会话 Token，然后在所有
+              Public API 请求中携带此 Token。后端验证 Token 的有效性。
             </p>
           </div>
           <div>
@@ -38,9 +35,7 @@
           </div>
           <div>
             <strong>关闭功能：</strong>
-            <p>
-              关闭此功能后，Public API 无限制访问（不推荐用于生产环境）
-            </p>
+            <p>关闭此功能后，Public API 无限制访问（不推荐用于生产环境）</p>
           </div>
         </n-space>
       </n-card>
@@ -49,52 +44,52 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { NCard, NSpace, NSwitch, NText, NButton, useMessage } from 'naive-ui'
-import { http } from '../../../lib/http'
+import { ref, onMounted } from 'vue';
+import { NCard, NSpace, NSwitch, NText, NButton, useMessage } from 'naive-ui';
+import { http } from '../../../lib/http';
 
-const message = useMessage()
+const message = useMessage();
 
 const config = ref({
   enabled: 0,
-})
+});
 
-const saving = ref(false)
+const saving = ref(false);
 
 const fetchConfig = async () => {
   try {
-    const response = await http.get('/admin/session-token-config')
-    const data = response.data?.data
+    const response = await http.get('/admin/session-token-config');
+    const data = response.data?.data;
     config.value = {
       enabled: data?.enabled ? true : false,
-    }
+    };
   } catch (error) {
-    message.error('获取配置失败')
+    message.error('获取配置失败');
   }
-}
+};
 
 const handleSave = async () => {
-  saving.value = true
+  saving.value = true;
   try {
     await http.post('/admin/session-token-config', {
       enabled: config.value.enabled ? 1 : 0,
-    })
-    message.success('配置保存成功')
-    await fetchConfig()
+    });
+    message.success('配置保存成功');
+    await fetchConfig();
   } catch (error) {
-    message.error('保存配置失败')
+    message.error('保存配置失败');
   } finally {
-    saving.value = false
+    saving.value = false;
   }
-}
+};
 
 const handleReset = async () => {
-  await fetchConfig()
-}
+  await fetchConfig();
+};
 
 onMounted(() => {
-  fetchConfig()
-})
+  fetchConfig();
+});
 </script>
 
 <style scoped>

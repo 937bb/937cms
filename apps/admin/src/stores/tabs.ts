@@ -30,7 +30,10 @@ export const useTabsStore = defineStore('tabs', () => {
   // 保存到 localStorage
   function save() {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ tabs: tabs.value, activeTab: activeTab.value }));
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ tabs: tabs.value, activeTab: activeTab.value })
+      );
     } catch {
       // 忽略
     }
@@ -75,7 +78,10 @@ export const useTabsStore = defineStore('tabs', () => {
       // 如果关闭的是活跃 Tab，切换到其他 Tab
       if (activeTab.value === closedKey) {
         if (tabs.value.length > 0) {
-          activeTab.value = getTabKey(tabs.value[Math.max(0, idx - 1)].path, tabs.value[Math.max(0, idx - 1)].query);
+          activeTab.value = getTabKey(
+            tabs.value[Math.max(0, idx - 1)].path,
+            tabs.value[Math.max(0, idx - 1)].query
+          );
         } else {
           activeTab.value = '';
         }

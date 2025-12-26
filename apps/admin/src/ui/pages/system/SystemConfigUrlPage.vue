@@ -2,7 +2,8 @@
   <n-space vertical size="large">
     <n-card title="URL 配置（预留）">
       <n-alert type="info" title="说明" style="margin-bottom: 12px">
-        当前项目是前后端分离（Nuxt），URL 规则/伪静态通常由前端路由与反向代理决定；这里先保留配置位，后续补齐。
+        当前项目是前后端分离（Nuxt），URL
+        规则/伪静态通常由前端路由与反向代理决定；这里先保留配置位，后续补齐。
       </n-alert>
       <n-form :model="model" label-placement="left" label-width="160" style="max-width: 760px">
         <n-form-item label="启用 URL 配置">
@@ -66,4 +67,3 @@ async function save() {
 
 onMounted(() => load().catch(() => void 0));
 </script>
-

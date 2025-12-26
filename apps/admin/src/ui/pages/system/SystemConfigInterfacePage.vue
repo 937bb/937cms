@@ -11,7 +11,9 @@
         <n-form-item label="TMDB API Key">
           <n-input v-model:value="model.tmdbApiKey" placeholder="用于海报搜索功能" />
           <template #feedback>
-            用于海报搜索功能。前往 <n-a href="https://www.themoviedb.org/settings/api" target="_blank">TMDB</n-a> 免费注册获取 API Key。
+            用于海报搜索功能。前往
+            <n-a href="https://www.themoviedb.org/settings/api" target="_blank">TMDB</n-a>
+            免费注册获取 API Key。
           </template>
         </n-form-item>
       </n-form>
@@ -66,4 +68,3 @@ onMounted(() => {
   load().catch(() => void 0);
 });
 </script>
-

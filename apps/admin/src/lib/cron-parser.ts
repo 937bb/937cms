@@ -8,7 +8,9 @@ export interface CronParts {
 
 export class CronParser {
   static parse(expression: string): CronParts {
-    const parts = String(expression || '').trim().split(/\s+/);
+    const parts = String(expression || '')
+      .trim()
+      .split(/\s+/);
     if (parts.length !== 5) {
       throw new Error('Invalid cron expression: must have 5 parts (minute hour day month weekday)');
     }
@@ -29,7 +31,8 @@ export class CronParser {
     for (const segment of part.split(',')) {
       if (segment.includes('-')) {
         const [start, end] = segment.split('-').map(Number);
-        if (!Number.isFinite(start) || !Number.isFinite(end)) throw new Error(`Invalid range: ${segment}`);
+        if (!Number.isFinite(start) || !Number.isFinite(end))
+          throw new Error(`Invalid range: ${segment}`);
         for (let i = Math.max(min, start); i <= Math.min(max, end); i++) values.push(i);
       } else if (segment.includes('/')) {
         const [range, step] = segment.split('/');

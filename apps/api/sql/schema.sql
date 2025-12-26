@@ -8,6 +8,8 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 -- 删除旧表（仅在初始化/重置时执行）
 -- 按依赖关系顺序删除，避免外键约束问题
+DROP TABLE IF EXISTS `bb_collect_template_field`;
+DROP TABLE IF EXISTS `bb_collect_template`;
 DROP TABLE IF EXISTS `bb_collect_type_bind`;
 DROP TABLE IF EXISTS `bb_collect_record`;
 DROP TABLE IF EXISTS `bb_collect_task`;
@@ -24,6 +26,7 @@ DROP TABLE IF EXISTS `bb_vod_source`;
 DROP TABLE IF EXISTS `bb_vod`;
 DROP TABLE IF EXISTS `bb_ulog`;
 DROP TABLE IF EXISTS `bb_theme_config`;
+DROP TABLE IF EXISTS `bb_theme`;
 DROP TABLE IF EXISTS `bb_server_group`;
 DROP TABLE IF EXISTS `bb_downloader`;
 DROP TABLE IF EXISTS `bb_gbook`;
@@ -714,6 +717,27 @@ CREATE TABLE IF NOT EXISTS `bb_server_group` (
   KEY `idx_sort` (`sort`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='服务器组';
 
+-- 主题表
+CREATE TABLE IF NOT EXISTS `bb_theme` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `theme_id` varchar(64) NOT NULL UNIQUE COMMENT '主题唯一标识',
+  `name` varchar(128) NOT NULL COMMENT '主题名称',
+  `version` varchar(32) NOT NULL COMMENT '主题版本',
+  `description` text COMMENT '主题描述',
+  `author` varchar(128) COMMENT '主题作者',
+  `homepage` varchar(255) COMMENT '主题主页',
+  `repository` varchar(255) COMMENT '主题仓库',
+  `config_schema` json NOT NULL COMMENT '配置字段定义 (JSON Schema)',
+  `status` tinyint unsigned NOT NULL DEFAULT 1 COMMENT '状态: 0=禁用, 1=启用',
+  `is_active` tinyint unsigned NOT NULL DEFAULT 0 COMMENT '是否激活: 0=否, 1=是',
+  `created_at` int unsigned NOT NULL DEFAULT 0,
+  `updated_at` int unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_theme_id` (`theme_id`),
+  KEY `idx_is_active` (`is_active`),
+  KEY `idx_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='主题表';
+
 -- 主题配置表
 CREATE TABLE IF NOT EXISTS `bb_theme_config` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
@@ -760,6 +784,33 @@ CREATE TABLE IF NOT EXISTS `bb_collect_task` (
   KEY `idx_source_id` (`source_id`),
   KEY `idx_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='采集任务';
+
+-- 采集模板表
+CREATE TABLE IF NOT EXISTS `bb_collect_template` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) NOT NULL COMMENT '模板名称',
+  `type` tinyint unsigned NOT NULL COMMENT '采集类型: 1=VOD, 2=Article, 3=Actor',
+  `description` text COMMENT '模板描述',
+  `config` json NOT NULL COMMENT '模板配置 (JSON)',
+  `status` tinyint unsigned NOT NULL DEFAULT 1 COMMENT '状态: 0=禁用, 1=启用',
+  `created_at` int unsigned NOT NULL DEFAULT 0,
+  `updated_at` int unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx_type_status` (`type`, `status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='采集模板表';
+
+-- 采集模板字段映射表
+CREATE TABLE IF NOT EXISTS `bb_collect_template_field` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `template_id` int unsigned NOT NULL,
+  `field_name` varchar(64) NOT NULL COMMENT '字段名',
+  `xpath` varchar(255) NOT NULL COMMENT 'XPath 表达式',
+  `regex` varchar(255) COMMENT '正则表达式',
+  `sort` int unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx_template_id` (`template_id`),
+  FOREIGN KEY (`template_id`) REFERENCES `bb_collect_template` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='采集模板字段映射表';
 
 -- 采集记录表
 CREATE TABLE IF NOT EXISTS `bb_collect_record` (

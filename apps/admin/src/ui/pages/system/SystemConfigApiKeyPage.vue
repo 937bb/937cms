@@ -3,9 +3,7 @@
     <n-space vertical :size="16">
       <n-space justify="space-between" align="center">
         <h2>API Key 管理</h2>
-        <n-button type="primary" @click="showCreateModal = true">
-          创建 API Key
-        </n-button>
+        <n-button type="primary" @click="showCreateModal = true"> 创建 API Key </n-button>
       </n-space>
 
       <n-data-table
@@ -29,10 +27,7 @@
     >
       <n-space vertical>
         <n-form-item label="名称">
-          <n-input
-            v-model:value="formData.name"
-            placeholder="输入 API Key 名称"
-          />
+          <n-input v-model:value="formData.name" placeholder="输入 API Key 名称" />
         </n-form-item>
         <n-form-item label="备注">
           <n-input
@@ -62,10 +57,7 @@
     >
       <n-space vertical>
         <n-form-item label="名称">
-          <n-input
-            v-model:value="editData.name"
-            placeholder="输入 API Key 名称"
-          />
+          <n-input v-model:value="editData.name" placeholder="输入 API Key 名称" />
         </n-form-item>
         <n-form-item label="备注">
           <n-input
@@ -86,7 +78,7 @@
             v-model:value="editData.enabled"
             :options="[
               { label: '启用', value: 1 },
-              { label: '禁用', value: 0 }
+              { label: '禁用', value: 0 },
             ]"
           />
         </n-form-item>
@@ -105,220 +97,242 @@
           请妥善保管此 Key，关闭此窗口后将无法再次查看完整的 Key。
         </n-alert>
         <n-form-item label="API Key">
-          <n-input
-            :value="viewKey"
-            type="password"
-            show-password-on="click"
-            readonly
-          />
+          <n-input :value="viewKey" type="password" show-password-on="click" readonly />
         </n-form-item>
-        <n-button type="primary" block @click="copyKey">
-          复制 Key
-        </n-button>
+        <n-button type="primary" block @click="copyKey"> 复制 Key </n-button>
       </n-space>
     </n-modal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, h } from 'vue'
-import { NButton, NSpace, NDataTable, NModal, NFormItem, NInput, NInputNumber, NSelect, NAlert, useMessage } from 'naive-ui'
-import { http } from '../../../lib/http'
+import { ref, computed, onMounted, h } from 'vue';
+import {
+  NButton,
+  NSpace,
+  NDataTable,
+  NModal,
+  NFormItem,
+  NInput,
+  NInputNumber,
+  NSelect,
+  NAlert,
+  useMessage,
+} from 'naive-ui';
+import { http } from '../../../lib/http';
 
-const message = useMessage()
+const message = useMessage();
 
 interface ApiKey {
-  id: number
-  name: string
-  key: string
-  keyDisplay?: string
-  remark?: string
-  ip_limit?: string
-  enabled: number
-  created_at: number
-  last_used_at?: number
+  id: number;
+  name: string;
+  key: string;
+  keyDisplay?: string;
+  remark?: string;
+  ip_limit?: string;
+  enabled: number;
+  created_at: number;
+  last_used_at?: number;
 }
 
-const loading = ref(false)
-const apiKeys = ref<ApiKey[]>([])
-const showCreateModal = ref(false)
-const showEditModal = ref(false)
-const showViewModal = ref(false)
-const viewKey = ref('')
-const editingId = ref<number | null>(null)
+const loading = ref(false);
+const apiKeys = ref<ApiKey[]>([]);
+const showCreateModal = ref(false);
+const showEditModal = ref(false);
+const showViewModal = ref(false);
+const viewKey = ref('');
+const editingId = ref<number | null>(null);
 
 const formData = ref({
   name: '',
   remark: '',
-  ip_limit: ''
-})
+  ip_limit: '',
+});
 
 const editData = ref({
   name: '',
   remark: '',
   ip_limit: '',
-  enabled: 1
-})
+  enabled: 1,
+});
 
 const pagination = {
-  pageSize: 10
-}
+  pageSize: 10,
+};
 
 const columns = computed(() => [
   {
     title: '名称',
     key: 'name',
-    width: 120
+    width: 120,
   },
   {
     title: 'API Key',
     key: 'keyDisplay',
     width: 150,
-    render: (row: ApiKey) => row.keyDisplay || row.key
+    render: (row: ApiKey) => row.keyDisplay || row.key,
   },
   {
     title: '备注',
     key: 'remark',
     width: 150,
-    render: (row: ApiKey) => row.remark || '-'
+    render: (row: ApiKey) => row.remark || '-',
   },
   {
     title: 'IP 限制',
     key: 'ip_limit',
     width: 150,
-    render: (row: ApiKey) => row.ip_limit || '无限制'
+    render: (row: ApiKey) => row.ip_limit || '无限制',
   },
   {
     title: '状态',
     key: 'enabled',
     width: 80,
-    render: (row: ApiKey) => row.enabled ? '启用' : '禁用'
+    render: (row: ApiKey) => (row.enabled ? '启用' : '禁用'),
   },
   {
     title: '创建时间',
     key: 'created_at',
     width: 150,
-    render: (row: ApiKey) => new Date(row.created_at * 1000).toLocaleString()
+    render: (row: ApiKey) => new Date(row.created_at * 1000).toLocaleString(),
   },
   {
     title: '最后使用',
     key: 'last_used_at',
     width: 150,
-    render: (row: ApiKey) => row.last_used_at ? new Date(row.last_used_at * 1000).toLocaleString() : '未使用'
+    render: (row: ApiKey) =>
+      row.last_used_at ? new Date(row.last_used_at * 1000).toLocaleString() : '未使用',
   },
   {
     title: '操作',
     key: 'actions',
     width: 200,
-    render: (row: ApiKey) => h(NSpace, { size: 'small' }, {
-      default: () => [
-        h(NButton, {
-          text: true,
-          type: 'primary',
-          onClick: () => handleView(row)
-        }, { default: () => '查看' }),
-        h(NButton, {
-          text: true,
-          type: 'primary',
-          onClick: () => handleEdit(row)
-        }, { default: () => '编辑' }),
-        h(NButton, {
-          text: true,
-          type: 'error',
-          onClick: () => handleDelete(row.id)
-        }, { default: () => '删除' })
-      ]
-    })
-  }
-])
+    render: (row: ApiKey) =>
+      h(
+        NSpace,
+        { size: 'small' },
+        {
+          default: () => [
+            h(
+              NButton,
+              {
+                text: true,
+                type: 'primary',
+                onClick: () => handleView(row),
+              },
+              { default: () => '查看' }
+            ),
+            h(
+              NButton,
+              {
+                text: true,
+                type: 'primary',
+                onClick: () => handleEdit(row),
+              },
+              { default: () => '编辑' }
+            ),
+            h(
+              NButton,
+              {
+                text: true,
+                type: 'error',
+                onClick: () => handleDelete(row.id),
+              },
+              { default: () => '删除' }
+            ),
+          ],
+        }
+      ),
+  },
+]);
 
 const fetchApiKeys = async () => {
-  loading.value = true
+  loading.value = true;
   try {
-    const response = await http.get('/admin/api-keys')
-    apiKeys.value = response.data?.data || []
+    const response = await http.get('/admin/api-keys');
+    apiKeys.value = response.data?.data || [];
   } catch (error) {
-    message.error('获取 API Key 列表失败')
+    message.error('获取 API Key 列表失败');
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const handleCreate = async () => {
   if (!formData.value.name) {
-    message.error('请输入 API Key 名称')
-    return
+    message.error('请输入 API Key 名称');
+    return;
   }
 
   try {
     const response = await http.post('/admin/api-keys', {
       name: formData.value.name,
       remark: formData.value.remark,
-      ip_limit: formData.value.ip_limit
-    })
+      ip_limit: formData.value.ip_limit,
+    });
 
-    message.success('API Key 创建成功')
-    viewKey.value = response.data?.data?.key
-    showCreateModal.value = false
-    showViewModal.value = true
-    formData.value = { name: '', remark: '', ip_limit: '' }
-    await fetchApiKeys()
+    message.success('API Key 创建成功');
+    viewKey.value = response.data?.data?.key;
+    showCreateModal.value = false;
+    showViewModal.value = true;
+    formData.value = { name: '', remark: '', ip_limit: '' };
+    await fetchApiKeys();
   } catch (error) {
-    message.error('创建 API Key 失败')
+    message.error('创建 API Key 失败');
   }
-}
+};
 
 const handleView = (row: ApiKey) => {
-  viewKey.value = row.key
-  showViewModal.value = true
-}
+  viewKey.value = row.key;
+  showViewModal.value = true;
+};
 
 const handleEdit = (row: ApiKey) => {
-  editingId.value = row.id
+  editingId.value = row.id;
   editData.value = {
     name: row.name,
     remark: row.remark || '',
     ip_limit: row.ip_limit || '',
-    enabled: row.enabled
-  }
-  showEditModal.value = true
-}
+    enabled: row.enabled,
+  };
+  showEditModal.value = true;
+};
 
 const handleUpdate = async () => {
-  if (!editingId.value) return
+  if (!editingId.value) return;
 
   try {
-    await http.put(`/admin/api-keys/${editingId.value}`, editData.value)
+    await http.put(`/admin/api-keys/${editingId.value}`, editData.value);
 
-    message.success('API Key 更新成功')
-    showEditModal.value = false
-    await fetchApiKeys()
+    message.success('API Key 更新成功');
+    showEditModal.value = false;
+    await fetchApiKeys();
   } catch (error) {
-    message.error('更新 API Key 失败')
+    message.error('更新 API Key 失败');
   }
-}
+};
 
 const handleDelete = async (id: number) => {
-  if (!confirm('确定要删除此 API Key 吗？')) return
+  if (!confirm('确定要删除此 API Key 吗？')) return;
 
   try {
-    await http.delete(`/admin/api-keys/${id}`)
+    await http.delete(`/admin/api-keys/${id}`);
 
-    message.success('API Key 删除成功')
-    await fetchApiKeys()
+    message.success('API Key 删除成功');
+    await fetchApiKeys();
   } catch (error) {
-    message.error('删除 API Key 失败')
+    message.error('删除 API Key 失败');
   }
-}
+};
 
 const copyKey = () => {
-  navigator.clipboard.writeText(viewKey.value)
-  message.success('已复制到剪贴板')
-}
+  navigator.clipboard.writeText(viewKey.value);
+  message.success('已复制到剪贴板');
+};
 
 onMounted(() => {
-  fetchApiKeys()
-})
+  fetchApiKeys();
+});
 </script>
 
 <style scoped>

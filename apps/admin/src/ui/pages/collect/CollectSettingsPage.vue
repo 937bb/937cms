@@ -69,19 +69,27 @@
         <n-form-item label="去重字段（匹配为同一影片）">
           <n-checkbox-group v-model:value="model.dedupFields">
             <n-space wrap>
-              <n-checkbox v-for="o in dedupOptions" :key="o.value" :value="o.value">{{ o.label }}</n-checkbox>
+              <n-checkbox v-for="o in dedupOptions" :key="o.value" :value="o.value">{{
+                o.label
+              }}</n-checkbox>
             </n-space>
           </n-checkbox-group>
         </n-form-item>
         <n-form-item label="允许更新字段（命中重复时）">
           <n-checkbox-group v-model:value="model.updateFields">
             <n-space wrap>
-              <n-checkbox v-for="o in updateOptions" :key="o.value" :value="o.value">{{ o.label }}</n-checkbox>
+              <n-checkbox v-for="o in updateOptions" :key="o.value" :value="o.value">{{
+                o.label
+              }}</n-checkbox>
             </n-space>
           </n-checkbox-group>
         </n-form-item>
         <n-form-item label="播放地址更新模式">
-          <n-select v-model:value="model.playUpdateMode" :options="playModeOptions" style="max-width: 320px" />
+          <n-select
+            v-model:value="model.playUpdateMode"
+            :options="playModeOptions"
+            style="max-width: 320px"
+          />
         </n-form-item>
 
         <n-divider title-placement="left">图片同步</n-divider>
@@ -160,7 +168,16 @@ const loading = ref(false);
 const saving = ref(false);
 
 type DedupField = 'name' | 'type' | 'year' | 'area' | 'lang' | 'actor' | 'director';
-type UpdateField = 'pic' | 'content' | 'remarks' | 'year' | 'area' | 'lang' | 'actor' | 'director' | 'play';
+type UpdateField =
+  | 'pic'
+  | 'content'
+  | 'remarks'
+  | 'year'
+  | 'area'
+  | 'lang'
+  | 'actor'
+  | 'director'
+  | 'play';
 
 const dedupOptions: Array<{ label: string; value: DedupField }> = [
   { label: '片名', value: 'name' },
@@ -246,4 +263,3 @@ onMounted(() => {
   load().catch(() => void 0);
 });
 </script>
-

@@ -4,24 +4,52 @@
       <n-space justify="space-between" align="center" style="margin-bottom: 12px">
         <n-space>
           <n-button type="primary" :loading="loading" @click="load">刷新</n-button>
-          <n-select v-model:value="filterRunId" :options="runOptions" style="width: 200px" placeholder="选择采集运行" clearable />
-          <n-select v-model:value="filterStatus" :options="statusOptions" style="width: 150px" placeholder="选择状态" clearable />
+          <n-select
+            v-model:value="filterRunId"
+            :options="runOptions"
+            style="width: 200px"
+            placeholder="选择采集运行"
+            clearable
+          />
+          <n-select
+            v-model:value="filterStatus"
+            :options="statusOptions"
+            style="width: 150px"
+            placeholder="选择状态"
+            clearable
+          />
         </n-space>
       </n-space>
 
-      <n-data-table :columns="columns" :data="items" :bordered="false" :loading="loading" :pagination="pagination" @update:page="handlePageChange" />
+      <n-data-table
+        :columns="columns"
+        :data="items"
+        :bordered="false"
+        :loading="loading"
+        :pagination="pagination"
+        @update:page="handlePageChange"
+      />
     </n-card>
 
     <!-- 任务详情弹窗 -->
-    <n-modal v-model:show="showDetailModal" preset="card" title="采集任务详情" style="max-width: 800px; width: 100%">
+    <n-modal
+      v-model:show="showDetailModal"
+      preset="card"
+      title="采集任务详情"
+      style="max-width: 800px; width: 100%"
+    >
       <n-space vertical size="large" v-if="selectedTask">
         <n-descriptions :columns="2" bordered>
           <n-descriptions-item label="任务ID">{{ selectedTask.id }}</n-descriptions-item>
           <n-descriptions-item label="采集源">{{ selectedTask.source_name }}</n-descriptions-item>
           <n-descriptions-item label="状态">
-            <n-tag :type="getStatusType(selectedTask.status)">{{ getStatusLabel(selectedTask.status) }}</n-tag>
+            <n-tag :type="getStatusType(selectedTask.status)">{{
+              getStatusLabel(selectedTask.status)
+            }}</n-tag>
           </n-descriptions-item>
-          <n-descriptions-item label="进度">{{ selectedTask.current_page }} / {{ selectedTask.total_pages }}</n-descriptions-item>
+          <n-descriptions-item label="进度"
+            >{{ selectedTask.current_page }} / {{ selectedTask.total_pages }}</n-descriptions-item
+          >
           <n-descriptions-item label="新增数量">
             <n-statistic :value="selectedTask.created_count" />
           </n-descriptions-item>
@@ -171,8 +199,19 @@ const pagination = computed(() => ({
 const columns: DataTableColumns<CollectTask> = [
   { title: '任务ID', key: 'id', width: 100 },
   { title: '采集源', key: 'source_name', minWidth: 150 },
-  { title: '状态', key: 'status', width: 100, render: (row) => h(NTag, { type: getStatusType(row.status) }, { default: () => getStatusLabel(row.status) }) },
-  { title: '进度', key: 'current_page', width: 100, render: (row) => `${row.current_page} / ${row.total_pages}` },
+  {
+    title: '状态',
+    key: 'status',
+    width: 100,
+    render: (row) =>
+      h(NTag, { type: getStatusType(row.status) }, { default: () => getStatusLabel(row.status) }),
+  },
+  {
+    title: '进度',
+    key: 'current_page',
+    width: 100,
+    render: (row) => `${row.current_page} / ${row.total_pages}`,
+  },
   { title: '新增', key: 'created_count', width: 80, align: 'center' },
   { title: '更新', key: 'updated_count', width: 80, align: 'center' },
   { title: '错误', key: 'error_count', width: 80, align: 'center' },
@@ -190,8 +229,16 @@ const columns: DataTableColumns<CollectTask> = [
     render: (row) =>
       h(
         NButton,
-        { size: 'small', tertiary: true, type: 'info', onClick: () => { selectedTask.value = row; showDetailModal.value = true; } },
-        { default: () => '详情' },
+        {
+          size: 'small',
+          tertiary: true,
+          type: 'info',
+          onClick: () => {
+            selectedTask.value = row;
+            showDetailModal.value = true;
+          },
+        },
+        { default: () => '详情' }
       ),
   },
 ];

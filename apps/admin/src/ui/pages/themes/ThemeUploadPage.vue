@@ -1,25 +1,20 @@
 <template>
   <n-space vertical size="large">
-    <n-card title="上传主题配置">
-      <n-space vertical>
+    <n-card title="主题管理">
+      <template #header-extra>
         <n-upload
-          action="/admin/theme/upload"
+          :action="`${apiBaseUrl}/admin/theme/upload`"
           :headers="{ Authorization: `Bearer ${token}` }"
+          accept=".zip"
+          :show-file-list="false"
           @finish="handleUploadFinish"
-          @error="handleUploadError"
         >
-          <n-button>选择配置文件 (JSON)</n-button>
+          <n-button type="primary">上传主题</n-button>
         </n-upload>
-        <n-text depth="3">支持上传 theme.config.json 文件</n-text>
-      </n-space>
-    </n-card>
-
-    <n-card title="已安装的主题" v-if="themes.length > 0">
+      </template>
       <n-list>
         <n-list-item v-for="theme in themes" :key="theme.themeId">
-          <template #header>
-            {{ theme.name }} (v{{ theme.version }})
-          </template>
+          <template #header> {{ theme.name }} (v{{ theme.version }}) </template>
           <template #default>
             {{ theme.description }}
           </template>
@@ -29,9 +24,7 @@
                 :value="theme.isActive === 1"
                 @update:value="() => handleActivate(theme.themeId)"
               />
-              <n-button size="small" @click="() => handleConfig(theme)">
-                配置
-              </n-button>
+              <n-button size="small" @click="() => handleConfig(theme)"> 配置 </n-button>
               <n-button text type="error" size="small" @click="() => handleDelete(theme.themeId)">
                 删除
               </n-button>
@@ -64,14 +57,8 @@
             v-model:value="editingConfig[key]"
             style="width: 100%"
           />
-          <n-switch
-            v-else-if="field.type === 'boolean'"
-            v-model:value="editingConfig[key]"
-          />
-          <n-color-picker
-            v-else-if="field.type === 'color'"
-            v-model:value="editingConfig[key]"
-          />
+          <n-switch v-else-if="field.type === 'boolean'" v-model:value="editingConfig[key]" />
+          <n-color-picker v-else-if="field.type === 'color'" v-model:value="editingConfig[key]" />
           <n-select
             v-else-if="field.type === 'select'"
             v-model:value="editingConfig[key]"
@@ -83,11 +70,7 @@
             type="textarea"
             :placeholder="field.description"
           />
-          <n-input
-            v-else
-            v-model:value="editingConfig[key]"
-            :placeholder="field.description"
-          />
+          <n-input v-else v-model:value="editingConfig[key]" :placeholder="field.description" />
         </n-form-item>
       </n-form>
       <template #footer>
@@ -97,17 +80,31 @@
         </n-space>
       </template>
     </n-modal>
+
+    <!-- iframe 配置模态框 -->
+    <n-modal
+      v-model:show="showIframeModal"
+      preset="card"
+      title="主题配置"
+      style="width: 100%; height: 100%; max-width: 100vw; max-height: 100vh; margin: 0"
+      :segmented="{ content: true }"
+    >
+      <iframe
+        v-if="showIframeModal"
+        :src="iframeUrl"
+        style="width: 100%; height: calc(100vh - 120px); border: none"
+      />
+    </n-modal>
   </n-space>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import {
   NCard,
   NSpace,
-  NUpload,
   NButton,
-  NText,
   NList,
   NListItem,
   NSwitch,
@@ -118,20 +115,23 @@ import {
   NInputNumber,
   NColorPicker,
   NSelect,
+  NUpload,
   useMessage,
   useDialog,
 } from 'naive-ui';
-import { http } from '../../../lib/http';
-import { useAuthStore } from '../../../stores/auth';
+import { http, getToken } from '../../../lib/http';
 
 const msg = useMessage();
 const dialog = useDialog();
-const auth = useAuthStore();
-const token = ref(auth.token);
+const router = useRouter();
 const themes = ref<any[]>([]);
 const showConfigModal = ref(false);
 const editingTheme = ref<any>(null);
 const editingConfig = ref<Record<string, any>>({});
+const showIframeModal = ref(false);
+const iframeUrl = ref('');
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+const token = getToken();
 
 async function loadThemes() {
   try {
@@ -142,29 +142,32 @@ async function loadThemes() {
   }
 }
 
-function handleUploadFinish({ file }: any) {
-  msg.success('主题上传成功');
-  loadThemes();
-}
-
-function handleUploadError() {
-  msg.error('上传失败');
+function handleUploadFinish({ event }: any) {
+  const response = event?.target?.response;
+  if (response) {
+    try {
+      const data = JSON.parse(response);
+      if (data.ok) {
+        msg.success('主题上传成功');
+        loadThemes();
+      } else {
+        msg.error(data.message || '上传失败');
+      }
+    } catch {
+      msg.error('上传失败');
+    }
+  }
 }
 
 async function handleConfig(theme: any) {
-  try {
-    const res = await http.get(`/admin/theme/${theme.themeId}`);
-    editingTheme.value = res.data;
-    editingConfig.value = { ...res.data.config };
-    showConfigModal.value = true;
-  } catch (e: any) {
-    msg.error(e?.response?.data?.message || '加载配置失败');
-  }
+  const configUrl = `${apiBaseUrl}/admin/theme/${theme.themeId}/config-page`;
+  iframeUrl.value = `${configUrl}?token=${token}&_t=${Date.now()}`;
+  showIframeModal.value = true;
 }
 
 async function handleSaveConfig() {
   try {
-    await http.put(`/admin/theme/${editingTheme.value.themeId}/config`, {
+    await http.post(`/admin/theme/${editingTheme.value.themeId}/config`, {
       config: editingConfig.value,
     });
     msg.success('配置保存成功');
@@ -193,7 +196,7 @@ async function handleDelete(themeId: string) {
     negativeText: '取消',
     onPositiveClick: async () => {
       try {
-        await http.delete(`/admin/theme/${themeId}`);
+        await http.post(`/admin/theme/${themeId}/delete`);
         msg.success('主题已删除');
         loadThemes();
       } catch (e: any) {

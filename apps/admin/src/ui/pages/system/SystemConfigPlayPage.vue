@@ -64,4 +64,3 @@ async function save() {
 
 onMounted(() => load().catch(() => void 0));
 </script>
-

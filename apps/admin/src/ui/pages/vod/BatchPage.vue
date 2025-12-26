@@ -9,32 +9,62 @@
         <n-grid :cols="3" :x-gap="16" :y-gap="12">
           <n-gi>
             <n-form-item label="分类">
-              <n-tree-select v-model:value="filters.typeId" :options="typeTreeOptions" clearable placeholder="选择分类" />
+              <n-tree-select
+                v-model:value="filters.typeId"
+                :options="typeTreeOptions"
+                clearable
+                placeholder="选择分类"
+              />
             </n-form-item>
           </n-gi>
           <n-gi>
             <n-form-item label="状态">
-              <n-select v-model:value="filters.status" :options="statusOptions" clearable placeholder="选择状态" />
+              <n-select
+                v-model:value="filters.status"
+                :options="statusOptions"
+                clearable
+                placeholder="选择状态"
+              />
             </n-form-item>
           </n-gi>
           <n-gi>
             <n-form-item label="锁定">
-              <n-select v-model:value="filters.lock" :options="lockOptions" clearable placeholder="选择锁定状态" />
+              <n-select
+                v-model:value="filters.lock"
+                :options="lockOptions"
+                clearable
+                placeholder="选择锁定状态"
+              />
             </n-form-item>
           </n-gi>
           <n-gi>
             <n-form-item label="推荐等级">
-              <n-select v-model:value="filters.level" :options="levelOptions" clearable placeholder="选择等级" />
+              <n-select
+                v-model:value="filters.level"
+                :options="levelOptions"
+                clearable
+                placeholder="选择等级"
+              />
             </n-form-item>
           </n-gi>
           <n-gi>
             <n-form-item label="完结状态">
-              <n-select v-model:value="filters.isend" :options="isendOptions" clearable placeholder="选择完结状态" />
+              <n-select
+                v-model:value="filters.isend"
+                :options="isendOptions"
+                clearable
+                placeholder="选择完结状态"
+              />
             </n-form-item>
           </n-gi>
           <n-gi>
             <n-form-item label="播放地址">
-              <n-select v-model:value="filters.url" :options="urlOptions" clearable placeholder="选择地址状态" />
+              <n-select
+                v-model:value="filters.url"
+                :options="urlOptions"
+                clearable
+                placeholder="选择地址状态"
+              />
             </n-form-item>
           </n-gi>
         </n-grid>
@@ -46,11 +76,21 @@
 
       <n-divider />
 
-      <n-statistic v-if="matchCount !== null" label="符合条件的视频数量" :value="matchCount" style="margin-bottom: 16px" />
+      <n-statistic
+        v-if="matchCount !== null"
+        label="符合条件的视频数量"
+        :value="matchCount"
+        style="margin-bottom: 16px"
+      />
 
       <n-form v-if="matchCount !== null && matchCount > 0" label-placement="left" label-width="100">
         <n-form-item label="操作类型">
-          <n-select v-model:value="action" :options="actionOptions" placeholder="选择操作" style="width: 200px" />
+          <n-select
+            v-model:value="action"
+            :options="actionOptions"
+            placeholder="选择操作"
+            style="width: 200px"
+          />
         </n-form-item>
 
         <n-form-item v-if="action === 'status'" label="设置状态">
@@ -72,23 +112,42 @@
         </n-form-item>
 
         <n-form-item v-if="action === 'type'" label="设置分类">
-          <n-tree-select v-model:value="actionValue" :options="typeTreeOptions" placeholder="选择分类" style="width: 260px" />
+          <n-tree-select
+            v-model:value="actionValue"
+            :options="typeTreeOptions"
+            placeholder="选择分类"
+            style="width: 260px"
+          />
         </n-form-item>
 
         <n-form-item v-if="action === 'hits'" label="随机点击数">
-          <n-input-number v-model:value="hitsStart" :min="0" placeholder="最小值" style="width: 120px" />
+          <n-input-number
+            v-model:value="hitsStart"
+            :min="0"
+            placeholder="最小值"
+            style="width: 120px"
+          />
           <span style="margin: 0 8px">~</span>
-          <n-input-number v-model:value="hitsEnd" :min="0" placeholder="最大值" style="width: 120px" />
+          <n-input-number
+            v-model:value="hitsEnd"
+            :min="0"
+            placeholder="最大值"
+            style="width: 120px"
+          />
         </n-form-item>
 
         <n-form-item v-if="action === 'delete'" label="确认删除">
-          <n-alert type="error">此操作将永久删除符合条件的 {{ matchCount }} 个视频，不可恢复！</n-alert>
+          <n-alert type="error"
+            >此操作将永久删除符合条件的 {{ matchCount }} 个视频，不可恢复！</n-alert
+          >
         </n-form-item>
 
         <n-space style="margin-top: 16px">
           <n-popconfirm @positive-click="executeBatch">
             <template #trigger>
-              <n-button type="warning" :loading="executing" :disabled="!action">执行批量操作</n-button>
+              <n-button type="warning" :loading="executing" :disabled="!action"
+                >执行批量操作</n-button
+              >
             </template>
             确认对 {{ matchCount }} 个视频执行此操作？
           </n-popconfirm>
@@ -126,9 +185,18 @@ const actionValue = ref<number | null>(null);
 const hitsStart = ref<number>(100);
 const hitsEnd = ref<number>(1000);
 
-const statusOptions = [{ label: '上架', value: 1 }, { label: '下架', value: 0 }];
-const lockOptions = [{ label: '已锁定', value: 1 }, { label: '未锁定', value: 0 }];
-const isendOptions = [{ label: '完结', value: 1 }, { label: '连载', value: 0 }];
+const statusOptions = [
+  { label: '上架', value: 1 },
+  { label: '下架', value: 0 },
+];
+const lockOptions = [
+  { label: '已锁定', value: 1 },
+  { label: '未锁定', value: 0 },
+];
+const isendOptions = [
+  { label: '完结', value: 1 },
+  { label: '连载', value: 0 },
+];
 const urlOptions = [
   { label: '无地址', value: '0' },
   { label: '有地址', value: '1' },
@@ -145,9 +213,12 @@ const actionOptions = [
 
 function buildTypeTreeOptions(list: TypeItem[]): TreeSelectOption[] {
   const byPid = new Map<number, TypeItem[]>();
-  for (const t of list) byPid.set(Number(t.type_pid || 0), [...(byPid.get(Number(t.type_pid || 0)) || []), t]);
+  for (const t of list)
+    byPid.set(Number(t.type_pid || 0), [...(byPid.get(Number(t.type_pid || 0)) || []), t]);
   const walk = (pid: number): TreeSelectOption[] => {
-    const children = (byPid.get(pid) || []).sort((a, b) => Number(a.type_sort || 0) - Number(b.type_sort || 0));
+    const children = (byPid.get(pid) || []).sort(
+      (a, b) => Number(a.type_sort || 0) - Number(b.type_sort || 0)
+    );
     return children.map((c) => ({ label: c.type_name, key: c.type_id, children: walk(c.type_id) }));
   };
   return walk(0);
@@ -166,7 +237,8 @@ async function countVideos() {
   try {
     const res = await http.get('/admin/vods', {
       params: {
-        page: 1, pageSize: 1,
+        page: 1,
+        pageSize: 1,
         typeId: filters.typeId ?? undefined,
         status: filters.status ?? undefined,
         lock: filters.lock ?? undefined,
@@ -213,5 +285,7 @@ async function executeBatch() {
   }
 }
 
-onMounted(() => { loadTypes(); });
+onMounted(() => {
+  loadTypes();
+});
 </script>

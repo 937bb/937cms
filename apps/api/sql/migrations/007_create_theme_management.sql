@@ -31,7 +31,3 @@ CREATE TABLE IF NOT EXISTS `bb_theme_setting` (
   UNIQUE KEY `uk_theme_config` (`theme_id`, `config_key`),
   KEY `idx_theme_id` (`theme_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='主题配置表';
-
--- 插入默认主题
-INSERT INTO `bb_theme` (`theme_id`, `name`, `version`, `description`, `author`, `config_schema`, `status`, `is_active`, `created_at`, `updated_at`) VALUES
-('default', '默认主题', '1.0.0', '系统默认主题', '937CMS', '{"title":{"type":"string","label":"网站标题","description":"网站名称","default":"937CMS"},"logo":{"type":"image","label":"网站Logo","description":"网站Logo图片"},"primaryColor":{"type":"color","label":"主色调","description":"主题主色调","default":"#1890ff"},"footerText":{"type":"textarea","label":"页脚文本","description":"页脚显示的文本内容"}}', 1, 1, UNIX_TIMESTAMP(), UNIX_TIMESTAMP());

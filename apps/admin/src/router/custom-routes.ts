@@ -1,5 +1,4 @@
 import type { RouteRecordRaw } from 'vue-router';
-import MxproConfigPage from '../ui/pages/themes/MxproConfigPage.vue';
 
 /**
  * 自定义主题路由
@@ -20,14 +19,7 @@ import MxproConfigPage from '../ui/pages/themes/MxproConfigPage.vue';
 export const customRoutes: RouteRecordRaw[] = [
   {
     path: 'themes/mxpro',
-    component: MxproConfigPage,
-    meta: { requiresAuth: true }
+    component: () => import('../ui/pages/themes/MxproConfigPage.vue'),
+    meta: { requiresAuth: true },
   },
-  // 主题开发者在这里添加自定义路由
-  // 示例：
-  // {
-  //   path: 'themes/my-theme/config',
-  //   component: () => import('./pages/MyThemeConfig.vue'),
-  //   meta: { requiresAuth: true }
-  // }
 ];

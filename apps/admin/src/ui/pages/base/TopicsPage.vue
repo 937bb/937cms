@@ -6,8 +6,19 @@
       </template>
 
       <n-space align="center" wrap style="margin-bottom: 12px">
-        <n-input v-model:value="filters.keyword" placeholder="搜索专题名" style="width: 200px" clearable />
-        <n-select v-model:value="filters.status" :options="statusOptions" clearable placeholder="状态" style="width: 120px" />
+        <n-input
+          v-model:value="filters.keyword"
+          placeholder="搜索专题名"
+          style="width: 200px"
+          clearable
+        />
+        <n-select
+          v-model:value="filters.status"
+          :options="statusOptions"
+          clearable
+          placeholder="状态"
+          style="width: 120px"
+        />
         <n-button secondary :loading="loading" @click="load">查询</n-button>
       </n-space>
 
@@ -98,7 +109,11 @@
             </n-gi>
             <n-gi :span="2">
               <n-form-item label="内容">
-                <n-input v-model:value="form.topic_content" type="textarea" :autosize="{ minRows: 4, maxRows: 10 }" />
+                <n-input
+                  v-model:value="form.topic_content"
+                  type="textarea"
+                  :autosize="{ minRows: 4, maxRows: 10 }"
+                />
               </n-form-item>
             </n-gi>
           </n-grid>
@@ -156,8 +171,15 @@ const pagination = computed<PaginationProps>(() => ({
   itemCount: total.value,
   showSizePicker: true,
   pageSizes: [10, 20, 50],
-  onUpdatePage: (p: number) => { page.value = p; load(); },
-  onUpdatePageSize: (s: number) => { pageSize.value = s; page.value = 1; load(); },
+  onUpdatePage: (p: number) => {
+    page.value = p;
+    load();
+  },
+  onUpdatePageSize: (s: number) => {
+    pageSize.value = s;
+    page.value = 1;
+    load();
+  },
 }));
 
 const form = reactive<Record<string, any>>({
@@ -179,7 +201,12 @@ async function load() {
   loading.value = true;
   try {
     const res = await http.get('/admin/topics', {
-      params: { page: page.value, pageSize: pageSize.value, keyword: filters.keyword || undefined, status: filters.status ?? undefined },
+      params: {
+        page: page.value,
+        pageSize: pageSize.value,
+        keyword: filters.keyword || undefined,
+        status: filters.status ?? undefined,
+      },
     });
     items.value = res.data?.items || [];
     total.value = Number(res.data?.total || 0);
@@ -191,7 +218,20 @@ async function load() {
 }
 
 function openAdd() {
-  Object.assign(form, { topic_id: 0, topic_name: '', topic_en: '', topic_sub: '', topic_status: 1, topic_sort: 0, topic_letter: '', topic_level: 0, topic_type: '', topic_pic: '', topic_blurb: '', topic_content: '' });
+  Object.assign(form, {
+    topic_id: 0,
+    topic_name: '',
+    topic_en: '',
+    topic_sub: '',
+    topic_status: 1,
+    topic_sort: 0,
+    topic_letter: '',
+    topic_level: 0,
+    topic_type: '',
+    topic_pic: '',
+    topic_blurb: '',
+    topic_content: '',
+  });
   showModal.value = true;
 }
 
@@ -220,7 +260,10 @@ async function openEdit(id: number) {
 }
 
 async function save() {
-  if (!form.topic_name) { msg.warning('请输入专题名称'); return; }
+  if (!form.topic_name) {
+    msg.warning('请输入专题名称');
+    return;
+  }
   saving.value = true;
   try {
     await http.post('/admin/topics/save', form);
@@ -244,7 +287,9 @@ async function remove(id: number) {
   }
 }
 
-function handleCheck(keys: DataTableRowKey[]) { selectedIds.value = keys as number[]; }
+function handleCheck(keys: DataTableRowKey[]) {
+  selectedIds.value = keys as number[];
+}
 
 async function batchEnable() {
   if (!selectedIds.value.length) return;
@@ -252,7 +297,9 @@ async function batchEnable() {
     await http.post('/admin/topics/batch-update-status', { ids: selectedIds.value, status: 1 });
     msg.success('批量启用成功');
     await load();
-  } catch (e: any) { msg.error(String(e?.response?.data?.message || e?.message || '操作失败')); }
+  } catch (e: any) {
+    msg.error(String(e?.response?.data?.message || e?.message || '操作失败'));
+  }
 }
 
 async function batchDisable() {
@@ -261,7 +308,9 @@ async function batchDisable() {
     await http.post('/admin/topics/batch-update-status', { ids: selectedIds.value, status: 0 });
     msg.success('批量禁用成功');
     await load();
-  } catch (e: any) { msg.error(String(e?.response?.data?.message || e?.message || '操作失败')); }
+  } catch (e: any) {
+    msg.error(String(e?.response?.data?.message || e?.message || '操作失败'));
+  }
 }
 
 async function batchDelete() {
@@ -270,7 +319,9 @@ async function batchDelete() {
     await http.post('/admin/topics/batch-delete', { ids: selectedIds.value });
     msg.success('批量删除成功');
     await load();
-  } catch (e: any) { msg.error(String(e?.response?.data?.message || e?.message || '操作失败')); }
+  } catch (e: any) {
+    msg.error(String(e?.response?.data?.message || e?.message || '操作失败'));
+  }
 }
 
 function statusTag(status: number) {
@@ -294,14 +345,29 @@ const columns: DataTableColumns<TopicRow> = [
     width: 160,
     render: (row) =>
       h('div', { style: 'display:flex; gap:8px;' }, [
-        h(NButton, { size: 'small', tertiary: true, onClick: () => openEdit(row.topic_id) }, { default: () => '编辑' }),
-        h(NPopconfirm, { onPositiveClick: () => remove(row.topic_id) }, {
-          trigger: () => h(NButton, { size: 'small', tertiary: true, type: 'error' }, { default: () => '删除' }),
-          default: () => '确认删除？',
-        }),
+        h(
+          NButton,
+          { size: 'small', tertiary: true, onClick: () => openEdit(row.topic_id) },
+          { default: () => '编辑' }
+        ),
+        h(
+          NPopconfirm,
+          { onPositiveClick: () => remove(row.topic_id) },
+          {
+            trigger: () =>
+              h(
+                NButton,
+                { size: 'small', tertiary: true, type: 'error' },
+                { default: () => '删除' }
+              ),
+            default: () => '确认删除？',
+          }
+        ),
       ]),
   },
 ];
 
-onMounted(() => { load(); });
+onMounted(() => {
+  load();
+});
 </script>

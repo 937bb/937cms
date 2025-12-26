@@ -35,4 +35,3 @@ export function clearSetupStatusCache() {
   cached = null;
   cachedAt = 0;
 }
-

@@ -25,7 +25,12 @@
     </n-card>
 
     <!-- 编辑弹窗 -->
-    <n-modal v-model:show="showModal" preset="card" :title="form.id ? '编辑会员组' : '新增会员组'" style="max-width: 720px; width: 100%">
+    <n-modal
+      v-model:show="showModal"
+      preset="card"
+      :title="form.id ? '编辑会员组' : '新增会员组'"
+      style="max-width: 720px; width: 100%"
+    >
       <n-form :model="form" label-placement="left" label-width="120">
         <n-form-item label="名称" required>
           <n-input v-model:value="form.name" placeholder="会员组名称" />
@@ -50,7 +55,9 @@
         </n-form-item>
         <n-form-item label="免积分">
           <n-switch v-model:value="form.points_free" />
-          <span style="margin-left: 8px">{{ form.points_free ? '是（观看不消耗积分）' : '否' }}</span>
+          <span style="margin-left: 8px">{{
+            form.points_free ? '是（观看不消耗积分）' : '否'
+          }}</span>
         </n-form-item>
         <n-divider />
         <n-form-item label="状态">
@@ -66,11 +73,22 @@
     </n-modal>
 
     <!-- 权限设置弹窗 -->
-    <n-modal v-model:show="showPermModal" preset="card" title="权限设置" style="max-width: 900px; width: 100%">
+    <n-modal
+      v-model:show="showPermModal"
+      preset="card"
+      title="权限设置"
+      style="max-width: 900px; width: 100%"
+    >
       <n-alert type="info" style="margin-bottom: 16px">
         <template #header>提示</template>
-        <p>1. 列表页、内容页、播放页、下载页 4个权限，控制是否可以进入页面，没权限会直接返回提示信息。</p>
-        <p>2. 试看权限：如果没有访问播放页的权限、或者有权限但是需要积分购买的数据，开启了试看权限也是可以进入页面的。</p>
+        <p>
+          1. 列表页、内容页、播放页、下载页
+          4个权限，控制是否可以进入页面，没权限会直接返回提示信息。
+        </p>
+        <p>
+          2.
+          试看权限：如果没有访问播放页的权限、或者有权限但是需要积分购买的数据，开启了试看权限也是可以进入页面的。
+        </p>
       </n-alert>
       <div v-if="permGroup">
         <div style="margin-bottom: 12px"><strong>名称：</strong>{{ permGroup.name }}</div>
@@ -88,13 +106,40 @@
           <tbody>
             <tr v-for="cat in categories" :key="cat.type_id">
               <td>
-                <n-checkbox v-model:checked="permData[cat.type_id].enabled">{{ cat.type_name }}</n-checkbox>
+                <n-checkbox v-model:checked="permData[cat.type_id].enabled">{{
+                  cat.type_name
+                }}</n-checkbox>
               </td>
-              <td><n-checkbox v-model:checked="permData[cat.type_id].list" :disabled="!permData[cat.type_id].enabled" /></td>
-              <td><n-checkbox v-model:checked="permData[cat.type_id].detail" :disabled="!permData[cat.type_id].enabled" /></td>
-              <td><n-checkbox v-model:checked="permData[cat.type_id].play" :disabled="!permData[cat.type_id].enabled" /></td>
-              <td><n-checkbox v-model:checked="permData[cat.type_id].down" :disabled="!permData[cat.type_id].enabled" /></td>
-              <td><n-checkbox v-model:checked="permData[cat.type_id].trysee" :disabled="!permData[cat.type_id].enabled" /></td>
+              <td>
+                <n-checkbox
+                  v-model:checked="permData[cat.type_id].list"
+                  :disabled="!permData[cat.type_id].enabled"
+                />
+              </td>
+              <td>
+                <n-checkbox
+                  v-model:checked="permData[cat.type_id].detail"
+                  :disabled="!permData[cat.type_id].enabled"
+                />
+              </td>
+              <td>
+                <n-checkbox
+                  v-model:checked="permData[cat.type_id].play"
+                  :disabled="!permData[cat.type_id].enabled"
+                />
+              </td>
+              <td>
+                <n-checkbox
+                  v-model:checked="permData[cat.type_id].down"
+                  :disabled="!permData[cat.type_id].enabled"
+                />
+              </td>
+              <td>
+                <n-checkbox
+                  v-model:checked="permData[cat.type_id].trysee"
+                  :disabled="!permData[cat.type_id].enabled"
+                />
+              </td>
             </tr>
           </tbody>
         </n-table>
@@ -138,7 +183,14 @@ type GroupItem = {
 };
 
 type CategoryItem = { type_id: number; type_name: string };
-type PermItem = { enabled: boolean; list: boolean; detail: boolean; play: boolean; down: boolean; trysee: boolean };
+type PermItem = {
+  enabled: boolean;
+  list: boolean;
+  detail: boolean;
+  play: boolean;
+  down: boolean;
+  trysee: boolean;
+};
 
 const msg = useMessage();
 const loading = ref(false);
@@ -209,7 +261,9 @@ async function loadCategories() {
   try {
     const res = await http.get('/admin/types');
     categories.value = (res.data?.items || []).filter((c: any) => c.type_pid === 0);
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
 }
 
 // 解析权限字符串 (格式: type_id,list,detail,play,down,trysee|...)
@@ -217,7 +271,14 @@ function parsePopedom(str: string): Record<number, PermItem> {
   const result: Record<number, PermItem> = {};
   // 默认所有分类无权限
   for (const cat of categories.value) {
-    result[cat.type_id] = { enabled: false, list: false, detail: false, play: false, down: false, trysee: false };
+    result[cat.type_id] = {
+      enabled: false,
+      list: false,
+      detail: false,
+      play: false,
+      down: false,
+      trysee: false,
+    };
   }
   if (!str) return result;
   const parts = str.split('|').filter(Boolean);
@@ -267,7 +328,14 @@ async function openPerm(row: GroupItem) {
 // 全选权限
 function selectAllPerm() {
   for (const cat of categories.value) {
-    permData[cat.type_id] = { enabled: true, list: true, detail: true, play: true, down: true, trysee: true };
+    permData[cat.type_id] = {
+      enabled: true,
+      list: true,
+      detail: true,
+      play: true,
+      down: true,
+      trysee: true,
+    };
   }
 }
 
@@ -369,7 +437,10 @@ function handleCheck(keys: DataTableRowKey[]) {
 async function batchEnable() {
   if (selectedIds.value.length === 0) return;
   try {
-    await http.post('/admin/members/groups/batch-update-status', { ids: selectedIds.value, status: 1 });
+    await http.post('/admin/members/groups/batch-update-status', {
+      ids: selectedIds.value,
+      status: 1,
+    });
     msg.success('批量启用成功');
     await load();
   } catch (e: any) {
@@ -381,7 +452,10 @@ async function batchEnable() {
 async function batchDisable() {
   if (selectedIds.value.length === 0) return;
   try {
-    await http.post('/admin/members/groups/batch-update-status', { ids: selectedIds.value, status: 0 });
+    await http.post('/admin/members/groups/batch-update-status', {
+      ids: selectedIds.value,
+      status: 0,
+    });
     msg.success('批量禁用成功');
     await load();
   } catch (e: any) {
@@ -414,13 +488,30 @@ const columns: DataTableColumns<GroupItem> = [
     width: 200,
     render: (row) =>
       h('div', { style: 'display:flex; gap:8px;' }, [
-        h(NButton, { size: 'small', tertiary: true, onClick: () => openEdit(row) }, { default: () => '编辑' }),
-        h(NButton, { size: 'small', tertiary: true, type: 'info', onClick: () => openPerm(row) }, { default: () => '权限' }),
+        h(
+          NButton,
+          { size: 'small', tertiary: true, onClick: () => openEdit(row) },
+          { default: () => '编辑' }
+        ),
+        h(
+          NButton,
+          { size: 'small', tertiary: true, type: 'info', onClick: () => openPerm(row) },
+          { default: () => '权限' }
+        ),
         row.id !== 1
-          ? h(NPopconfirm, { onPositiveClick: () => remove(row.id) }, {
-              trigger: () => h(NButton, { size: 'small', tertiary: true, type: 'error' }, { default: () => '删除' }),
-              default: () => '确认删除该会员组？',
-            })
+          ? h(
+              NPopconfirm,
+              { onPositiveClick: () => remove(row.id) },
+              {
+                trigger: () =>
+                  h(
+                    NButton,
+                    { size: 'small', tertiary: true, type: 'error' },
+                    { default: () => '删除' }
+                  ),
+                default: () => '确认删除该会员组？',
+              }
+            )
           : null,
       ]),
   },

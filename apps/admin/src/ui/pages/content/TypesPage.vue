@@ -12,10 +12,19 @@
     </n-card>
 
     <!-- 分类编辑弹窗 -->
-    <n-modal v-model:show="showModal" preset="card" title="分类" style="max-width: 720px; width: 100%">
+    <n-modal
+      v-model:show="showModal"
+      preset="card"
+      title="分类"
+      style="max-width: 720px; width: 100%"
+    >
       <n-form :model="form" label-placement="left" label-width="120">
         <n-form-item label="名称">
-          <n-input v-model:value="form.type_name" placeholder="例如：电影 / 动作片" @input="onNameInput" />
+          <n-input
+            v-model:value="form.type_name"
+            placeholder="例如：电影 / 动作片"
+            @input="onNameInput"
+          />
         </n-form-item>
         <n-form-item label="拼音别名">
           <n-input v-model:value="form.type_en" placeholder="自动生成，可手动修改" />
@@ -44,22 +53,47 @@
     </n-modal>
 
     <!-- 扩展配置弹窗 -->
-    <n-modal v-model:show="showExtendModal" preset="card" title="扩展配置" style="max-width: 720px; width: 100%">
+    <n-modal
+      v-model:show="showExtendModal"
+      preset="card"
+      title="扩展配置"
+      style="max-width: 720px; width: 100%"
+    >
       <n-alert type="info" style="margin-bottom: 16px">
         扩展配置用于前台筛选功能，多个选项用英文逗号分隔。子分类会继承父分类的配置。
       </n-alert>
       <n-form :model="extendForm" label-placement="left" label-width="100">
         <n-form-item label="剧情/类型">
-          <n-input v-model:value="extendForm.class" type="textarea" :rows="2" placeholder="动作,喜剧,爱情,科幻,恐怖,战争,犯罪" />
+          <n-input
+            v-model:value="extendForm.class"
+            type="textarea"
+            :rows="2"
+            placeholder="动作,喜剧,爱情,科幻,恐怖,战争,犯罪"
+          />
         </n-form-item>
         <n-form-item label="地区">
-          <n-input v-model:value="extendForm.area" type="textarea" :rows="2" placeholder="大陆,香港,台湾,美国,韩国,日本,泰国,印度,英国,法国" />
+          <n-input
+            v-model:value="extendForm.area"
+            type="textarea"
+            :rows="2"
+            placeholder="大陆,香港,台湾,美国,韩国,日本,泰国,印度,英国,法国"
+          />
         </n-form-item>
         <n-form-item label="语言">
-          <n-input v-model:value="extendForm.lang" type="textarea" :rows="2" placeholder="国语,粤语,英语,韩语,日语,其他" />
+          <n-input
+            v-model:value="extendForm.lang"
+            type="textarea"
+            :rows="2"
+            placeholder="国语,粤语,英语,韩语,日语,其他"
+          />
         </n-form-item>
         <n-form-item label="年份">
-          <n-input v-model:value="extendForm.year" type="textarea" :rows="2" placeholder="2025,2024,2023,2022,2021,2020,2019,2018,2017,2016,2015,2014,2013,2012,2011,2010" />
+          <n-input
+            v-model:value="extendForm.year"
+            type="textarea"
+            :rows="2"
+            placeholder="2025,2024,2023,2022,2021,2020,2019,2018,2017,2016,2015,2014,2013,2012,2011,2010"
+          />
         </n-form-item>
       </n-form>
       <n-space justify="end">
@@ -115,7 +149,14 @@ const extendForm = reactive({
 });
 
 function openCreate() {
-  Object.assign(form, { type_id: 0, type_name: '', type_en: '', type_pid: 0, type_sort: 0, type_status: true });
+  Object.assign(form, {
+    type_id: 0,
+    type_name: '',
+    type_en: '',
+    type_pid: 0,
+    type_sort: 0,
+    type_status: true,
+  });
   showModal.value = true;
 }
 
@@ -143,10 +184,10 @@ async function openExtend(row: TypeItem) {
   try {
     const res = await http.get(`/admin/types/extend/${row.type_id}`);
     const ext = res.data?.extend || {};
-    extendForm.class = Array.isArray(ext.class) ? ext.class.join(',') : (ext.class || '');
-    extendForm.area = Array.isArray(ext.area) ? ext.area.join(',') : (ext.area || '');
-    extendForm.lang = Array.isArray(ext.lang) ? ext.lang.join(',') : (ext.lang || '');
-    extendForm.year = Array.isArray(ext.year) ? ext.year.join(',') : (ext.year || '');
+    extendForm.class = Array.isArray(ext.class) ? ext.class.join(',') : ext.class || '';
+    extendForm.area = Array.isArray(ext.area) ? ext.area.join(',') : ext.area || '';
+    extendForm.lang = Array.isArray(ext.lang) ? ext.lang.join(',') : ext.lang || '';
+    extendForm.year = Array.isArray(ext.year) ? ext.year.join(',') : ext.year || '';
   } catch {
     // 忽略
   }
@@ -181,7 +222,13 @@ function buildTreeOptions(list: TypeItem[]): TreeSelectOption[] {
     byPid.set(pid, [...(byPid.get(pid) || []), t]);
   }
   const sortChildren = (arr: TypeItem[]) =>
-    arr.slice().sort((a, b) => Number(a.type_sort || 0) - Number(b.type_sort || 0) || Number(a.type_id) - Number(b.type_id));
+    arr
+      .slice()
+      .sort(
+        (a, b) =>
+          Number(a.type_sort || 0) - Number(b.type_sort || 0) ||
+          Number(a.type_id) - Number(b.type_id)
+      );
 
   const walk = (pid: number): TreeSelectOption[] => {
     const children = sortChildren(byPid.get(pid) || []);
@@ -205,7 +252,13 @@ const flatWithDepth = computed<WithDepth[]>(() => {
     byPid.set(pid, [...(byPid.get(pid) || []), t]);
   }
   const sortChildren = (arr: TypeItem[]) =>
-    arr.slice().sort((a, b) => Number(a.type_sort || 0) - Number(b.type_sort || 0) || Number(a.type_id) - Number(b.type_id));
+    arr
+      .slice()
+      .sort(
+        (a, b) =>
+          Number(a.type_sort || 0) - Number(b.type_sort || 0) ||
+          Number(a.type_id) - Number(b.type_id)
+      );
 
   const out: WithDepth[] = [];
   const walk = (pid: number, depth: number) => {
@@ -283,7 +336,12 @@ const columns: DataTableColumns<WithDepth> = [
     },
   },
   { title: '排序', key: 'type_sort', width: 80 },
-  { title: '状态', key: 'type_status', width: 80, render: (r) => (Number(r.type_status) ? '启用' : '禁用') },
+  {
+    title: '状态',
+    key: 'type_status',
+    width: 80,
+    render: (r) => (Number(r.type_status) ? '启用' : '禁用'),
+  },
   {
     title: '操作',
     key: 'actions',
@@ -293,19 +351,32 @@ const columns: DataTableColumns<WithDepth> = [
         'div',
         { style: 'display:flex; gap:8px;' },
         [
-          h(NButton, { size: 'small', tertiary: true, onClick: () => openEdit(row) }, { default: () => '编辑' }),
+          h(
+            NButton,
+            { size: 'small', tertiary: true, onClick: () => openEdit(row) },
+            { default: () => '编辑' }
+          ),
           row.depth === 0
-            ? h(NButton, { size: 'small', tertiary: true, type: 'info', onClick: () => openExtend(row) }, { default: () => '扩展配置' })
+            ? h(
+                NButton,
+                { size: 'small', tertiary: true, type: 'info', onClick: () => openExtend(row) },
+                { default: () => '扩展配置' }
+              )
             : null,
           h(
             NPopconfirm,
             { onPositiveClick: () => remove(row.type_id) },
             {
-              trigger: () => h(NButton, { size: 'small', tertiary: true, type: 'error' }, { default: () => '删除' }),
+              trigger: () =>
+                h(
+                  NButton,
+                  { size: 'small', tertiary: true, type: 'error' },
+                  { default: () => '删除' }
+                ),
               default: () => '确认删除该分类？',
-            },
+            }
           ),
-        ].filter(Boolean),
+        ].filter(Boolean)
       ),
   },
 ];

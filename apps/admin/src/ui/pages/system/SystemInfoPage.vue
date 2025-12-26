@@ -8,7 +8,9 @@
         <n-descriptions-item label="数据库版本">
           <n-tag type="success">{{ sysInfo.dbVersion || '-' }}</n-tag>
         </n-descriptions-item>
-        <n-descriptions-item label="Node 版本">{{ sysInfo.nodeVersion || '-' }}</n-descriptions-item>
+        <n-descriptions-item label="Node 版本">{{
+          sysInfo.nodeVersion || '-'
+        }}</n-descriptions-item>
         <n-descriptions-item label="运行平台">{{ sysInfo.platform || '-' }}</n-descriptions-item>
       </n-descriptions>
 
@@ -100,4 +102,3 @@ onMounted(() => {
   loadInfo().catch(() => void 0);
 });
 </script>
-

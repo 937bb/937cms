@@ -14,7 +14,12 @@
             <n-input-number v-model:value="model.port" :min="1" :max="65535" />
           </n-form-item>
           <n-form-item label="密码">
-            <n-input v-model:value="model.password" type="password" show-password-on="click" placeholder="无密码可留空" />
+            <n-input
+              v-model:value="model.password"
+              type="password"
+              show-password-on="click"
+              placeholder="无密码可留空"
+            />
           </n-form-item>
           <n-form-item label="数据库">
             <n-input-number v-model:value="model.db" :min="0" :max="15" />
@@ -40,10 +45,23 @@
           <n-text strong>模块缓存配置</n-text>
         </div>
         <n-space vertical style="width: 100%">
-          <div v-for="(moduleName, key) in moduleNames" :key="key" style="display: flex; align-items: center; gap: 16px; padding: 8px 0">
+          <div
+            v-for="(moduleName, key) in moduleNames"
+            :key="key"
+            style="display: flex; align-items: center; gap: 16px; padding: 8px 0"
+          >
             <div style="width: 100px">{{ moduleName }}</div>
-            <n-switch v-model:value="model.modules[key].enabled" :checked-value="1" :unchecked-value="0" />
-            <n-input-number v-model:value="model.modules[key].ttl" :min="60" :max="86400" style="width: 120px" />
+            <n-switch
+              v-model:value="model.modules[key].enabled"
+              :checked-value="1"
+              :unchecked-value="0"
+            />
+            <n-input-number
+              v-model:value="model.modules[key].ttl"
+              :min="60"
+              :max="86400"
+              style="width: 120px"
+            />
             <span style="color: #999; font-size: 12px">秒</span>
           </div>
         </n-space>

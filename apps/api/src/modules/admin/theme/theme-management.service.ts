@@ -1,5 +1,8 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { MySQLService } from '../../../db/mysql.service';
+import AdmZip = require('adm-zip');
+import * as fs from 'fs';
+import * as path from 'path';
 
 export interface ThemeConfigSchema {
   [key: string]: {
@@ -73,20 +76,8 @@ export class ThemeManagementService {
     const row = rows?.[0];
     if (!row) throw new NotFoundException('Theme not found');
 
-    // 获取当前配置
-    const [configRows] = await this.db.getPool().query<any[]>(
-      `SELECT config_key, config_value FROM bb_theme_setting WHERE theme_id = ?`,
-      [themeId],
-    );
-
-    const config: Record<string, any> = {};
-    (configRows || []).forEach(row => {
-      try {
-        config[row.config_key] = JSON.parse(row.config_value);
-      } catch {
-        config[row.config_key] = row.config_value;
-      }
-    });
+    // 从 JSON 文件获取配置
+    const config = await this.getThemeConfigFromFile(themeId);
 
     return {
       id: row.id,
@@ -175,23 +166,8 @@ export class ThemeManagementService {
   }
 
   async updateThemeConfig(themeId: string, config: Record<string, any>) {
-    const theme = await this.getTheme(themeId);
-    const now = Math.floor(Date.now() / 1000);
-    const pool = this.db.getPool();
-
-    // 删除旧配置
-    await pool.query('DELETE FROM bb_theme_setting WHERE theme_id = ?', [themeId]);
-
-    // 插入新配置
-    for (const [key, value] of Object.entries(config)) {
-      await pool.query(
-        `INSERT INTO bb_theme_setting (theme_id, config_key, config_value, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?)`,
-        [themeId, key, JSON.stringify(value), now, now],
-      );
-    }
-
-    return { ok: true, message: 'Config updated' };
+    // 直接保存到 JSON 文件
+    return this.saveThemeConfigToFile(themeId, config);
   }
 
   async activateTheme(themeId: string) {
@@ -228,31 +204,89 @@ export class ThemeManagementService {
 
   async getActiveThemeConfig() {
     const [rows] = await this.db.getPool().query<any[]>(
-      `SELECT t.theme_id, t.config_schema
+      `SELECT t.theme_id, t.name, t.config_schema
        FROM bb_theme t WHERE t.is_active = 1 LIMIT 1`,
     );
 
     const theme = rows?.[0];
     if (!theme) throw new NotFoundException('No active theme');
 
-    // 获取配置
-    const [configRows] = await this.db.getPool().query<any[]>(
-      `SELECT config_key, config_value FROM bb_theme_setting WHERE theme_id = ?`,
-      [theme.theme_id],
-    );
-
-    const config: Record<string, any> = {};
-    (configRows || []).forEach(row => {
-      try {
-        config[row.config_key] = JSON.parse(row.config_value);
-      } catch {
-        config[row.config_key] = row.config_value;
-      }
-    });
+    const config = await this.getThemeConfigFromFile(theme.theme_id);
 
     return {
       themeId: theme.theme_id,
+      name: theme.name,
+      configSchema: typeof theme.config_schema === 'string' ? JSON.parse(theme.config_schema) : theme.config_schema,
       config,
     };
+  }
+
+  async installThemePackage(file: Express.Multer.File) {
+    const zip = new AdmZip(file.buffer);
+
+    const themeJsonEntry = zip.getEntry('theme.json');
+    if (!themeJsonEntry) {
+      throw new BadRequestException('theme.json not found in ZIP');
+    }
+
+    const themeConfig = JSON.parse(themeJsonEntry.getData().toString('utf8'));
+    const themeId = themeConfig.themeId;
+
+    // 使用项目根目录的data/themes目录，避免编译时丢失
+    const projectRoot = path.join(__dirname, '../../../../..');
+    const themePath = path.join(projectRoot, 'data/themes', themeId);
+
+    if (!fs.existsSync(path.dirname(themePath))) {
+      fs.mkdirSync(path.dirname(themePath), { recursive: true });
+    }
+    zip.extractAllTo(themePath, true);
+
+    await this.installTheme(themeConfig);
+
+    return { ok: true, themeId, message: 'Theme package installed' };
+  }
+
+  async getThemeConfigFromFile(themeId: string) {
+    const projectRoot = path.join(__dirname, '../../../../..');
+    const configPath = path.join(projectRoot, 'data/themes', themeId, 'config.json');
+    if (!fs.existsSync(configPath)) {
+      return {};
+    }
+    const content = fs.readFileSync(configPath, 'utf8');
+    return JSON.parse(content);
+  }
+
+  async saveThemeConfigToFile(themeId: string, config: Record<string, any>) {
+    const projectRoot = path.join(__dirname, '../../../../..');
+    const configPath = path.join(projectRoot, 'data/themes', themeId, 'config.json');
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf8');
+    return { ok: true, message: 'Config saved' };
+  }
+
+  async uploadThemeImage(themeId: string, file: Express.Multer.File) {
+    const projectRoot = path.join(__dirname, '../../../../..');
+    const imagesDir = path.join(projectRoot, 'data/uploads/theme', themeId);
+
+    if (!fs.existsSync(imagesDir)) {
+      fs.mkdirSync(imagesDir, { recursive: true });
+    }
+
+    const ext = path.extname(file.originalname);
+    const filename = `${Date.now()}-${Math.random().toString(36).substring(7)}${ext}`;
+    const filePath = path.join(imagesDir, filename);
+
+    fs.writeFileSync(filePath, file.buffer);
+
+    const url = `/uploads/theme/${themeId}/${filename}`;
+    return { ok: true, url, message: 'Image uploaded' };
+  }
+
+  async getThemeConfigPage(themeId: string) {
+    const projectRoot = path.join(__dirname, '../../../../..');
+    const htmlPath = path.join(projectRoot, 'data/themes', themeId, 'config.html');
+    if (!fs.existsSync(htmlPath)) {
+      throw new NotFoundException('Config page not found');
+    }
+    return fs.readFileSync(htmlPath, 'utf8');
   }
 }
