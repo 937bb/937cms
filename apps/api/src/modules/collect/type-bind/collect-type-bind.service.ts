@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, OnModuleInit } from '@nestjs/common';
 import { MySQLService } from '../../../db/mysql.service';
 
 function nowSec() {
@@ -6,12 +6,28 @@ function nowSec() {
 }
 
 @Injectable()
-export class CollectTypeBindService {
+export class CollectTypeBindService implements OnModuleInit {
   // Cache: sourceId -> { map, expireAt }
   private bindMapCache = new Map<number, { map: Map<number, number>; expireAt: number }>();
   private readonly cacheTTL = 3600; // 1 hour
 
   constructor(private readonly db: MySQLService) {}
+
+  async onModuleInit() {
+    // Preload all type bindings on startup
+    try {
+      const pool = this.db.getPool();
+      const [rows] = await pool.query<any[]>(
+        'SELECT DISTINCT source_id FROM bb_collect_type_bind',
+      );
+      const sourceIds = (rows || []).map((r) => Number(r.source_id)).filter(Boolean);
+      for (const sourceId of sourceIds) {
+        await this.getBindMap(sourceId);
+      }
+    } catch (e) {
+      // Ignore errors during preload
+    }
+  }
 
   async listBindings(sourceId: number) {
     const pool = this.db.getPool();
