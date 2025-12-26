@@ -161,12 +161,9 @@ export class ReceiveVodService {
         const localTypeId = bindMap.get(remoteTypeId);
         if (localTypeId && localTypeId > 0) {
           typeId = String(localTypeId);
-        } else if (hasSourceBindings && !typeName) {
-          // If source has bindings but this type is not bound, and no typeName fallback, skip
+        } else if (hasSourceBindings) {
+          // If source has bindings but this type is not bound, skip
           return { code: 1002, msg: `type ${remoteTypeId} not bound for source ${sourceId}` };
-        } else {
-          // Clear typeId to try typeName lookup
-          typeId = '';
         }
       }
     }
