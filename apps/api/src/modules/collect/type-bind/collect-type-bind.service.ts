@@ -8,6 +8,8 @@ function nowSec() {
 
 @Injectable()
 export class CollectTypeBindService implements OnModuleInit {
+  // Fallback memory cache when Redis is not available
+  private memoryCache = new Map<number, { map: Map<number, number>; expireAt: number }>();
   private readonly cacheTTL = 3600; // 1 hour
 
   constructor(
@@ -138,12 +140,21 @@ export class CollectTypeBindService implements OnModuleInit {
   }
 
   async getBindMap(sourceId: number): Promise<Map<number, number>> {
-    const cacheKey = `type_bind:${sourceId}`;
+    const now = nowSec();
 
-    // Try Redis cache first
-    const cached = await this.redisCache.get<Array<[number, number]>>(cacheKey);
-    if (cached) {
-      return new Map(cached);
+    // Try Redis cache first if enabled
+    if (this.redisCache.isEnabled()) {
+      const cacheKey = `type_bind:${sourceId}`;
+      const cached = await this.redisCache.get<Array<[number, number]>>(cacheKey);
+      if (cached) {
+        return new Map(cached);
+      }
+    }
+
+    // Try memory cache as fallback
+    const memCached = this.memoryCache.get(sourceId);
+    if (memCached && memCached.expireAt > now) {
+      return memCached.map;
     }
 
     // Query from database
@@ -157,24 +168,37 @@ export class CollectTypeBindService implements OnModuleInit {
       map.set(Number(r.remote_type_id), Number(r.local_type_id));
     }
 
-    // Cache in Redis
-    await this.redisCache.set(cacheKey, Array.from(map.entries()), this.cacheTTL);
+    // Cache in Redis if enabled, otherwise use memory cache
+    if (this.redisCache.isEnabled()) {
+      await this.redisCache.set(`type_bind:${sourceId}`, Array.from(map.entries()), this.cacheTTL);
+    } else {
+      this.memoryCache.set(sourceId, { map, expireAt: now + this.cacheTTL });
+    }
+
     return map;
   }
 
   async clearBindMapCache(sourceId?: number) {
     if (sourceId !== undefined) {
-      await this.redisCache.del(`type_bind:${sourceId}`);
-    } else {
-      // Clear all type bind caches
-      const pool = this.db.getPool();
-      const [rows] = await pool.query<any[]>(
-        'SELECT DISTINCT source_id FROM bb_collect_type_bind',
-      );
-      const sourceIds = (rows || []).map((r) => Number(r.source_id)).filter(Boolean);
-      for (const id of sourceIds) {
-        await this.redisCache.del(`type_bind:${id}`);
+      // Clear Redis cache if enabled
+      if (this.redisCache.isEnabled()) {
+        await this.redisCache.del(`type_bind:${sourceId}`);
       }
+      // Clear memory cache
+      this.memoryCache.delete(sourceId);
+    } else {
+      // Clear all caches
+      if (this.redisCache.isEnabled()) {
+        const pool = this.db.getPool();
+        const [rows] = await pool.query<any[]>(
+          'SELECT DISTINCT source_id FROM bb_collect_type_bind',
+        );
+        const sourceIds = (rows || []).map((r) => Number(r.source_id)).filter(Boolean);
+        for (const id of sourceIds) {
+          await this.redisCache.del(`type_bind:${id}`);
+        }
+      }
+      this.memoryCache.clear();
     }
   }
 
