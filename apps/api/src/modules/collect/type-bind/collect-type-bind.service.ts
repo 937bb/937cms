@@ -127,7 +127,7 @@ export class CollectTypeBindService {
 
     const pool = this.db.getPool();
     const [rows] = await pool.query<any[]>(
-      'SELECT remote_type_id, local_type_id FROM bb_collect_type_bind WHERE source_id = ? AND local_type_id > 0',
+      'SELECT remote_type_id, local_type_id FROM bb_collect_type_bind WHERE source_id = ?',
       [sourceId],
     );
     const map = new Map<number, number>();
