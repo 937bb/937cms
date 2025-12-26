@@ -31,7 +31,6 @@ import TypesPage from '../ui/pages/content/TypesPage.vue';
 import VodsPage from '../ui/pages/content/VodsPage.vue';
 import PlayersPage from '../ui/pages/PlayersPage.vue';
 import LinksPage from '../ui/pages/LinksPage.vue';
-import ThemeListPage from '../ui/pages/themes/ThemeListPage.vue';
 import ThemeUploadPage from '../ui/pages/themes/ThemeUploadPage.vue';
 import MembersPage from '../ui/pages/member/MembersPage.vue';
 import MemberGroupsPage from '../ui/pages/member/MemberGroupsPage.vue';
