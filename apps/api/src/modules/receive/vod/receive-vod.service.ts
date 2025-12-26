@@ -175,7 +175,7 @@ export class ReceiveVodService {
       );
       if (typeRows?.[0]?.type_id) typeId = String(typeRows[0].type_id);
     }
-    if (!typeId && !typeName) return { code: 2002, msg: 'type not found' };
+    if (!typeId) return { code: 2002, msg: 'type not found' };
 
     const enableSynonyms = Boolean(collectCfg.enableSynonyms);
     const namePairs = enableSynonyms ? parseSynonymsText(collectCfg.nameSynonymsText || '') : [];
