@@ -745,6 +745,7 @@ CREATE TABLE IF NOT EXISTS `bb_collect_task` (
   `current_page` int unsigned NOT NULL DEFAULT 1 COMMENT '当前页码',
   `total_pages` int unsigned NOT NULL DEFAULT 0 COMMENT '总页数',
   `started_at` int unsigned NOT NULL DEFAULT 0,
+  `finished_at` int unsigned NOT NULL DEFAULT 0 COMMENT '完成时间',
   `created_at` int unsigned NOT NULL DEFAULT 0,
   `updated_at` int unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
