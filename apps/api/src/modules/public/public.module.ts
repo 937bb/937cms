@@ -32,9 +32,10 @@ import { PublicMemberGroupService } from './member-group/public-member-group.ser
 import { SessionTokenController } from './session/session-token.controller';
 import { SessionTokenService } from './session/session-token.service';
 import { SessionTokenGuard } from './session/session-token.guard';
+import { ThemeManagementModule } from '../admin/theme/theme-management.module';
 
 @Module({
-  imports: [MemberAuthModule, SharedModule],
+  imports: [MemberAuthModule, SharedModule, ThemeManagementModule],
   controllers: [
     PublicTypesController,
     PublicVodsController,

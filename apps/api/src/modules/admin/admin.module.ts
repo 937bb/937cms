@@ -61,6 +61,7 @@ import { SessionTokenConfigController } from './system/session-token-config.cont
 import { SessionTokenConfigService } from './system/session-token-config.service';
 import { RedisCacheConfigController } from './system/redis-cache-config.controller';
 import { AdminDashboardModule } from './dashboard/admin-dashboard.module';
+import { ThemeManagementModule } from './theme/theme-management.module';
 
 @Module({
   imports: [
@@ -69,6 +70,7 @@ import { AdminDashboardModule } from './dashboard/admin-dashboard.module';
     PublicModule,
     SharedModule,
     AdminDashboardModule,
+    ThemeManagementModule,
     PassportModule,
     JwtModule.registerAsync({
       global: true,
