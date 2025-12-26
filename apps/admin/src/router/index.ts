@@ -33,7 +33,6 @@ import PlayersPage from '../ui/pages/PlayersPage.vue';
 import LinksPage from '../ui/pages/LinksPage.vue';
 import ThemeListPage from '../ui/pages/themes/ThemeListPage.vue';
 import ThemeUploadPage from '../ui/pages/themes/ThemeUploadPage.vue';
-import MxproConfigPage from '../ui/pages/themes/MxproConfigPage.vue';
 import MembersPage from '../ui/pages/member/MembersPage.vue';
 import MemberGroupsPage from '../ui/pages/member/MemberGroupsPage.vue';
 import ArticlesPage from '../ui/pages/content/ArticlesPage.vue';
@@ -101,7 +100,6 @@ const routes: RouteRecordRaw[] = [
       { path: 'gbook', component: GbookPage },
       { path: 'comments', component: CommentsPage },
       { path: 'themes', component: ThemeUploadPage },
-      { path: 'themes/mxpro', component: MxproConfigPage },
       { path: 'links', component: LinksPage },
       { path: 'members', component: MembersPage },
       { path: 'member-groups', component: MemberGroupsPage },
