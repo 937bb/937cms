@@ -31,7 +31,7 @@ import VodsPage from '../ui/pages/content/VodsPage.vue';
 import PlayersPage from '../ui/pages/PlayersPage.vue';
 import LinksPage from '../ui/pages/LinksPage.vue';
 import ThemeListPage from '../ui/pages/themes/ThemeListPage.vue';
-import ThemeManagementPage from '../ui/pages/themes/ThemeManagementPage.vue';
+import ThemeUploadPage from '../ui/pages/themes/ThemeUploadPage.vue';
 import MxproConfigPage from '../ui/pages/themes/MxproConfigPage.vue';
 import MembersPage from '../ui/pages/member/MembersPage.vue';
 import MemberGroupsPage from '../ui/pages/member/MemberGroupsPage.vue';
@@ -99,7 +99,7 @@ const routes: RouteRecordRaw[] = [
       { path: 'players', component: PlayersPage },
       { path: 'gbook', component: GbookPage },
       { path: 'comments', component: CommentsPage },
-      { path: 'themes', component: ThemeManagementPage },
+      { path: 'themes', component: ThemeUploadPage },
       { path: 'themes/mxpro', component: MxproConfigPage },
       { path: 'links', component: LinksPage },
       { path: 'members', component: MembersPage },

@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, UploadedFile, UseInterceptors, BadRequestException } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { AdminGuard } from '../auth/admin.guard';
 import { ThemeManagementService } from './theme-management.service';
 
@@ -47,5 +48,21 @@ export class ThemeManagementController {
   @Delete(':themeId')
   async delete(@Param('themeId') themeId: string) {
     return this.themeService.deleteTheme(themeId);
+  }
+
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async upload(@UploadedFile() file: Express.Multer.File) {
+    if (!file) throw new BadRequestException('No file uploaded');
+    if (!file.originalname.endsWith('.json')) {
+      throw new BadRequestException('Only JSON files are supported');
+    }
+
+    try {
+      const config = JSON.parse(file.buffer.toString('utf-8'));
+      return this.themeService.installTheme(config);
+    } catch (e: any) {
+      throw new BadRequestException('Invalid JSON file: ' + e.message);
+    }
   }
 }
