@@ -12,10 +12,11 @@ export class SecurityHeadersMiddleware implements NestMiddleware {
 
     // Content Security Policy
     if (req.path.startsWith('/themes/') || req.path.includes('/config-page')) {
-      // Relaxed CSP for theme config pages - allow iframe from localhost
+      // Relaxed CSP for theme config pages - allow iframe from same origin and admin domains
+      const allowedOrigins = process.env.ADMIN_ORIGINS || 'http://localhost:* http://127.0.0.1:* https://*';
       res.setHeader(
         'Content-Security-Policy',
-        "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'; frame-ancestors 'self' http://localhost:* http://127.0.0.1:*",
+        `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'; frame-ancestors 'self' ${allowedOrigins}`,
       );
     } else {
       res.setHeader('X-Frame-Options', 'DENY');

@@ -25,6 +25,7 @@
                 @update:value="() => handleActivate(theme.themeId)"
               />
               <n-button size="small" @click="() => handleConfig(theme)"> 配置 </n-button>
+              <n-button size="small" @click="() => handleConfigNewWindow(theme)"> 在新窗口打开 </n-button>
               <n-button text type="error" size="small" @click="() => handleDelete(theme.themeId)">
                 删除
               </n-button>
@@ -163,6 +164,11 @@ async function handleConfig(theme: any) {
   const configUrl = `${apiBaseUrl}/admin/theme/${theme.themeId}/config-page`;
   iframeUrl.value = `${configUrl}?token=${token}&_t=${Date.now()}`;
   showIframeModal.value = true;
+}
+
+function handleConfigNewWindow(theme: any) {
+  const configUrl = `${apiBaseUrl}/admin/theme/${theme.themeId}/config-page`;
+  window.open(`${configUrl}?token=${token}&_t=${Date.now()}`, '_blank');
 }
 
 async function handleSaveConfig() {
