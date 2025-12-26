@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { DbModule } from '../../db/db.module';
 import { ConfigModule } from '../../config/config.module';
 import { PublicModule } from '../public/public.module';
 import { MemberAuthModule } from './member-auth.module';
@@ -10,7 +9,7 @@ import { MemberUserController } from './member-user.controller';
 import { MemberUserService } from './member-user.service';
 
 @Module({
-  imports: [DbModule, ConfigModule, PublicModule, MemberAuthModule],
+  imports: [ConfigModule, PublicModule, MemberAuthModule],
   controllers: [MemberAuthController, MemberMeController, MemberUserController],
   providers: [MemberAuthService, MemberUserService],
   exports: [MemberAuthModule],

@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
-import { DbModule } from '../../../db/db.module';
 import { AdminDashboardService } from './admin-dashboard.service';
 import { AdminDashboardController } from './admin-dashboard.controller';
 
 @Module({
-  imports: [DbModule],
+  imports: [],
   providers: [AdminDashboardService],
   controllers: [AdminDashboardController],
 })

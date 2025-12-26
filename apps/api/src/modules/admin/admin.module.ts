@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { DbModule } from '../../db/db.module';
 import { ConfigModule } from '../../config/config.module';
 import { RuntimeConfigService } from '../../config/runtime-config.service';
 import { CollectModule } from '../collect/collect.module';
@@ -65,7 +64,6 @@ import { AdminDashboardModule } from './dashboard/admin-dashboard.module';
 
 @Module({
   imports: [
-    DbModule,
     ConfigModule,
     CollectModule,
     PublicModule,

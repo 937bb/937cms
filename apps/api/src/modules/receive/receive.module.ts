@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { DbModule } from '../../db/db.module';
 import { ConfigModule } from '../../config/config.module';
 import { CollectModule } from '../collect/collect.module';
 import { ReceiveVodController } from './vod/receive-vod.controller';
@@ -12,7 +11,7 @@ import { RedisCacheConfigService } from '../../cache/redis-cache-config.service'
 import { VodQueryCacheService } from '../../cache/vod-query-cache.service';
 
 @Module({
-  imports: [DbModule, ConfigModule, CollectModule],
+  imports: [ConfigModule, CollectModule],
   controllers: [ReceiveVodController, ReceiveArticleController],
   providers: [RedisCacheService, RedisCacheConfigService, VodQueryCacheService, ReceiveVodService, ReceiveArticleService, SystemSettingsService],
 })

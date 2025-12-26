@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { DbModule } from '../../db/db.module';
 import { ConfigModule } from '../../config/config.module';
 import { CollectService } from './collect.service';
 import { CollectTaskService } from './collect-task.service';
@@ -18,7 +17,7 @@ import { VodQueryCacheService } from '../../cache/vod-query-cache.service';
 import { CronSchedulerService } from './cron/cron-scheduler.service';
 
 @Module({
-  imports: [DbModule, ConfigModule],
+  imports: [ConfigModule],
   controllers: [CollectorQueueController],
   providers: [
     RedisCacheService,

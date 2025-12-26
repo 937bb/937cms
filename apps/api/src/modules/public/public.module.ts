@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { DbModule } from '../../db/db.module';
 import { MemberAuthModule } from '../member/member-auth.module';
 import { SharedModule } from '../../shared/shared.module';
 import { RedisCacheService } from '../../cache/redis-cache.service';
@@ -35,7 +34,7 @@ import { SessionTokenService } from './session/session-token.service';
 import { SessionTokenGuard } from './session/session-token.guard';
 
 @Module({
-  imports: [DbModule, MemberAuthModule, SharedModule],
+  imports: [MemberAuthModule, SharedModule],
   controllers: [
     PublicTypesController,
     PublicVodsController,
