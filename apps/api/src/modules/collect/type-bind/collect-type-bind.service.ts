@@ -52,6 +52,7 @@ export class CollectTypeBindService {
       [sourceId, remoteTypeId, remoteTypeName, localTypeId, t, t],
     );
 
+    this.clearBindMapCache(sourceId);
     return { ok: true };
   }
 
