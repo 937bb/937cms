@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, OnModuleInit } from '@nestjs/common';
 import { MySQLService } from '../../../db/mysql.service';
+import { RedisCacheService } from '../../../cache/redis-cache.service';
 
 function nowSec() {
   return Math.floor(Date.now() / 1000);
@@ -7,11 +8,12 @@ function nowSec() {
 
 @Injectable()
 export class CollectTypeBindService implements OnModuleInit {
-  // Cache: sourceId -> { map, expireAt }
-  private bindMapCache = new Map<number, { map: Map<number, number>; expireAt: number }>();
   private readonly cacheTTL = 3600; // 1 hour
 
-  constructor(private readonly db: MySQLService) {}
+  constructor(
+    private readonly db: MySQLService,
+    private readonly redisCache: RedisCacheService,
+  ) {}
 
   async onModuleInit() {
     // Preload all type bindings on startup
@@ -136,12 +138,15 @@ export class CollectTypeBindService implements OnModuleInit {
   }
 
   async getBindMap(sourceId: number): Promise<Map<number, number>> {
-    const now = nowSec();
-    const cached = this.bindMapCache.get(sourceId);
-    if (cached && cached.expireAt > now) {
-      return cached.map;
+    const cacheKey = `type_bind:${sourceId}`;
+
+    // Try Redis cache first
+    const cached = await this.redisCache.get<Array<[number, number]>>(cacheKey);
+    if (cached) {
+      return new Map(cached);
     }
 
+    // Query from database
     const pool = this.db.getPool();
     const [rows] = await pool.query<any[]>(
       'SELECT remote_type_id, local_type_id FROM bb_collect_type_bind WHERE source_id = ?',
@@ -151,15 +156,25 @@ export class CollectTypeBindService implements OnModuleInit {
     for (const r of rows || []) {
       map.set(Number(r.remote_type_id), Number(r.local_type_id));
     }
-    this.bindMapCache.set(sourceId, { map, expireAt: now + this.cacheTTL });
+
+    // Cache in Redis
+    await this.redisCache.set(cacheKey, Array.from(map.entries()), this.cacheTTL);
     return map;
   }
 
-  clearBindMapCache(sourceId?: number) {
+  async clearBindMapCache(sourceId?: number) {
     if (sourceId !== undefined) {
-      this.bindMapCache.delete(sourceId);
+      await this.redisCache.del(`type_bind:${sourceId}`);
     } else {
-      this.bindMapCache.clear();
+      // Clear all type bind caches
+      const pool = this.db.getPool();
+      const [rows] = await pool.query<any[]>(
+        'SELECT DISTINCT source_id FROM bb_collect_type_bind',
+      );
+      const sourceIds = (rows || []).map((r) => Number(r.source_id)).filter(Boolean);
+      for (const id of sourceIds) {
+        await this.redisCache.del(`type_bind:${id}`);
+      }
     }
   }
 
