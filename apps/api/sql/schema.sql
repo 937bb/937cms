@@ -368,7 +368,7 @@ CREATE TABLE IF NOT EXISTS `bb_vod` (
   `vod_down_from` varchar(255) NOT NULL DEFAULT '',
   `vod_down_server` varchar(255) NOT NULL DEFAULT '',
   `vod_down_note` varchar(255) NOT NULL DEFAULT '',
-  `vod_down_url` mediumtext NOT NULL DEFAULT '',
+  `vod_down_url` mediumtext NOT NULL,
   `vod_plot` tinyint unsigned NOT NULL DEFAULT 0,
   `vod_plot_name` mediumtext NOT NULL,
   `vod_plot_detail` mediumtext NOT NULL,
