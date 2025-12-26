@@ -159,6 +159,7 @@ export class ReceiveVodService {
         const bindMap = await this.typeBind.getBindMap(sourceId);
         hasSourceBindings = bindMap.size > 0;
         const localTypeId = bindMap.get(remoteTypeId);
+        console.log(`[TypeBind Debug] sourceId=${sourceId}, remoteTypeId=${remoteTypeId}, bindMapSize=${bindMap.size}, localTypeId=${localTypeId}, bindMap=[${Array.from(bindMap.entries()).map(([k,v]) => `${k}=>${v}`).join(',')}]`);
         if (localTypeId && localTypeId > 0) {
           typeId = String(localTypeId);
         } else if (hasSourceBindings) {
@@ -358,6 +359,10 @@ export class ReceiveVodService {
         vod_pwd_down: '',
         vod_pwd_down_url: '',
         vod_content: vodContent,
+        vod_down_from: '',
+        vod_down_server: '',
+        vod_down_note: '',
+        vod_down_url: '',
         vod_plot: 0,
         vod_plot_name: '',
         vod_plot_detail: '',
