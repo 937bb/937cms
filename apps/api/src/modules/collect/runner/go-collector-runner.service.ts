@@ -54,21 +54,9 @@ export class GoCollectorRunnerService implements OnModuleInit, OnModuleDestroy {
 
   private ensureBinary() {
     const { collectorDir, binPath } = this.resolveCollectorPath();
-    const mainGo = path.join(collectorDir, 'cmd', 'collector', 'main.go');
-    let needsBuild = !fs.existsSync(binPath);
-    if (!needsBuild) {
-      try {
-        const binStat = fs.statSync(binPath);
-        const srcStat = fs.statSync(mainGo);
-        if (srcStat.mtimeMs <= binStat.mtimeMs) return binPath;
-        needsBuild = true;
-        this.log.warn(`collector source changed, rebuilding: ${binPath}`);
-      } catch {
-        return binPath;
-      }
-    }
+    if (fs.existsSync(binPath)) return binPath;
 
-    if (needsBuild) this.log.warn(`building collector: ${binPath}`);
+    this.log.warn(`building collector: ${binPath}`);
     const distDir = path.dirname(binPath);
     fs.mkdirSync(distDir, { recursive: true });
     const cacheDir = path.join(collectorDir, '.cache', 'go-build');
