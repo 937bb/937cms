@@ -9,6 +9,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- 删除旧表（仅在初始化/重置时执行）
 DROP TABLE IF EXISTS `bb_collect_type_bind`;
 DROP TABLE IF EXISTS `bb_collect_record`;
+DROP TABLE IF EXISTS `bb_collect_run`;
 DROP TABLE IF EXISTS `bb_collect_task`;
 DROP TABLE IF EXISTS `bb_ulog`;
 DROP TABLE IF EXISTS `bb_theme_config`;
