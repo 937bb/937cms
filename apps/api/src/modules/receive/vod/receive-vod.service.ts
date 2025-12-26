@@ -222,7 +222,8 @@ export class ReceiveVodService {
       );
       if (typeCheck?.[0]?.type_id) {
         if (!typeName) typeName = String(typeCheck[0].type_name || '');
-      } else if (typeName) {
+      } else {
+        // Local type not found, clear typeIdNum
         typeIdNum = 0;
       }
     }
